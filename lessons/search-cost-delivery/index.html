@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="styles.css?v=2026082901">
   <link rel="stylesheet" href="../../assets/guard.css">
   <script type="module" src="../../assets/group-guard.js"></script>
-  <script type="module" src="game.js?v=2026082901"></script>
+  <script type="module" src="game.js?v=2026090402"></script>
   <script type="module" src="practice.js?v=2026082801"></script>
 </head>
 <body data-guard-scope="page" data-guard-group="ai-search" data-guard-lesson="search-cost-delivery">
@@ -150,8 +150,8 @@
 
     <section id="predict-view" class="transition" aria-labelledby="predict-title" hidden>
       <p class="eyebrow">문제 3 · 균일 비용 탐색</p>
-      <h2 id="predict-title" tabindex="-1">정문에서 매점까지, 어느 길이 더 빠를까요?</h2>
-      <p>아래 그래프에서 선 위의 숫자는 눈이 쌓인 뒤 그 구간을 이동하는 데 걸리는 시간(분)입니다.</p>
+      <h2 id="predict-title" tabindex="-1">정문에서 매점까지 가장 빠른 길을 찾아봅시다</h2>
+      <p>선 위의 숫자는 눈이 쌓인 뒤 그 구간을 이동하는 데 걸리는 시간(분)입니다. 균일 비용 탐색으로 어떤 길이 가장 빠른지 확인하세요.</p>
       <div class="graph-panel">
         <div class="graph-zoom-viewport"><svg id="predict-graph" class="graph-diagram"></svg></div>
         <div class="graph-zoom-controls" data-zoom-for="predict-graph">
@@ -161,12 +161,7 @@
           <button type="button" data-zoom="reset" class="graph-zoom-reset">원래 크기</button>
         </div>
       </div>
-      <div class="predict-buttons" id="predict-choice">
-        <button type="button" data-path="fewer-hops">정문 → 중앙현관 → 매점</button>
-        <button type="button" data-path="optimal">정문 → 운동장 → 급식실 → 매점</button>
-      </div>
-      <div id="predict-result" class="step-feedback" aria-live="polite" hidden></div>
-      <button id="start-ucs-button" type="button" class="stage-next" hidden>균일 비용 탐색으로 진짜 빠른 길 찾아보기 <span aria-hidden="true">→</span></button>
+      <button id="start-ucs-button" type="button" class="stage-next">균일 비용 탐색으로 진짜 빠른 길 찾아보기 <span aria-hidden="true">→</span></button>
     </section>
 
     <section id="experiment" class="experiment" aria-labelledby="experiment-title" hidden>

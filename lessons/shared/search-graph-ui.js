@@ -110,7 +110,7 @@ export function renderGraphDiagram(svgRoot, {
       group.setAttribute("aria-label", `${node.label}${gLabel} ${interactiveVerb}`);
     }
 
-    group.appendChild(svgEl("circle", { cx: node.x, cy: node.y, r: 36 }));
+    group.appendChild(svgEl("circle", { cx: node.x, cy: node.y, r: node.radius || 36 }));
 
     const compare = compareById[node.id];
     const hasG = !compare && gById[node.id] != null;

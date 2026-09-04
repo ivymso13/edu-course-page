@@ -1,5 +1,5 @@
-import { runUcsGraphTrace, pathCostFor, nodeLabel, NODES } from "../shared/search-graph-lab.js?v=2026082401";
-import { renderGraphDiagram, renderListPanel, enableGraphZoom } from "../shared/search-graph-ui.js?v=2026082401";
+import { runUcsGraphTrace, nodeLabel, NODES } from "../shared/search-graph-lab.js?v=2026082401";
+import { renderGraphDiagram, renderListPanel, enableGraphZoom } from "../shared/search-graph-ui.js?v=2026090401";
 import { buildRounds, checkPickAnswer, checkDupAnswer, summarize, pathLabel, FEWER_HOPS_PATH } from "./game-core.js?v=2026082401";
 
 const $ = (selector) => document.querySelector(selector);
@@ -20,8 +20,6 @@ const el = {
   costProgress: $("#cost-progress"),
   ucsConcept: $("#ucs-concept"),
   predictGraph: $("#predict-graph"),
-  predictChoice: $("#predict-choice"),
-  predictResult: $("#predict-result"),
   startUcsButton: $("#start-ucs-button"),
   predictView: $("#predict-view"),
   experiment: $("#experiment"),
@@ -52,6 +50,13 @@ const el = {
 
 const trace = runUcsGraphTrace();
 const rounds = buildRounds(trace);
+const NODE_SYMBOLS = { gate: "a", lobby: "b", yard: "c", cafeteria: "d", store: "e" };
+const GRAPH_NODES = NODES.map((node) => ({
+  ...node,
+  label: `${node.label} (${NODE_SYMBOLS[node.id]})`,
+  radius: node.id === "lobby" ? 44 : 36,
+}));
+const LIST_NODES = NODES.map((node) => ({ ...node, label: NODE_SYMBOLS[node.id] }));
 
 let currentRoundIndex = 0;
 let roundState = null;
@@ -151,6 +156,7 @@ function renderFromRoundState({ interactiveIds = null, interactiveVerb, resultMa
     .filter(([childId, { parentId }]) => visibleSet.has(childId) && visibleSet.has(parentId))
     .map(([childId, { parentId, cost }]) => ({ a: parentId, b: childId, cost }));
   renderGraphDiagram(el.traceGraph, {
+    nodes: GRAPH_NODES,
     statesById,
     gById,
     visibleIds,
@@ -161,6 +167,7 @@ function renderFromRoundState({ interactiveIds = null, interactiveVerb, resultMa
     label: label || "지금까지 컴퓨터가 발견한 상태들의 탐색 트리",
   });
   renderListPanel(el.listPanel, {
+    nodes: LIST_NODES,
     open: [...roundState.open].map(([id, g]) => ({ id, g })),
     closed: [...roundState.closed].map(([id, g]) => ({ id, g })),
   });
@@ -207,6 +214,7 @@ function renderRevealPhase() {
     .filter((c) => visibleSet.has(c.parentId))
     .map((c) => ({ a: c.parentId, b: c.id, cost: c.cost, pending: true }));
   renderGraphDiagram(el.traceGraph, {
+    nodes: GRAPH_NODES,
     statesById,
     gById,
     compareById,
@@ -217,6 +225,7 @@ function renderRevealPhase() {
     label: "지금까지 컴퓨터가 발견한 상태들의 탐색 트리. 점선 노드나 두 후보 간선을 클릭하세요.",
   });
   renderListPanel(el.listPanel, {
+    nodes: LIST_NODES,
     open: [...roundState.open].map(([id, g]) => ({ id, g })),
     closed: [...roundState.closed].map(([id, g]) => ({ id, g })),
   });
@@ -436,6 +445,7 @@ function renderResults() {
   const gById = {};
   for (const entry of lastRound.closedAfter) gById[entry.id] = entry.g;
   renderGraphDiagram(el.resultsGraph, {
+    nodes: GRAPH_NODES,
     statesById,
     gById,
     visibleIds: NODES.map((n) => n.id),
@@ -449,21 +459,6 @@ function renderResults() {
     <div class="stat-block"><span>균일 비용 탐색이 아낀 시간</span><strong>${summary.saved}분</strong></div>
   `;
 }
-
-el.predictChoice.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-path]");
-  if (!button || button.disabled) return;
-  [...el.predictChoice.children].forEach((b) => {
-    b.disabled = true;
-    b.setAttribute("aria-pressed", String(b === button));
-  });
-  el.predictResult.hidden = false;
-  el.predictResult.className = "step-feedback";
-  el.predictResult.classList.add("correct");
-  el.predictResult.innerHTML = `<strong>예측을 저장했습니다.</strong><p>아직 어느 길이 정답인지는 공개하지 않습니다. 균일 비용 탐색으로 직접 확인해 보세요.</p>`;
-  el.startUcsButton.hidden = false;
-  el.startUcsButton.focus();
-});
 
 el.commuteAnswer.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -620,7 +615,7 @@ el.projectorToggle.addEventListener("click", () => {
   el.projectorToggle.setAttribute("aria-pressed", String(enabled));
 });
 
-renderGraphDiagram(el.predictGraph, {});
+renderGraphDiagram(el.predictGraph, { nodes: GRAPH_NODES });
 
 enableGraphZoom(el.predictGraph, document.querySelector('[data-zoom-for="predict-graph"]'));
 enableGraphZoom(el.traceGraph, document.querySelector('[data-zoom-for="trace-graph"]'));

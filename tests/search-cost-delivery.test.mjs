@@ -57,7 +57,9 @@ test("독립 lesson 페이지와 접근성 장치, 그래프 기반 예측 UI를
   assert.match(html, /프로젝터 모드/);
   assert.match(html, /data-guard-scope="page" data-guard-group="ai-search" data-guard-lesson="search-cost-delivery"/);
   assert.match(html, /id="predict-graph"/);
-  assert.match(html, /id="predict-choice"/);
+  assert.doesNotMatch(html, /id="predict-choice"/);
+  assert.doesNotMatch(html, /정문 → 중앙현관 → 매점/);
+  assert.match(html, /id="start-ucs-button"[^>]*>균일 비용 탐색으로 진짜 빠른 길 찾아보기/);
   assert.match(labCss, /prefers-reduced-motion/);
   assert.match(js, /prefers-reduced-motion: reduce/);
 });
@@ -71,7 +73,7 @@ test("균일 비용 탐색의 정의와 g(n) 표기, 오픈 리스트·닫힌 �
   assert.match(html, /맹목적 탐색\(무정보 탐색, uninformed search\)/);
 });
 
-test("집에서 학교까지의 사람용 도전 뒤에 UCS 활동이 열리고, 기존 문제의 정답은 탐색 전에 공개하지 않는다", async () => {
+test("집에서 학교까지의 사람용 도전 뒤에 경로 선택 없이 UCS 활동이 열린다", async () => {
   const [html, js, practiceJs] = await Promise.all([
     readFile(new URL("index.html", lessonRoot), "utf8"),
     readFile(new URL("game.js", lessonRoot), "utf8"),
@@ -92,7 +94,6 @@ test("집에서 학교까지의 사람용 도전 뒤에 UCS 활동이 열리고,
   assert.match(html, /data-go-stage="3"/);
   assert.match(html, /균일 비용 탐색/);
   assert.match(html, /장소 24개와 길 48개/);
-  assert.match(js, /아직 어느 길이 정답인지는 공개하지 않습니다/);
   assert.match(js, /한 번 더 비교해 보세요/);
   assert.match(js, /정답이 아닙니다/);
   assert.match(html, /id="complex-cost"[^>]*type="number"/);
@@ -104,4 +105,13 @@ test("집에서 학교까지의 사람용 도전 뒤에 UCS 활동이 열리고,
   assert.match(js, /\["편의점", "🏪"\]/);
   assert.match(js, /\["학교", "🏫"\]/);
   assert.match(practiceJs, /minNodes: 5, maxNodes: 6/);
+});
+
+test("고정 그래프는 장소명과 a~e를 함께 표시하고 오픈·닫힌 리스트는 알파벳만 사용한다", async () => {
+  const js = await readFile(new URL("game.js", lessonRoot), "utf8");
+  assert.match(js, /gate: "a", lobby: "b", yard: "c", cafeteria: "d", store: "e"/);
+  assert.match(js, /label: `\$\{node\.label\} \(\$\{NODE_SYMBOLS\[node\.id\]\}\)`/);
+  assert.match(js, /nodes: LIST_NODES/);
+  assert.match(js, /nodes: GRAPH_NODES/);
+  assert.match(js, /node\.id === "lobby" \? 44 : 36/);
 });
