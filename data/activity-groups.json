@@ -188,13 +188,13 @@
         {
           "id": "search-astar-delivery",
           "order": 4,
-          "title": "8-퍼즐로 익히는 A* 탐색",
+          "title": "휴리스틱값으로 익히는 A* 탐색",
           "path": "lessons/search-astar-delivery/",
           "duration": 25,
           "difficulty": "보통",
           "status": "published",
           "active": true,
-          "objective": "교과서의 8-퍼즐 예시와 새로운 문제에서 g(n), h(n), f(n)을 비교하며 A* 탐색이 다음 상태를 선택하는 원리를 체험한다."
+          "objective": "3단계와 같은 학교 지도에서 A* 탐색이 균일 비용 탐색보다 적은 상태만 확인하고도 같은 길을 찾는 것을 확인한 뒤, 8-퍼즐 새 문제에서 g(n), h(n), f(n)을 비교하며 다음 상태를 선택하는 원리를 체험한다."
         }
       ]
     }

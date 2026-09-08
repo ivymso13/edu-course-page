@@ -4,14 +4,18 @@
   <meta charset="utf-8">
   <script>document.documentElement.setAttribute("data-guard", "pending");</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="교과서의 8-퍼즐 예시와 새로운 문제로 A* 탐색의 g(n), h(n), f(n) 값을 직접 비교하는 체험 활동">
-  <title>8-퍼즐로 익히는 A* 탐색 | 인공지능과 탐색</title>
+  <meta name="description" content="3단계에서 걸었던 학교 지도를 A* 탐색으로 다시 걸어보고, 새 문제인 8-퍼즐에서 g(n), h(n), f(n) 값을 직접 비교하는 체험 활동">
+  <title>휴리스틱값으로 익히는 A* 탐색 | 인공지능과 탐색</title>
   <link rel="stylesheet" href="../../assets/fonts.css">
   <link rel="stylesheet" href="../shared/lab-base.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../shared/search-grid.css">
+  <link rel="stylesheet" href="../shared/search-graph.css?v=2026090903">
+  <link rel="stylesheet" href="styles.css?v=2026090904">
   <link rel="stylesheet" href="../../assets/guard.css">
   <script type="module" src="../../assets/group-guard.js"></script>
-  <script type="module" src="game.js"></script>
+  <script type="module" src="game.js?v=2026090907"></script>
+  <script type="module" src="practice.js?v=2026090907"></script>
+  <script type="module" src="broken-demo.js?v=2026090907"></script>
 </head>
 <body data-guard-scope="page" data-guard-group="ai-search" data-guard-lesson="search-astar-delivery">
   <a class="skip-link" href="#activity">활동으로 바로가기</a>
@@ -32,51 +36,61 @@
       <section class="hero" aria-labelledby="page-title">
         <div>
           <p class="eyebrow">지능적 탐색 · 활동 04</p>
-          <h1 id="page-title">8-퍼즐로 익히는 A* 탐색</h1>
-          <p class="hero-copy">지금까지 온 거리와 목표까지 남은 거리의 어림값을 함께 보면, 목표에 더 가까운 상태를 먼저 찾을 수 있습니다.</p>
+          <h1 id="page-title">휴리스틱값으로 익히는 A* 탐색</h1>
+          <p class="hero-copy">3단계에서 정문부터 매점까지 걸었던 그 학교 지도를 다시 불러옵니다. 이번에는 지금까지 온 거리에 <b>목표까지 남았다고 추정하는 거리</b>까지 더해서, 더 적은 상태만 확인하고도 같은 길을 찾을 수 있는지 확인합니다.</p>
         </div>
         <div class="formula-card" aria-label="A 스타 평가 함수">
           <span>다음 상태를 고르는 기준</span>
           <strong>f(n) = g(n) + h(n)</strong>
           <dl>
-            <div><dt>g(n)</dt><dd>이 8-퍼즐에서 지금까지 빈칸을 움직인 횟수</dd></div>
-            <div><dt>h(n)</dt><dd>이 활동에서 정한 어림값: 목표 자리와 다른 숫자 타일 수</dd></div>
+            <div><dt>g(n)</dt><dd>초기 상태에서 지금까지 실제로 든 비용</dd></div>
+            <div><dt>h(n)</dt><dd>목표까지 남았다고 추정하는 어림값(휴리스틱값)</dd></div>
           </dl>
-          <p>※ h의 계산 방법은 문제마다 다릅니다. 이 8-퍼즐에서는 빈칸을 제외한 ‘제자리가 아닌 숫자 타일 수’를 사용합니다.</p>
+          <p>※ h(n)을 정하는 방법은 문제마다 다릅니다. 이 활동에서는 지도와 8-퍼즐, 두 문제에 각각 다른 h(n)을 사용합니다.</p>
         </div>
       </section>
 
       <nav class="stage-nav" aria-label="활동 진행 단계">
         <button type="button" data-view="intro" aria-current="step"><b>1</b><span>방법 알아보기</span></button>
-        <button type="button" data-view="textbook" disabled><b>2</b><span>교과서 예시</span></button>
-        <button type="button" data-view="new" disabled><b>3</b><span>새 문제</span></button>
-        <button type="button" data-view="result" disabled><b>4</b><span>정리</span></button>
+        <button type="button" data-view="textbook"><b>2</b><span>교과서 예시</span></button>
+        <button type="button" data-view="new"><b>3</b><span>새 문제</span></button>
+        <button type="button" data-view="result"><b>4</b><span>정리</span></button>
       </nav>
 
       <section id="intro-view" class="lesson-view" aria-labelledby="intro-title">
         <div class="section-heading">
           <p class="eyebrow">활동 전 준비</p>
           <h2 id="intro-title" tabindex="-1">g(n), h(n), f(n)은 무엇을 뜻할까요?</h2>
-          <p>A* 탐색은 지금까지 사용한 비용과 앞으로 필요할 것 같은 비용의 어림값을 더해 다음 상태를 고릅니다. 아래 계산법은 <b>이번 8-퍼즐에 적용한 기준</b>입니다.</p>
+          <p>A* 탐색은 지금까지 사용한 비용과 앞으로 필요할 것 같은 비용의 어림값을 더해 다음 상태를 고릅니다. 3단계의 학교 지도로 먼저 확인해 봅시다.</p>
         </div>
         <div class="value-grid">
-          <article class="value-card value-g"><span>이 8-퍼즐에서 이미 사용한 비용</span><strong>g(n)</strong><p><b>초기 상태부터 현재 상태까지</b> 빈칸을 움직인 횟수입니다.</p><em>빈칸을 2번 움직였다면 g(n)=2</em></article>
-          <article class="value-card value-h"><span>이 8-퍼즐에서 사용하는 어림값</span><strong>h(n)</strong><p>현재 퍼즐에서 <b>목표 자리와 다른 숫자 타일</b>의 개수입니다.</p><em>이번 활동에서는 빈칸을 세지 않습니다</em></article>
-          <article class="value-card value-f"><span>이 8-퍼즐의 다음 상태 선택 기준</span><strong>f(n)</strong><p><b>g(n)+h(n)</b>으로 계산하며, f(n)이 가장 작은 상태를 먼저 봅니다.</p><em>g(n)=2, h(n)=3이면 f(n)=5</em></article>
+          <article class="value-card value-g"><span>지금까지 실제로 든 비용</span><strong>g(n)</strong><p><b>정문(초기 상태)부터 현재 장소까지</b> 실제로 이동하며 든 비용입니다.</p><em>3단계에서 본 그 g(n)과 같습니다</em></article>
+          <article class="value-card value-h"><span>이 지도에서 정한 어림값</span><strong>h(n)</strong><p>그 장소에서 <b>매점(목표)까지의 직선거리</b>를 어림값으로 사용합니다.</p><em>직선거리이므로 실제 이동 비용보다 작거나 같습니다</em></article>
+          <article class="value-card value-f"><span>이 지도의 다음 상태 선택 기준</span><strong>f(n)</strong><p><b>g(n)+h(n)</b>으로 계산하며, f(n)이 가장 작은 상태를 먼저 봅니다.</p><em>g(n)=4, h(n)=7이면 f(n)=11</em></article>
+        </div>
+        <p class="eyebrow intro-graph-label">각 장소에서 매점까지의 어림값 h(n)</p>
+        <div class="graph-panel intro-graph-panel">
+          <div class="graph-zoom-viewport"><svg id="intro-heuristic-graph" class="graph-diagram"></svg></div>
+          <div class="graph-zoom-controls" data-zoom-for="intro-heuristic-graph">
+            <button type="button" data-zoom="out" aria-label="그림 축소">−</button>
+            <span class="graph-zoom-level" data-zoom-level>100%</span>
+            <button type="button" data-zoom="in" aria-label="그림 확대">+</button>
+            <button type="button" data-zoom="reset" class="graph-zoom-reset">원래 크기</button>
+          </div>
         </div>
         <div class="warmup" aria-labelledby="warmup-title">
           <div class="warmup-copy">
-            <p class="eyebrow">계산 연습</p><h3 id="warmup-title">이 퍼즐판의 f를 계산해 봅시다</h3>
-            <p>아직 빈칸을 움직이지 않은 <b>초기 상태</b>이므로 <b>g(n)=0</b>입니다. 두 퍼즐판을 비교하여 h(n)과 f(n)을 계산하세요.</p>
+            <p class="eyebrow">계산 연습</p><h3 id="warmup-title">정문의 f(n)을 계산해 봅시다</h3>
+            <p>아직 출발하지 않았으므로 <b>g(n)=0</b>입니다. 위 그림에서 정문의 어림값을 확인하여 h(n)과 f(n)을 계산하세요.</p>
             <div class="warmup-equation" aria-label="g(n)은 0이고, h(n)과 f(n)을 계산하는 문제">
-              <span><small>주어진 값</small><b>g(n) = 0</b></span><i aria-hidden="true">+</i><span><small>다른 숫자 타일 수</small><b>h(n) = ?</b></span><i aria-hidden="true">=</i><span class="answer"><small>선택 기준</small><b>f(n) = ?</b></span>
+              <span><small>주어진 값</small><b>g(n) = 0</b></span><i aria-hidden="true">+</i><span><small>그림에서 확인</small><b>h(n) = ?</b></span><i aria-hidden="true">=</i><span class="answer"><small>선택 기준</small><b>f(n) = ?</b></span>
             </div>
             <form id="warmup-form" class="warmup-answer-form">
               <fieldset>
-                <legend>8-퍼즐의 h와 f 값을 직접 입력하세요</legend>
-                <label><span>빈칸을 움직인 횟수</span><strong>g(n)</strong><input id="warmup-g" name="g" type="number" value="0" readonly aria-readonly="true"><small>주어진 값</small></label>
+                <legend>정문의 h와 f 값을 직접 입력하세요</legend>
+                <label><span>지금까지 든 비용</span><strong>g(n)</strong><input id="warmup-g" name="g" type="number" value="0" readonly aria-readonly="true"><small>주어진 값</small></label>
                 <i aria-hidden="true">+</i>
-                <label><span>목표 자리와 다른 숫자 타일 수</span><strong>h(n)</strong><input id="warmup-h" name="h" type="number" min="0" max="8" inputmode="numeric" required autocomplete="off"><small>0~8 사이의 수</small></label>
+                <label><span>매점까지의 어림값</span><strong>h(n)</strong><input id="warmup-h" name="h" type="number" min="0" max="20" inputmode="numeric" required autocomplete="off"><small>위 그림에서 확인하세요</small></label>
                 <i aria-hidden="true">=</i>
                 <label><span>g(n)+h(n)</span><strong>f(n)</strong><input id="warmup-f" name="f" type="number" min="0" max="20" inputmode="numeric" required autocomplete="off"><small>g(n)=0을 사용하세요</small></label>
                 <div class="warmup-submit"><span aria-hidden="true">계산 결과</span><button type="submit">계산 확인</button><small aria-hidden="true">&nbsp;</small></div>
@@ -85,32 +99,263 @@
             <div id="warmup-feedback" class="trace-feedback" aria-live="polite" hidden></div>
           </div>
           <div class="warmup-boards">
-            <div class="warmup-board"><span>현재 상태</span><div class="puzzle-board" role="img" aria-label="현재 상태: 2, 8, 3, 1, 6, 4, 7, 빈칸, 5"><span class="tile">2</span><span class="tile">8</span><span class="tile">3</span><span class="tile">1</span><span class="tile">6</span><span class="tile">4</span><span class="tile">7</span><span class="tile blank"><i aria-hidden="true">빈칸</i></span><span class="tile">5</span></div></div>
-            <div class="warmup-board goal"><span>목표 상태</span><div class="puzzle-board" role="img" aria-label="목표 상태: 1, 2, 3, 8, 빈칸, 4, 7, 6, 5"><span class="tile">1</span><span class="tile">2</span><span class="tile">3</span><span class="tile">8</span><span class="tile blank"><i aria-hidden="true">빈칸</i></span><span class="tile">4</span><span class="tile">7</span><span class="tile">6</span><span class="tile">5</span></div></div>
+            <div class="warmup-board"><span>정문(초기 상태)</span><div class="warmup-place-icon" role="img" aria-label="정문">🏫</div></div>
+            <div class="warmup-board goal"><span>매점(목표 상태)</span><div class="warmup-place-icon" role="img" aria-label="매점">🏪</div></div>
           </div>
         </div>
         <div class="rule-grid compact-rules">
-          <article><span>01</span><h3>후보 확인</h3><p>아직 살펴보지 않은 퍼즐판의 g(n)과 h(n)을 확인합니다.</p></article><article><span>02</span><h3>f(n) 계산</h3><p>각 후보의 g(n)+h(n)을 계산합니다.</p></article><article><span>03</span><h3>상태 선택</h3><p>f(n)이 가장 작은 상태부터 확인합니다.</p></article>
+          <article><span>01</span><h3>후보 확인</h3><p>아직 살펴보지 않은 장소의 g(n)과 h(n)을 확인합니다.</p></article><article><span>02</span><h3>f(n) 계산</h3><p>각 후보의 g(n)+h(n)을 계산합니다.</p></article><article><span>03</span><h3>상태 선택</h3><p>f(n)이 가장 작은 상태부터 확인합니다.</p></article>
         </div>
-        <aside class="tie-note"><strong>f(n)이 같다면?</strong> 먼저 후보에 들어온 상태를 선택합니다. 이 활동에서는 빈칸을 <b>위 → 아래 → 왼쪽 → 오른쪽</b> 순서로 움직여 후보를 만듭니다.</aside>
+        <aside class="tie-note"><strong>f(n)이 같다면?</strong> 이 활동의 지도에서는 이름(기호) 순서로 먼저 확인합니다. 오픈 리스트에 있던 값이 더 싸다면, 새로 찾은 더 비싼 값은 사용하지 않습니다.</aside>
         <button id="start-textbook" class="primary-action" type="button" data-next="textbook" disabled>계산 연습 후 시작할 수 있습니다</button>
       </section>
 
       <section id="textbook-view" class="lesson-view" aria-labelledby="textbook-title" hidden>
         <div class="section-heading">
           <p class="eyebrow">활동 1 · 교과서 예시 따라가기</p>
-          <h2 id="textbook-title" tabindex="-1">g(n), h(n), f(n)을 계산한 뒤 상태를 선택하세요</h2>
-          <p>교과서와 같은 초기 상태와 목표 상태입니다. 모든 후보의 값을 정확히 입력하면 다음에 확인할 상태를 선택할 수 있습니다.</p>
+          <h2 id="textbook-title" tabindex="-1">A* 탐색 수행하기: 같은 지도</h2>
+          <p><a href="../search-cost-delivery/">3단계: 균일 비용 탐색으로 가장 빠른 길 찾기</a>에서는 g(n)만 보고 정문에서 매점까지 <b>5개</b> 상태를 확인했습니다. 이번에는 같은 지도에서 정문부터 매점까지 휴리스틱 탐색(A*)으로 가 보면서, f(n)=g(n)+h(n)이 가장 작은 상태만 골라도 몇 개 상태만 확인하면 되는지 직접 확인해 보세요.</p>
         </div>
-        <div class="puzzle-reference" data-reference="textbook"></div>
-        <div class="trace-panel" data-activity="textbook"></div>
+
+        <div class="experiment-head">
+          <div><span id="map-stage-label">단계 1 / 4 · A* 탐색</span><div class="progress" aria-hidden="true"><i id="map-progress-bar"></i></div></div>
+        </div>
+
+        <div id="map-trace-view">
+          <div class="sample-head">
+            <div><span class="sample-id" id="map-step-badge">단계 1</span><h3 id="map-experiment-title" tabindex="-1">다음에 확인할 상태는 어디일까요?</h3></div>
+            <p id="map-step-instruction">아래 그래프에서 각 노드는 h(n)을, 그 상태로 이어지는 간선(원)은 g(n)을 보여줍니다. 오픈 리스트에 있는 상태 중 <strong>g(n)+h(n)인 f(n)이 가장 작은 간선</strong>을 직접 클릭하세요.</p>
+          </div>
+          <div class="graph-panel">
+            <div class="graph-zoom-viewport"><svg id="map-trace-graph" class="graph-diagram"></svg></div>
+            <div class="graph-zoom-controls" data-zoom-for="map-trace-graph">
+              <button type="button" data-zoom="out" aria-label="그래프 축소">−</button>
+              <span class="graph-zoom-level" data-zoom-level>100%</span>
+              <button type="button" data-zoom="in" aria-label="그래프 확대">+</button>
+              <button type="button" data-zoom="reset" class="graph-zoom-reset">원래 크기</button>
+            </div>
+            <ul class="graph-legend">
+              <li><span class="swatch" style="background:#fffaf0;border-color:#b8811b;border-style:dashed"></span>새로 발견됨(간선을 클릭해서 추가)</li>
+              <li><span class="swatch" style="background:#fff3cd;border-color:#b8811b"></span>오픈 리스트</li>
+              <li><span class="swatch" style="background:#eef1f6"></span>닫힌 리스트(확정됨)</li>
+              <li><span class="swatch" style="background:#dff3e8;border-color:#147a59"></span>최종 경로</li>
+              <li><span class="swatch" style="background:#eaf0ff;border-color:#3158d7;border-radius:99px"></span>파란 원 g(n)=지금까지 이동 비용(클릭)</li>
+              <li><span class="swatch" style="background:#f3e8ff;border-color:#c084fc"></span>보라 배지 h(n)=목표까지 어림값(고정)</li>
+            </ul>
+          </div>
+          <div class="trace-controls">
+            <div class="list-panel list-panel-compact" id="map-list-panel">
+              <div class="list-panel-block" data-list-kind="open"><span>오픈 리스트</span><ul data-list="open"></ul></div>
+              <div class="list-panel-block" data-list-kind="closed"><span>닫힌 리스트</span><ul data-list="closed"></ul></div>
+            </div>
+            <p class="candidate-prompt" id="map-candidate-prompt">그래프에서 f(n)이 가장 작은 상태를 클릭하세요.</p>
+            <div id="map-cost-choice-summary" class="cost-choice-summary" aria-live="polite"></div>
+            <div id="map-step-feedback" class="step-feedback" aria-live="polite" hidden></div>
+            <div id="map-close-action" class="list-action" hidden aria-live="polite"></div>
+            <div id="map-children-reveal" class="children-reveal" aria-live="polite"></div>
+            <div id="map-dup-question" class="dup-question" hidden aria-live="polite"></div>
+            <div class="candidate-actions">
+              <button id="map-next-step" type="button" hidden>다음 단계 <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
+          <div class="record-table-wrap">
+            <table class="record-table">
+              <caption class="sr-only">A* 탐색 기록표: 순서·장소 이름·g(n)·h(n)·f(n)</caption>
+              <thead><tr><th scope="col">순서</th><th scope="col">장소</th><th scope="col">g(n)</th><th scope="col">h(n)</th><th scope="col">f(n)</th></tr></thead>
+              <tbody id="map-record-body"><tr class="empty-row"><td colspan="5">아직 확정된 장소가 없습니다.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="map-summary" class="map-summary" hidden>
+          <p class="eyebrow">지도 활동 완료</p>
+          <h3 tabindex="-1">같은 지도, 같은 길, 더 적은 확인</h3>
+          <p id="map-summary-text"></p>
+          <div class="stat-compare" id="map-compare"></div>
+          <div class="map-summary-actions">
+            <button id="map-show-practice" type="button" class="secondary-action">다른 지도로 더 연습하기 <span aria-hidden="true">→</span></button>
+            <button id="map-show-broken" type="button" class="secondary-action">h(n)이 틀리면 어떻게 될까요? <span aria-hidden="true">→</span></button>
+            <button id="map-continue" class="primary-action" type="button">새 문제(8-퍼즐) 풀어보기 <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+
+        <div id="map-practice-view" hidden>
+          <div class="section-heading practice-heading">
+            <p class="eyebrow">연습 문제 · 새로운 학교 지도</p>
+            <h3 tabindex="-1">이번엔 다른 지도에서 A* 탐색을 직접 해 보세요</h3>
+            <p>정점 6~9개짜리 새 지도가 나옵니다. 🚩 시작에서 🏁 목표까지, 이번에도 노드는 h(n)을, 간선은 g(n)을 보여줍니다. f(n)이 가장 작은 간선을 클릭해 풀어 보세요.</p>
+            <button id="map-practice-new-graph" type="button" class="practice-new-graph-btn">새 지도 만들기 <span aria-hidden="true">↻</span></button>
+          </div>
+
+          <div class="experiment-head">
+            <div><span id="map-practice-stage-label">연습 문제</span></div>
+          </div>
+
+          <div id="map-practice-trace-area">
+            <div class="graph-panel">
+              <div class="graph-zoom-viewport"><svg id="map-practice-graph" class="graph-diagram"></svg></div>
+              <div class="graph-zoom-controls" data-zoom-for="map-practice-graph">
+                <button type="button" data-zoom="out" aria-label="그래프 축소">−</button>
+                <span class="graph-zoom-level" data-zoom-level>100%</span>
+                <button type="button" data-zoom="in" aria-label="그래프 확대">+</button>
+                <button type="button" data-zoom="reset" class="graph-zoom-reset">원래 크기</button>
+              </div>
+              <ul class="graph-legend">
+                <li><span class="swatch" style="background:#fffaf0;border-color:#b8811b;border-style:dashed"></span>새로 발견됨(간선을 클릭해서 추가)</li>
+                <li><span class="swatch" style="background:#fff3cd;border-color:#b8811b"></span>오픈 리스트</li>
+                <li><span class="swatch" style="background:#eef1f6"></span>닫힌 리스트(확정됨)</li>
+                <li><span class="swatch" style="background:#dff3e8;border-color:#147a59"></span>최종 경로</li>
+              <li><span class="swatch" style="background:#eaf0ff;border-color:#3158d7;border-radius:99px"></span>파란 원 g(n)=지금까지 이동 비용(클릭)</li>
+              <li><span class="swatch" style="background:#f3e8ff;border-color:#c084fc"></span>보라 배지 h(n)=목표까지 어림값(고정)</li>
+              </ul>
+            </div>
+            <div class="trace-controls">
+              <div class="list-panel list-panel-compact" id="map-practice-list-panel">
+                <div class="list-panel-block" data-list-kind="open"><span>오픈 리스트</span><ul data-list="open"></ul></div>
+                <div class="list-panel-block" data-list-kind="closed"><span>닫힌 리스트</span><ul data-list="closed"></ul></div>
+              </div>
+              <p class="candidate-prompt" id="map-practice-prompt">그래프에서 f(n)이 가장 작은 간선을 클릭하세요.</p>
+              <div id="map-practice-cost-choice-summary" class="cost-choice-summary" aria-live="polite"></div>
+              <div id="map-practice-feedback" class="step-feedback" aria-live="polite" hidden></div>
+              <div id="map-practice-children-reveal" class="children-reveal" aria-live="polite"></div>
+              <div id="map-practice-dup-question" class="dup-question" hidden aria-live="polite"></div>
+              <div class="candidate-actions">
+                <button id="map-practice-next-step" type="button" hidden>다음 단계 <span aria-hidden="true">→</span></button>
+              </div>
+            </div>
+            <div class="record-table-wrap">
+              <table class="record-table">
+                <caption class="sr-only">연습 문제 A* 탐색 기록표: 순서·장소 이름·g(n)·h(n)·f(n)</caption>
+                <thead><tr><th scope="col">순서</th><th scope="col">장소</th><th scope="col">g(n)</th><th scope="col">h(n)</th><th scope="col">f(n)</th></tr></thead>
+                <tbody id="map-practice-record-body"><tr class="empty-row"><td colspan="5">아직 확정된 장소가 없습니다.</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="map-practice-summary" class="map-summary" hidden>
+            <p class="eyebrow">연습 완료</p>
+            <h3 tabindex="-1">이 지도에서도 A*는 최적의 길을 찾았습니다</h3>
+            <p id="map-practice-summary-text"></p>
+            <button id="map-practice-again" type="button" class="secondary-action">또 다른 지도로 연습하기 <span aria-hidden="true">↻</span></button>
+          </div>
+        </div>
+
+        <div id="map-broken-view" hidden>
+          <div class="section-heading practice-heading">
+            <p class="eyebrow">먼저 직접 탐색 · 이동 비용이 다른 지도</p>
+            <h3 tabindex="-1">지도만 보고 가장 빠른 길을 찾아봅시다</h3>
+            <p>정문에서 매점까지 갈 수 있는 경로와 각 경로의 합을 먼저 계산해 보세요. 어떤 길이 가장 빠른지 찾은 뒤, 아래 버튼을 눌러 A*가 같은 답을 찾는지 확인합니다.</p>
+          </div>
+
+          <div class="broken-rule-check" aria-labelledby="broken-rule-check-title">
+            <div>
+              <p class="eyebrow">먼저 지도 확인</p>
+              <h4 id="broken-rule-check-title">이 지도에서는 목표와 맞닿은 곳의 값이 간선 시간과 같습니다</h4>
+              <p>중앙현관 h(n)=9 ↔ 매점까지 9분 · 급식실 h(n)=3 ↔ 매점까지 3분</p>
+            </div>
+            <div class="graph-panel broken-reference-panel">
+              <svg id="map-broken-reference-graph" class="graph-diagram"></svg>
+            </div>
+            <p class="broken-rule-note"><strong>살펴볼 점:</strong> 간선 숫자로 계산한 실제 남은 값과 각 정점의 h(n)을 비교해 보세요. 서로 맞지 않는 곳이 있나요?</p>
+          </div>
+
+          <button id="map-broken-start" type="button" class="primary-action">A* 실패 예시 확인하기 <span aria-hidden="true">→</span></button>
+
+          <div id="map-broken-experiment-head" class="experiment-head" hidden>
+            <div>
+              <span id="map-broken-stage-label">단계 1 / 3 · A* 탐색(잘못된 h)</span>
+              <div class="progress" aria-hidden="true"><i id="map-broken-progress-bar"></i></div>
+              <p class="broken-experiment-note">운동장에서 실제로 남은 값은 5이지만 h(n)=10으로 잘못 주어졌습니다. A*의 선택 규칙은 바꾸지 않고 그대로 진행하세요.</p>
+            </div>
+          </div>
+
+          <div id="map-broken-trace-area" hidden>
+            <div class="graph-panel">
+              <p class="graph-inline-label">탐색 트리 · 간선의 숫자는 그 구간에 걸리는 시간이며, 누적 g(n)은 오른쪽 목록에서 확인합니다</p>
+              <div class="graph-zoom-viewport"><svg id="map-broken-graph" class="graph-diagram"></svg></div>
+              <div class="graph-zoom-controls" data-zoom-for="map-broken-graph">
+                <button type="button" data-zoom="out" aria-label="그래프 축소">−</button>
+                <span class="graph-zoom-level" data-zoom-level>100%</span>
+                <button type="button" data-zoom="in" aria-label="그래프 확대">+</button>
+                <button type="button" data-zoom="reset" class="graph-zoom-reset">원래 크기</button>
+              </div>
+              <ul class="graph-legend">
+                <li><span class="swatch" style="background:#fffaf0;border-color:#b8811b;border-style:dashed"></span>새로 발견됨(간선을 클릭해서 추가)</li>
+                <li><span class="swatch" style="background:#fff3cd;border-color:#b8811b"></span>오픈 리스트</li>
+                <li><span class="swatch" style="background:#eef1f6"></span>닫힌 리스트(확정됨)</li>
+                <li><span class="swatch" style="background:#dff3e8;border-color:#147a59"></span>최종 경로</li>
+              <li><span class="swatch" style="background:#eaf0ff;border-color:#3158d7;border-radius:99px"></span>파란 원=해당 구간의 시간(클릭)</li>
+              <li><span class="swatch" style="background:#f3e8ff;border-color:#c084fc"></span>보라 배지 h(n)=목표까지 어림값(고정)</li>
+              </ul>
+            </div>
+            <div class="trace-controls">
+              <div class="list-panel list-panel-compact" id="map-broken-list-panel">
+                <div class="list-panel-block" data-list-kind="open"><span>오픈 리스트</span><ul data-list="open"></ul></div>
+                <div class="list-panel-block" data-list-kind="closed"><span>닫힌 리스트</span><ul data-list="closed"></ul></div>
+              </div>
+              <p class="candidate-prompt" id="map-broken-prompt">그래프에서 f(n)이 가장 작은 간선을 클릭하세요.</p>
+              <div id="map-broken-cost-choice-summary" class="cost-choice-summary" aria-live="polite"></div>
+              <div id="map-broken-feedback" class="step-feedback" aria-live="polite" hidden></div>
+              <div id="map-broken-children-reveal" class="children-reveal" aria-live="polite"></div>
+              <div id="map-broken-dup-question" class="dup-question" hidden aria-live="polite"></div>
+              <div class="candidate-actions">
+                <button id="map-broken-next-step" type="button" hidden>다음 단계 <span aria-hidden="true">→</span></button>
+              </div>
+            </div>
+            <div class="record-table-wrap">
+              <table class="record-table">
+                <caption class="sr-only">잘못된 h(n)으로 진행한 A* 탐색 기록표: 순서·장소 이름·g(n)·h(n)·f(n)</caption>
+                <thead><tr><th scope="col">순서</th><th scope="col">장소</th><th scope="col">g(n)</th><th scope="col">h(n)</th><th scope="col">f(n)</th></tr></thead>
+                <tbody id="map-broken-record-body"><tr class="empty-row"><td colspan="5">아직 확정된 장소가 없습니다.</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="map-broken-summary" class="map-summary broken-summary" hidden>
+            <p class="eyebrow">잘못된 h(n)의 결과</p>
+            <h3 tabindex="-1">규칙은 그대로 따랐는데, 왜 답이 달라졌을까요?</h3>
+            <p id="map-broken-summary-text"></p>
+
+            <div class="broken-compare-graphs">
+              <div class="broken-compare-graph">
+                <p class="broken-graph-label">잘못된 h(n)으로 A*가 찾은 경로</p>
+                <p class="broken-graph-cost is-wrong" id="map-broken-result-cost"></p>
+                <div class="graph-panel">
+                  <div class="graph-zoom-viewport"><svg id="map-broken-result-graph" class="graph-diagram"></svg></div>
+                  <div class="graph-zoom-controls" data-zoom-for="map-broken-result-graph">
+                    <button type="button" data-zoom="out" aria-label="그래프 축소">−</button>
+                    <span class="graph-zoom-level" data-zoom-level>100%</span>
+                    <button type="button" data-zoom="in" aria-label="그래프 확대">+</button>
+                    <button type="button" data-zoom="reset" class="graph-zoom-reset">원래 크기</button>
+                  </div>
+                </div>
+              </div>
+              <div class="broken-compare-graph">
+                <p class="broken-graph-label">실제 최적 경로</p>
+                <p class="broken-graph-cost is-ok" id="map-broken-optimal-cost"></p>
+                <div class="graph-panel">
+                  <div class="graph-zoom-viewport"><svg id="map-broken-optimal-graph" class="graph-diagram"></svg></div>
+                  <div class="graph-zoom-controls" data-zoom-for="map-broken-optimal-graph">
+                    <button type="button" data-zoom="out" aria-label="그래프 축소">−</button>
+                    <span class="graph-zoom-level" data-zoom-level>100%</span>
+                    <button type="button" data-zoom="in" aria-label="그래프 확대">+</button>
+                    <button type="button" data-zoom="reset" class="graph-zoom-reset">원래 크기</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="broken-explain">운동장의 h(n)=10은 매점과 직접 연결된 간선이 없어 그럴듯해 보였지만, 실제 최단 거리(운동장→급식실→매점=5)보다 큰(admissible하지 않은) 값이었습니다. h(n) 하나라도 실제 남은 비용보다 크면, f(n)=g(n)+h(n)을 정확히 계산해도 A*가 지름길을 놔두고 더 비싼 길로 돌아갈 수 있습니다.</p>
+            <button id="map-broken-again" type="button" class="secondary-action">다시 해보기 <span aria-hidden="true">↻</span></button>
+          </div>
+        </div>
       </section>
 
       <section id="new-view" class="lesson-view" aria-labelledby="new-title" hidden>
         <div class="section-heading">
           <p class="eyebrow">활동 2 · 새로운 문제에 적용하기</p>
-          <h2 id="new-title" tabindex="-1">A* 탐색 수행하기: 연습</h2>
-          <p>새 후보마다 g(n)만 제공합니다. 목표 상태와 비교해 h(n)을 구하고 f(n)=g(n)+h(n)을 입력한 뒤, 전체 오픈 리스트에서 다음 상태를 선택하세요.</p>
+          <h2 id="new-title" tabindex="-1">A* 탐색 수행하기: 8-퍼즐</h2>
+          <p>지도에서는 h(n)이 "매점까지의 직선거리"였습니다. 8-퍼즐에서는 <b>목표 자리와 다른 숫자 타일 수</b>를 h(n)으로 사용합니다. 문제가 바뀌어도 f(n)=g(n)+h(n)이 가장 작은 상태를 고른다는 규칙은 같습니다. 새 후보마다 g(n)만 제공합니다. 목표 상태와 비교해 h(n)을 구하고 f(n)=g(n)+h(n)을 입력한 뒤, 전체 오픈 리스트에서 다음 상태를 선택하세요.</p>
         </div>
         <div class="puzzle-reference" data-reference="new"></div>
         <div class="trace-panel" data-activity="new"></div>
@@ -121,13 +366,13 @@
         <h2 id="result-title" tabindex="-1">A*는 두 가지 정보를 함께 사용했습니다</h2>
         <div id="score-summary" class="score-summary" aria-live="polite"></div>
         <div class="takeaway-grid">
-          <article><span>이 8-퍼즐에서 지금까지의 비용</span><strong>g(n)</strong><p>시작 상태에서 현재 상태까지 빈칸이 움직인 횟수</p></article>
+          <article><span>지금까지의 비용</span><strong>g(n)</strong><p>시작 상태에서 현재 상태까지 실제로 든 비용</p></article>
           <i aria-hidden="true">+</i>
-          <article><span>이 8-퍼즐에서 정한 어림값</span><strong>h(n)</strong><p>빈칸을 제외하고 목표 상태와 자리가 다른 숫자 타일의 수</p></article>
+          <article><span>문제마다 다르게 정하는 어림값</span><strong>h(n)</strong><p>지도에서는 목표까지의 직선거리, 8-퍼즐에서는 목표 자리와 다른 타일 수</p></article>
           <i aria-hidden="true">=</i>
           <article class="accent"><span>선택 기준</span><strong>f(n)</strong><p>값이 가장 작은 상태를 먼저 확인</p></article>
         </div>
-        <aside class="discussion"><span>함께 생각해 보기</span><p>h(n)만 보고 다음 상태를 고르면 왜 항상 가장 짧은 길을 찾는다고 말할 수 없을까요?</p></aside>
+        <aside class="discussion"><span>함께 생각해 보기</span><p>h(n)을 실제보다 훨씬 크게 어림잡으면 A*가 찾는 경로가 더 이상 최적(가장 싼 경로)임을 보장하지 못할 수 있습니다. 왜 그럴까요? 반대로 h(n)을 0으로 두면 A*는 어떤 탐색과 같아질까요?</p></aside>
         <div class="result-actions">
           <button id="restart-button" type="button">처음부터 다시 하기</button>
           <a href="../../units/ai-search/">활동 목록으로 돌아가기 →</a>

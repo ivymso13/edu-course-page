@@ -1,6 +1,48 @@
-export const GOAL_STATE = Object.freeze([1, 2, 3, 8, 0, 4, 7, 6, 5]);
+import { runAStarGraphTrace, runUcsGraphTrace, HEURISTICS, nodeLabel } from "../shared/search-graph-lab.js?v=2026090902";
+
+// ---------------------------------------------------------------------------
+// 학교 지도 위 A* 탐색 — 3단계(균일 비용 탐색)와 같은 지도를 재사용해 "교과서 예시"로 쓴다.
+// ---------------------------------------------------------------------------
+export { HEURISTICS };
+
+export function buildMapRounds(trace = runAStarGraphTrace()) {
+  return trace.steps.map((step) => ({
+    ...step,
+    isSetup: step.pickCandidates.length <= 1,
+    dupChildren: step.children.filter((c) => c.status === "open-worse-skip" || c.status === "open-replace"),
+  }));
+}
+
+export function checkMapPickAnswer(round, selectedId) {
+  return { correct: selectedId === round.expandedId };
+}
+
+// insert=true는 "새 값을 오픈 리스트에 넣는다(=기존 값을 교체한다)"는 학생의 선택.
+export function checkMapDupAnswer(dupChild, insert) {
+  const shouldInsert = dupChild.status === "open-replace";
+  return { correct: insert === shouldInsert, shouldInsert };
+}
+
+// 3단계에서 본 균일 비용 탐색과 이번 A* 탐색이 같은 지도에서 같은 경로를 찾되,
+// 몇 개 상태를 확인했는지는 다르다는 것을 정리 화면에서 비교하기 위한 값.
+export function summarizeMap({ astarTrace = runAStarGraphTrace(), ucsTrace = runUcsGraphTrace() } = {}) {
+  return {
+    path: astarTrace.path,
+    pathCost: astarTrace.pathCost,
+    astarTested: astarTrace.order.length,
+    ucsTested: ucsTrace.order.length,
+    saved: ucsTrace.order.length - astarTrace.order.length,
+  };
+}
+
+export function mapPathLabel(pathIds) {
+  return pathIds.map((id) => nodeLabel(id)).join(" → ");
+}
+
+// ---------------------------------------------------------------------------
+// 8-퍼즐 A* 탐색(새 문제 연습). 교과서의 8-퍼즐 예시 대신 이 활동만의 연습 문제로 쓴다.
+// ---------------------------------------------------------------------------
 export const NEW_GOAL_STATE = Object.freeze([1, 2, 3, 4, 5, 6, 7, 8, 0]);
-export const TEXTBOOK_START = Object.freeze([2, 8, 3, 1, 6, 4, 7, 0, 5]);
 export const NEW_START = Object.freeze([1, 2, 3, 4, 8, 5, 0, 7, 6]);
 
 export const MOVE_ORDER = Object.freeze([
@@ -14,7 +56,7 @@ export function boardKey(board) {
   return board.join(",");
 }
 
-export function misplacedTiles(board, goal = GOAL_STATE) {
+export function misplacedTiles(board, goal = NEW_GOAL_STATE) {
   return board.reduce((count, tile, index) => count + (tile !== 0 && tile !== goal[index] ? 1 : 0), 0);
 }
 
@@ -40,7 +82,7 @@ function sortedOpen(open, bestG, closed) {
     .sort((a, b) => a.f - b.f || a.serial - b.serial);
 }
 
-export function solveAstar(start, goal = GOAL_STATE) {
+export function solveAstar(start, goal = NEW_GOAL_STATE) {
   const startBoard = [...start];
   const startKey = boardKey(startBoard);
   const goalKey = boardKey(goal);

@@ -25,6 +25,10 @@ export const EDGES = [
 export const START = "gate";
 export const GOAL = "store";
 
+// 지능적 탐색.pptx(34~37쪽) 휴리스틱값 예시와 동일한 그래프·값이다(도시 a~e를 학교 장소로 옮긴 것과
+// 같은 매핑: a=정문, b=중앙현관, c=운동장, d=급식실, e=매점). 각 값은 그 장소에서 매점(목표)까지의 직선거리.
+export const HEURISTICS = { gate: 12, lobby: 9, yard: 7, cafeteria: 5, store: 0 };
+
 const DEFAULT_GRAPH = { nodes: NODES, edges: EDGES, start: START, goal: GOAL };
 
 const NODES_BY_ID = new Map(NODES.map((n) => [n.id, n]));
@@ -139,6 +143,144 @@ export function runUcsGraphTrace(graph = DEFAULT_GRAPH) {
     pathCost: reached ? closedG.get(goal) : null,
     order: closed.map((entry) => entry.id),
   };
+}
+
+// A* 탐색을 한 상태씩 확장하며, runUcsGraphTrace와 같은 형태(steps[].pickCandidates/children/...)로
+// 기록한다. 차이는 두 가지뿐이다: (1) 후보를 g(n) 대신 f(n)=g(n)+h(n)이 가장 작은 순으로 고르고,
+// (2) 각 후보에 h(n)·f(n) 값을 함께 담는다. 오픈 리스트 교체 여부는 A*에서도 g(n) 비교로 판단한다
+// (h(n)은 상태마다 고정값이라 g(n)이 더 작으면 f(n)도 항상 더 작기 때문).
+export function runAStarGraphTrace(graph = DEFAULT_GRAPH, heuristics = HEURISTICS) {
+  const { nodes, edges, start, goal } = graph;
+  const adj = buildAdjacency(nodes, edges);
+  const h = (id) => heuristics[id] ?? 0;
+  const withF = ({ id, g }) => ({ id, g, h: h(id), f: g + h(id) });
+  const byId = (a, b) => (a.f === b.f ? a.id.localeCompare(b.id) : a.f - b.f);
+  let open = [withF({ id: start, g: 0 })];
+  const closed = [];
+  const closedG = new Map();
+  const parent = new Map();
+  const steps = [];
+
+  while (open.length > 0) {
+    open.sort(byId);
+    const pickCandidates = open.map((entry) => ({ ...entry }));
+    const winner = open[0];
+    open = open.slice(1);
+    const isGoal = winner.id === goal;
+
+    closed.push({ id: winner.id, g: winner.g, h: winner.h, f: winner.f });
+    closedG.set(winner.id, winner.g);
+
+    const children = [];
+    if (!isGoal) {
+      for (const edge of adj.get(winner.id)) {
+        const childId = edge.to;
+        const newG = winner.g + edge.cost;
+        const childH = h(childId);
+        if (closedG.has(childId)) {
+          children.push({ id: childId, cost: edge.cost, newG, h: childH, newF: newG + childH, status: "closed-skip", existingG: closedG.get(childId) });
+          continue;
+        }
+        const existingIndex = open.findIndex((entry) => entry.id === childId);
+        if (existingIndex === -1) {
+          open.push(withF({ id: childId, g: newG }));
+          parent.set(childId, winner.id);
+          children.push({ id: childId, cost: edge.cost, newG, h: childH, newF: newG + childH, status: "new" });
+        } else if (newG < open[existingIndex].g) {
+          const existingG = open[existingIndex].g;
+          open[existingIndex] = withF({ id: childId, g: newG });
+          parent.set(childId, winner.id);
+          children.push({ id: childId, cost: edge.cost, newG, h: childH, newF: newG + childH, status: "open-replace", existingG });
+        } else {
+          children.push({ id: childId, cost: edge.cost, newG, h: childH, newF: newG + childH, status: "open-worse-skip", existingG: open[existingIndex].g });
+        }
+      }
+    }
+
+    steps.push({
+      index: steps.length,
+      expandedId: winner.id,
+      g: winner.g,
+      h: winner.h,
+      f: winner.f,
+      isGoal,
+      pickCandidates,
+      children,
+      openAfter: [...open].sort(byId),
+      closedAfter: closed.map((entry) => ({ ...entry })),
+    });
+
+    if (isGoal) break;
+  }
+
+  const reached = closedG.has(goal);
+  const path = reached ? reconstructPath(parent, goal, start) : null;
+  return {
+    steps,
+    path,
+    pathCost: reached ? closedG.get(goal) : null,
+    order: closed.map((entry) => entry.id),
+  };
+}
+
+// 다익스트라: goal로부터 모든 노드까지의 실제 최단 거리. generateAdmissibleHeuristics가
+// "이 어림값이 실제로 넘치지 않는지" 판단하는 기준으로 쓴다(간선 비용이 모두 양수이므로 성립).
+function shortestDistances(nodes, edges, sourceId) {
+  const adj = buildAdjacency(nodes, edges);
+  const dist = new Map(nodes.map((n) => [n.id, Infinity]));
+  dist.set(sourceId, 0);
+  const visited = new Set();
+  while (visited.size < nodes.length) {
+    let current = null;
+    let best = Infinity;
+    for (const [id, d] of dist) {
+      if (!visited.has(id) && d < best) { best = d; current = id; }
+    }
+    if (current === null) break;
+    visited.add(current);
+    for (const { to, cost } of adj.get(current)) {
+      const candidate = dist.get(current) + cost;
+      if (candidate < dist.get(to)) dist.set(to, candidate);
+    }
+  }
+  return dist;
+}
+
+// 연습용 랜덤 그래프에도 "개념적으로 틀릴 수 없는"(admissible: 실제 최단 거리를 절대 넘지 않고,
+// consistent: h(n) <= 그 간선 비용 + h(이웃))인 휴리스틱값을 만들어 준다. 그래야 A* 탐색이
+// 이 그래프에서도 항상 정확한(최적) 경로를 찾는다는, 이 활동이 가르치는 핵심 성질이 랜덤
+// 연습 문제에서도 절대 깨지지 않는다.
+// 규칙: 목표와 간선으로 바로 연결된 장소는 그 간선 비용을 어림값으로 쓰고 싶어 하고(교과서
+// 예시의 중앙현관·급식실처럼), 그 외는 실제 최단 거리의 40~80% 사이에서 적당히 어림잡는다.
+// 다만 둘 다 "희망값"일 뿐이라, 아래에서 실제 최단 거리보다 크지 않게 낮추고(admissible),
+// 이웃끼리 값이 서로 모순되지 않을 때까지(consistent) 벨만-포드 방식으로 다시 다듬는다.
+export function generateAdmissibleHeuristics(graph) {
+  const { nodes, edges, goal } = graph;
+  const trueDist = shortestDistances(nodes, edges, goal);
+
+  const wishlist = new Map([[goal, 0]]);
+  for (const node of nodes) {
+    if (node.id === goal) continue;
+    const directEdge = edges.find((e) => (e.a === node.id && e.b === goal) || (e.b === node.id && e.a === goal));
+    if (directEdge) {
+      wishlist.set(node.id, directEdge.cost);
+    } else {
+      const ratio = 0.4 + (Math.random() * 0.4); // 0.4~0.8배: 어림값다운 오차를 일부러 남긴다.
+      wishlist.set(node.id, Math.round(trueDist.get(node.id) * ratio));
+    }
+  }
+
+  const h = new Map(nodes.map((n) => [n.id, Math.min(wishlist.get(n.id), trueDist.get(n.id))]));
+  h.set(goal, 0);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const { a, b, cost } of edges) {
+      if (h.get(a) > cost + h.get(b)) { h.set(a, cost + h.get(b)); changed = true; }
+      if (h.get(b) > cost + h.get(a)) { h.set(b, cost + h.get(a)); changed = true; }
+    }
+  }
+  return Object.fromEntries(h);
 }
 
 function randInt(min, max) {
