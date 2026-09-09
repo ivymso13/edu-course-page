@@ -42,7 +42,7 @@ main { width:min(1180px, calc(100% - 2rem)); margin:0 auto 5rem; }
 .map-summary .primary-action { margin-top:1.2rem; }
 .map-summary-actions { display:flex; flex-wrap:wrap; gap:.8rem; margin-top:1.2rem; }
 .map-summary-actions .primary-action { margin-top:0; }
-.secondary-action { display:inline-flex; align-items:center; gap:.4rem; padding:.85rem 1.25rem; color:var(--astar-dark); background:#fff; border:1px solid var(--astar); border-radius:8px; font:inherit; font-weight:750; cursor:pointer; }
+.secondary-action { display:inline-flex; align-items:center; gap:.4rem; padding:.85rem 1.25rem; color:var(--astar-dark); background:#fff; border:1px solid var(--astar); border-radius:8px; font:inherit; font-weight:750; text-decoration:none; cursor:pointer; }
 .secondary-action:hover:not(:disabled) { background:var(--astar-soft); }
 .practice-heading { margin-bottom:1.5rem; }
 .practice-heading p:last-of-type { margin-bottom:0; }
