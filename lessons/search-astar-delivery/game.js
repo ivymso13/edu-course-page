@@ -1,4 +1,4 @@
-import { NODES, nodeLabel, runAStarGraphTrace, runUcsGraphTrace, HEURISTICS } from "../shared/search-graph-lab.js?v=2026090902";
+import { NODES, nodeLabel, runAStarGraphTrace, runUcsGraphTrace, HEURISTICS } from "../shared/search-graph-lab.js?v=2026090908";
 import { renderGraphDiagram, renderListPanel, enableGraphZoom } from "../shared/search-graph-ui.js?v=2026090907";
 import {
   buildMapRounds, checkMapPickAnswer, checkMapDupAnswer, summarizeMap, mapPathLabel,
@@ -104,16 +104,16 @@ function renderFromMapRoundState({ interactiveIds = null, interactiveVerb, resul
   for (const [id] of mapRoundState.open) statesById[id] = "open";
   const interactiveSet = new Set(interactiveIds || []);
   const edgesOverride = [];
-  for (const [childId, { parentId }] of mapRoundState.parentOf.entries()) {
+  for (const [childId, { parentId, cost }] of mapRoundState.parentOf.entries()) {
     if (!visibleSet.has(childId) || !visibleSet.has(parentId)) continue;
     const g = currentG(childId);
     if (interactiveSet.has(childId)) {
       edgesOverride.push({
-        a: parentId, b: childId, displayValue: g, pick: true,
-        pickLabel: `${nodeLabel(childId)} g=${g} ${interactiveVerb || "선택하기"}`,
+        a: parentId, b: childId, displayValue: g, displayText: `${cost}`, pick: true,
+        pickLabel: `${nodeLabel(childId)} 간선 값 ${cost}, 누적 g=${g} ${interactiveVerb || "선택하기"}`,
       });
     } else {
-      edgesOverride.push({ a: parentId, b: childId, cost: `g=${g}` });
+      edgesOverride.push({ a: parentId, b: childId, cost: `${cost}` });
     }
   }
   // 정문(시작 상태)처럼 들어오는 간선이 없는 상태는 간선을 그릴 수 없으니 노드 자체를 클릭해 고른다.
@@ -151,7 +151,7 @@ function renderMapRevealPhase() {
       choice: "keep",
       choiceLabel: `${nodeLabel(mapPendingDup.id)} 기존 f=${existingDupF(mapPendingDup)} 유지하기`,
       displayValue: mapPendingDup.existingG,
-      displayText: `f=${existingDupF(mapPendingDup)}`,
+      displayText: `${mapRoundState.parentOf.get(mapPendingDup.id)?.cost}`,
     });
     extraEdges.push({
       a: mapRounds[mapRoundIndex].expandedId,
@@ -161,7 +161,7 @@ function renderMapRevealPhase() {
       pending: true,
       choice: "replace",
       choiceLabel: `${nodeLabel(mapPendingDup.id)} 새 f=${mapPendingDup.newF}으로 갱신하기`,
-      displayText: `f=${mapPendingDup.newF}`,
+      displayText: `${mapPendingDup.cost}`,
     });
     compareById[mapPendingDup.id] = {
       existingF: existingDupF(mapPendingDup),
@@ -176,15 +176,15 @@ function renderMapRevealPhase() {
   for (const c of candidates) statesById[c.id] = "candidate";
   const committedEdges = [...mapRoundState.parentOf.entries()]
     .filter(([childId, { parentId }]) => visibleSet.has(childId) && visibleSet.has(parentId))
-    .map(([childId, { parentId }]) => {
+    .map(([childId, { parentId, cost }]) => {
       const override = committedOverrides.get(childId);
-      return override ? { a: parentId, b: childId, ...override } : { a: parentId, b: childId, cost: `g=${currentG(childId)}` };
+      return override ? { a: parentId, b: childId, ...override } : { a: parentId, b: childId, cost: `${cost}` };
     });
   const candidateEdges = candidates
     .filter((c) => visibleSet.has(c.parentId))
     .map((c) => ({
-      a: c.parentId, b: c.id, pending: true, pick: true, displayValue: c.g,
-      pickLabel: `${nodeLabel(c.id)} g=${c.g} 오픈 리스트에 추가하기`,
+      a: c.parentId, b: c.id, pending: true, pick: true, displayValue: c.g, displayText: `${c.cost}`,
+      pickLabel: `${nodeLabel(c.id)} 간선 값 ${c.cost}, 누적 g=${c.g} 오픈 리스트에 추가하기`,
     }));
   renderGraphDiagram(mapEl.traceGraph, {
     nodes: GRAPH_NODES,
@@ -663,7 +663,7 @@ $("#warmup-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const hInput = $("#warmup-h");
   const fInput = $("#warmup-f");
-  const correct = Number(hInput.value) === 12 && Number(fInput.value) === 12;
+  const correct = Number(hInput.value) === 10 && Number(fInput.value) === 10;
   const form = event.currentTarget;
   form.classList.remove("correct", "incorrect");
   form.classList.add(correct ? "correct" : "incorrect");
@@ -671,7 +671,7 @@ $("#warmup-form").addEventListener("submit", (event) => {
   feedback.hidden = false;
   feedback.className = `trace-feedback ${correct ? "correct" : "incorrect"}`;
   if (correct) {
-    feedback.innerHTML = "<strong>맞았습니다.</strong> 정문에서 매점까지의 어림값은 12이므로 h(n)=12이고, f(n)=g(n)+h(n)=0+12=12입니다.";
+    feedback.innerHTML = "<strong>맞았습니다.</strong> 정문에서 매점까지의 어림값은 10이므로 h(n)=10이고, f(n)=g(n)+h(n)=0+10=10입니다.";
     $$("#warmup-form input, #warmup-form button").forEach((control) => { control.disabled = true; });
     const start = $("#start-textbook");
     start.disabled = false;

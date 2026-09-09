@@ -1,4 +1,4 @@
-import { runAStarGraphTrace, runUcsGraphTrace, HEURISTICS, nodeLabel } from "../shared/search-graph-lab.js?v=2026090902";
+import { runAStarGraphTrace, runUcsGraphTrace, HEURISTICS, nodeLabel } from "../shared/search-graph-lab.js?v=2026090908";
 
 // ---------------------------------------------------------------------------
 // 학교 지도 위 A* 탐색 — 3단계(균일 비용 탐색)와 같은 지도를 재사용해 "교과서 예시"로 쓴다.

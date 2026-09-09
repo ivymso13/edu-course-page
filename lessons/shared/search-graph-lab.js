@@ -27,7 +27,7 @@ export const GOAL = "store";
 
 // 지능적 탐색.pptx(34~37쪽) 휴리스틱값 예시와 동일한 그래프·값이다(도시 a~e를 학교 장소로 옮긴 것과
 // 같은 매핑: a=정문, b=중앙현관, c=운동장, d=급식실, e=매점). 각 값은 그 장소에서 매점(목표)까지의 직선거리.
-export const HEURISTICS = { gate: 12, lobby: 9, yard: 7, cafeteria: 5, store: 0 };
+export const HEURISTICS = { gate: 10, lobby: 9, yard: 7, cafeteria: 5, store: 0 };
 
 const DEFAULT_GRAPH = { nodes: NODES, edges: EDGES, start: START, goal: GOAL };
 

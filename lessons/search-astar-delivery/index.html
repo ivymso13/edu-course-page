@@ -13,9 +13,9 @@
   <link rel="stylesheet" href="styles.css?v=2026090904">
   <link rel="stylesheet" href="../../assets/guard.css">
   <script type="module" src="../../assets/group-guard.js"></script>
-  <script type="module" src="game.js?v=2026090907"></script>
-  <script type="module" src="practice.js?v=2026090907"></script>
-  <script type="module" src="broken-demo.js?v=2026090907"></script>
+  <script type="module" src="game.js?v=2026090909"></script>
+  <script type="module" src="practice.js?v=2026090909"></script>
+  <script type="module" src="broken-demo.js?v=2026090908"></script>
 </head>
 <body data-guard-scope="page" data-guard-group="ai-search" data-guard-lesson="search-astar-delivery">
   <a class="skip-link" href="#activity">활동으로 바로가기</a>
@@ -139,7 +139,7 @@
               <li><span class="swatch" style="background:#fff3cd;border-color:#b8811b"></span>오픈 리스트</li>
               <li><span class="swatch" style="background:#eef1f6"></span>닫힌 리스트(확정됨)</li>
               <li><span class="swatch" style="background:#dff3e8;border-color:#147a59"></span>최종 경로</li>
-              <li><span class="swatch" style="background:#eaf0ff;border-color:#3158d7;border-radius:99px"></span>파란 원 g(n)=지금까지 이동 비용(클릭)</li>
+              <li><span class="swatch" style="background:#eaf0ff;border-color:#3158d7;border-radius:99px"></span>파란 원=실제 간선 값(클릭)</li>
               <li><span class="swatch" style="background:#f3e8ff;border-color:#c084fc"></span>보라 배지 h(n)=목표까지 어림값(고정)</li>
             </ul>
           </div>
@@ -183,7 +183,7 @@
           <div class="section-heading practice-heading">
             <p class="eyebrow">연습 문제 · 새로운 학교 지도</p>
             <h3 tabindex="-1">이번엔 다른 지도에서 A* 탐색을 직접 해 보세요</h3>
-            <p>정점 6~9개짜리 새 지도가 나옵니다. 🚩 시작에서 🏁 목표까지, 이번에도 노드는 h(n)을, 간선은 g(n)을 보여줍니다. f(n)이 가장 작은 간선을 클릭해 풀어 보세요.</p>
+            <p>정점 6~9개짜리 새 지도가 나옵니다. 🚩 시작에서 🏁 목표까지, 노드는 h(n)을, 간선은 실제 간선 값을 보여줍니다. 누적 g(n)은 오픈 리스트에서 확인하고 f(n)이 가장 작은 상태를 선택하세요.</p>
             <button id="map-practice-new-graph" type="button" class="practice-new-graph-btn">새 지도 만들기 <span aria-hidden="true">↻</span></button>
           </div>
 
@@ -205,7 +205,7 @@
                 <li><span class="swatch" style="background:#fff3cd;border-color:#b8811b"></span>오픈 리스트</li>
                 <li><span class="swatch" style="background:#eef1f6"></span>닫힌 리스트(확정됨)</li>
                 <li><span class="swatch" style="background:#dff3e8;border-color:#147a59"></span>최종 경로</li>
-              <li><span class="swatch" style="background:#eaf0ff;border-color:#3158d7;border-radius:99px"></span>파란 원 g(n)=지금까지 이동 비용(클릭)</li>
+              <li><span class="swatch" style="background:#eaf0ff;border-color:#3158d7;border-radius:99px"></span>파란 원=실제 간선 값(클릭)</li>
               <li><span class="swatch" style="background:#f3e8ff;border-color:#c084fc"></span>보라 배지 h(n)=목표까지 어림값(고정)</li>
               </ul>
             </div>
@@ -373,6 +373,15 @@
           <article class="accent"><span>선택 기준</span><strong>f(n)</strong><p>값이 가장 작은 상태를 먼저 확인</p></article>
         </div>
         <aside class="discussion"><span>함께 생각해 보기</span><p>h(n)을 실제보다 훨씬 크게 어림잡으면 A*가 찾는 경로가 더 이상 최적(가장 싼 경로)임을 보장하지 못할 수 있습니다. 왜 그럴까요? 반대로 h(n)을 0으로 두면 A*는 어떤 탐색과 같아질까요?</p></aside>
+
+        <div class="reference-box">
+          <p class="reference-eyebrow">더 연습하기</p>
+          <p class="reference-title">8-퍼즐과 그래프를 오가며 g(n), h(n), f(n)을 더 자유롭게 연습하는 도구</p>
+          <div class="reference-actions">
+            <a class="reference-button" href="../search-astar-practice/">A* 자유 연습 도구 열기 <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+
         <div class="result-actions">
           <button id="restart-button" type="button">처음부터 다시 하기</button>
           <a href="../../units/ai-search/">활동 목록으로 돌아가기 →</a>

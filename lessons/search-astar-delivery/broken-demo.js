@@ -12,9 +12,9 @@
 // 고르는 규칙)는 활동 1과 똑같이 정확히 따르지만, h(n) 하나가 admissible하지 않기 때문에(실제
 // 최단 거리 5를 초과) 지름길(운동장→급식실→매점)을 놔두고 돌아가는 길(중앙현관→매점)로 가게 되어,
 // 최적이 아닌(비용 13, 실제 최적 10보다 30% 더 비싼) 경로로 끝난다는 것을 직접 보여준다.
-import { NODES, START, GOAL, nodeLabel, runAStarGraphTrace, runUcsGraphTrace } from "../shared/search-graph-lab.js?v=2026090902";
+import { NODES, START, GOAL, nodeLabel, runAStarGraphTrace, runUcsGraphTrace } from "../shared/search-graph-lab.js?v=2026090908";
 import { renderGraphDiagram, renderListPanel, enableGraphZoom } from "../shared/search-graph-ui.js?v=2026090907";
-import { buildMapRounds, checkMapPickAnswer, checkMapDupAnswer } from "./game-core.js?v=2026090902";
+import { buildMapRounds, checkMapPickAnswer, checkMapDupAnswer } from "./game-core.js?v=2026090908";
 
 const $ = (selector) => document.querySelector(selector);
 const el = {

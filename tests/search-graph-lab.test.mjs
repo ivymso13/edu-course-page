@@ -71,9 +71,13 @@ test("같은 입력에 대해 트레이스 결과는 항상 동일하다(결정�
 // 교과서 트레이스: a→c→d→e 순으로 4번 확장, 균일 비용 탐색(5번)보다 적게 확인한다.
 const astarTrace = runAStarGraphTrace();
 
-test("휴리스틱값은 각 장소에서 매점까지의 직선거리이며 목표의 휴리스틱값은 0이다", () => {
-  assert.deepEqual(HEURISTICS, { gate: 12, lobby: 9, yard: 7, cafeteria: 5, store: 0 });
+test("휴리스틱값은 목표에서 0이고 모든 간선에서 일관성 조건을 만족한다", () => {
+  assert.deepEqual(HEURISTICS, { gate: 10, lobby: 9, yard: 7, cafeteria: 5, store: 0 });
   assert.equal(HEURISTICS[GOAL], 0);
+  for (const edge of EDGES) {
+    assert.ok(HEURISTICS[edge.a] <= edge.cost + HEURISTICS[edge.b], `consistent 위반: ${edge.a}->${edge.b}`);
+    assert.ok(HEURISTICS[edge.b] <= edge.cost + HEURISTICS[edge.a], `consistent 위반: ${edge.b}->${edge.a}`);
+  }
 });
 
 test("A* 탐색은 정문→운동장→급식실→매점 순으로 4번만 확장해 균일 비용 탐색과 같은 경로를 찾는다", () => {

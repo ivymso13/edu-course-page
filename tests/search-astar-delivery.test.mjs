@@ -103,16 +103,16 @@ test("학교 지도의 휴리스틱값은 3단계 그래프의 간선 비용과 
   assert.match(js, /gate: "a", lobby: "b", yard: "c", cafeteria: "d", store: "e"/);
 });
 
-test("그래프 노드에는 h(n)만 항상 보이고, g(n)은 그 상태로 이어지는 간선 위에 뜨며, 선택은 간선을 클릭해서 한다", async () => {
+test("그래프 노드에는 h(n), 간선에는 실제 구간 값이 보이고 누적 g(n)은 목록에서 확인한다", async () => {
   const js = await readFile(new URL("game.js", lessonRoot), "utf8");
   // 노드: h(n)만, 방문 여부와 무관하게 항상.
   assert.match(js, /const H_LABELS = Object\.fromEntries\(NODES\.map\(\(n\) => \[n\.id, `h=\$\{HEURISTICS\[n\.id\]\}`\]\)\);/);
   assert.match(js, /gById: H_LABELS/);
   assert.doesNotMatch(js, /metricLabel: "f"/);
-  // 간선: g(n)을 보여주고, 오픈 리스트로 이어지는 간선은 pick:true로 클릭 가능해야 한다.
-  assert.match(js, /edgesOverride\.push\(\{\s*a: parentId, b: childId, displayValue: g, pick: true,/);
-  assert.match(js, /edgesOverride\.push\(\{ a: parentId, b: childId, cost: `g=\$\{g\}` \}\)/);
-  assert.match(js, /pick: true, displayValue: c\.g,/);
+  // 간선: 실제 구간 값을 보여주고, 누적 g(n)은 오픈·닫힌 리스트에 별도로 표시한다.
+  assert.match(js, /displayValue: g, displayText: `\$\{cost\}`, pick: true/);
+  assert.match(js, /edgesOverride\.push\(\{ a: parentId, b: childId, cost: `\$\{cost\}` \}\)/);
+  assert.match(js, /displayValue: c\.g, displayText: `\$\{c\.cost\}`/);
   // 클릭 처리는 노드가 아니라 .is-pickable(간선 포함) 전체를 대상으로 한다.
   assert.match(js, /event\.target\.closest\("\.is-pickable"\)/);
   assert.doesNotMatch(js, /event\.target\.closest\("\.graph-node\.is-pickable"\)/);
