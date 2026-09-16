@@ -34,6 +34,17 @@
       "status": "published"
     },
     {
+      "id": "search-othello-minimax",
+      "subject": "인공지능 기초",
+      "unit": "탐색의 다양한 문제 해결 사례",
+      "order": 2,
+      "title": "돌 뒤집기 게임 탐색",
+      "path": "lessons/search-othello-minimax/",
+      "duration": 25,
+      "difficulty": "보통",
+      "status": "published"
+    },
+    {
       "id": "ai-signal-noise",
       "subject": "인공지능 기초",
       "unit": "기계학습 알고리즘",

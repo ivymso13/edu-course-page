@@ -224,7 +224,7 @@
       "id": "search-problem-cases",
       "order": 4,
       "title": "탐색의 다양한 문제 해결 사례",
-      "description": "상대가 있는 게임에서 컴퓨터가 Min-Max 알고리즘으로 수를 고르는 과정을 틱택토로 체험하고, 그 판단이 어떻게 만들어지는지 의사결정 트리로 직접 따라가 봅니다.",
+      "description": "상대가 있는 게임에서 컴퓨터가 Min-Max 알고리즘으로 수를 고르는 과정을 틱택토와 오델로로 체험하고, 그 판단이 어떻게 만들어지는지 의사결정 트리로 직접 따라가 봅니다.",
       "path": "units/search-problem-cases/",
       "status": "published",
       "active": true,
@@ -239,6 +239,17 @@
           "status": "published",
           "active": true,
           "objective": "Min-Max 알고리즘을 적용한 컴퓨터와 틱택토를 하며 상대가 있는 게임에서의 탐색 과정을 체험하고, 컴퓨터의 선택이 만들어지는 의사결정 트리를 직접 따라간다."
+        },
+        {
+          "id": "search-othello-minimax",
+          "order": 2,
+          "title": "돌 뒤집기 게임 탐색",
+          "path": "lessons/search-othello-minimax/",
+          "duration": 25,
+          "difficulty": "보통",
+          "status": "published",
+          "active": true,
+          "objective": "상대의 돌을 뒤집어 가며 두는 오델로에서도 Min-Max 탐색이 그대로 통함을 확인하고, 돌 개수로 정해지는 말단 점수와 패스 규칙이 의사결정 트리에 반영되는 과정을 직접 따라간다."
         }
       ]
     }

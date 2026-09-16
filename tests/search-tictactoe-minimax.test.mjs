@@ -386,7 +386,7 @@ test("game.js는 buildDecisionTree로 각 수마다 Min-Max 의사결정 트리�
   assert.match(js, /Min-Max 의사결정 트리로 보기/);
 });
 
-test("이 활동지는 단일 활동 구조라 시리즈 네비게이션이 없다", async () => {
+test("이 활동지는 series-nav/series-step 대신 lesson-pager로 다음 활동(오델로)과 이어진다", async () => {
   const [html, css] = await Promise.all([
     readFile(new URL("index.html", lessonRoot), "utf8"),
     readFile(new URL("styles.css", lessonRoot), "utf8"),
@@ -394,6 +394,9 @@ test("이 활동지는 단일 활동 구조라 시리즈 네비게이션이 없�
   assert.doesNotMatch(html, /series-nav/);
   assert.doesNotMatch(html, /series-step/);
   assert.doesNotMatch(css, /\.series-step/);
+  assert.match(html, /class="lesson-pager"/);
+  assert.match(html, /href="\.\.\/search-othello-minimax\/"/);
+  assert.match(css, /\.lesson-pager\s*\{/);
 });
 
 test("Min-Max 의사결정 트리는 후보 수·MAX\\/MIN 차례·말단 점수·최종 선택을 화면에 표시하는 CSS 훅을 갖춘다", async () => {
@@ -470,7 +473,7 @@ test("data/activity-groups.json과 data/lessons.json에 이 활동이 search-pro
   assert.ok(child, "search-tictactoe-minimax가 search-problem-cases 그룹의 활동으로 등록되어 있어야 함");
   assert.equal(child.path, "lessons/search-tictactoe-minimax/");
   assert.equal(child.order, 1);
-  assert.equal(searchGroup.children.length, 1, "search-problem-cases는 게임 트리 탐색 하나만 남은 단일 활동 구조여야 함");
+  assert.equal(searchGroup.children.length, 2, "search-problem-cases는 이제 틱택토 + 오델로 두 활동 구조여야 함");
 
   const lessons = JSON.parse(lessonsRaw).lessons;
   const lesson = lessons.find((candidate) => candidate.id === "search-tictactoe-minimax");

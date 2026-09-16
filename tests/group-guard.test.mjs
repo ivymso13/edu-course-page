@@ -46,7 +46,7 @@ test("활동지 03·04·05는 공개하고 활동지 06은 비활성화한다", 
   assert.equal(algorithms.active, false);
   assert.deepEqual(algorithms.children.map(({ active }) => active), [true, true, true]);
   assert.deepEqual(search.children.map(({ active }) => active), [true, true, true, true]);
-  assert.deepEqual(problemCases.children.map(({ active }) => active), [true]);
+  assert.deepEqual(problemCases.children.map(({ active }) => active), [true, true]);
   for (const group of data.groups) {
     if (group.id !== "machine-learning-algorithms") {
       assert.equal(group.active, true, `${group.id}는 공개 상태여야 함`);

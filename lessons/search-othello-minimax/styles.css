@@ -199,14 +199,6 @@ h2 {
   font-size: 1rem;
 }
 
-.activity {
-  padding: 1.8rem;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-}
-
 .board-head {
   display: flex;
   justify-content: space-between;
@@ -215,7 +207,7 @@ h2 {
 }
 
 #turn-status {
-  margin: 0 0 1.1rem;
+  margin: 0 0 0.5rem;
   padding: 0.6rem 0.9rem;
   background: var(--soft);
   border-left: 3px solid var(--accent);
@@ -226,28 +218,36 @@ h2 {
   min-height: 1.3em;
 }
 
+#piece-count {
+  margin: 0 0 1.1rem;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
 .board {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.65rem;
-  width: min(340px, 100%);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+  width: min(360px, 100%);
   margin: 0 auto;
 }
 
 .cell {
+  position: relative;
   aspect-ratio: 1 / 1;
   min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(2rem, 9vw, 2.8rem);
+  font-size: clamp(1.6rem, 7vw, 2.3rem);
   font-weight: 800;
   color: var(--ink);
   background: var(--surface);
   border: 2px solid var(--line);
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease, color 0.2s ease;
 }
 
 .cell:hover:not([disabled]) {
@@ -264,12 +264,24 @@ h2 {
   opacity: 0.9;
 }
 
-.cell--x {
-  color: var(--accent);
+.cell--b {
+  background: #e9edf5;
 }
 
-.cell--o {
-  color: #b45309;
+.cell--w {
+  background: #fbfbfa;
+  border-color: var(--line-strong);
+}
+
+/* 지금 사람이 둘 수 있는 빈 칸 안내(점 표시). 시각 정보는 aria-label의 "(둘 수 있음)"으로도 함께 전달된다. */
+.cell--legal::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.4;
 }
 
 .cell:focus-visible {
@@ -444,7 +456,7 @@ h2 {
   line-height: 1.65;
 }
 
-/* 컴퓨터가 비교한 후보 수 목록 */
+/* 컴퓨터가 비교한 후보 자리 목록 */
 .candidate-list {
   margin: 0;
   padding: 0;
@@ -874,7 +886,7 @@ body.tree-overlay-open {
   user-select: none;
 }
 
-/* 계층 단계 배지 (루트 / 1단계 / 2단계 / 대표 진행선 / 말단 판정) */
+/* 계층 단계 배지 (루트 / 1단계 / 2단계 / 대표 진행선 / 패스 / 말단 판정) */
 .tree-level-tag {
   display: inline-flex;
   align-items: center;
@@ -939,6 +951,13 @@ body.tree-overlay-open {
   background: #ffffff;
 }
 
+/* 패스 노드 (둘 수 있는 자리가 없어 건너뜀) */
+.tree-node--pass {
+  border-style: dashed;
+  border-color: var(--line-strong);
+  background: #f8fafc;
+}
+
 /* 노드 헤더 */
 .tree-node-head {
   display: flex;
@@ -971,7 +990,7 @@ body.tree-overlay-open {
   gap: 0.25rem;
 }
 
-/* 차례 배지 (MAX: 컴퓨터 청색 vs MIN: 상대 황색 vs 말단) */
+/* 차례 배지 (MAX: 컴퓨터 청색 vs MIN: 상대 황색 vs 패스 회색 vs 말단) */
 .tree-turn-badge {
   display: inline-flex;
   align-items: center;
@@ -992,6 +1011,12 @@ body.tree-overlay-open {
   color: #b45309;
   background: #fffbeb;
   border: 1px solid #fde68a;
+}
+
+.tree-turn-badge--pass {
+  color: #475569;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
 }
 
 .tree-turn-badge--terminal {
@@ -1074,7 +1099,7 @@ body.tree-overlay-open {
   border: 1px solid #94a3b8;
 }
 
-/* 미니 보드 (3행 3열 콤팩트 보드) */
+/* 미니 보드 (기본 3행 3열, 오델로는 4행 4열 변형 사용) */
 .mini-board {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1082,6 +1107,11 @@ body.tree-overlay-open {
   width: 66px;
   margin: 0.2rem 0;
   flex-shrink: 0;
+}
+
+.mini-board--4x4 {
+  grid-template-columns: repeat(4, 1fr);
+  width: 76px;
 }
 
 .mini-cell {
@@ -1092,19 +1122,18 @@ body.tree-overlay-open {
   background: var(--surface);
   border: 1px solid var(--line-light);
   border-radius: 3px;
-  font-size: 0.72rem;
+  font-size: 0.6rem;
   font-weight: 800;
   color: var(--muted);
 }
 
-.mini-cell--x {
-  color: var(--accent);
-  background: #eff6ff;
+.mini-cell--b {
+  background: #e9edf5;
 }
 
-.mini-cell--o {
-  color: #b45309;
-  background: #fffbeb;
+.mini-cell--w {
+  background: #fbfbfa;
+  border-color: var(--line-strong);
 }
 
 .tree-state {
@@ -1371,8 +1400,12 @@ body.tree-overlay-open {
     width: 50px;
   }
 
+  .mini-board--4x4 {
+    width: 58px;
+  }
+
   .mini-cell {
-    font-size: 0.62rem;
+    font-size: 0.56rem;
   }
 
   .tree-score {

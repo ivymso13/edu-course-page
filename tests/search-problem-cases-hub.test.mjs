@@ -18,15 +18,17 @@ test("허브(units/search-problem-cases)는 fonts.css·hub.css·guard.css를 링
   assert.match(html, /class="back-link" href="\.\.\/\.\.\/"/);
 });
 
-test("허브는 게임 트리 탐색 활동 하나만 담고, 제거된 경로 탐색·지역 탐색 카드는 없다", async () => {
+test("허브는 게임 트리 탐색·돌 뒤집기 게임 탐색 두 활동을 담고, 제거된 경로 탐색·지역 탐색 카드는 없다", async () => {
   const html = await readFile(hubPath, "utf8");
   assert.match(html, /data-lesson-card="search-tictactoe-minimax"/);
   assert.match(html, /href="\.\.\/\.\.\/lessons\/search-tictactoe-minimax\/"/);
+  assert.match(html, /data-lesson-card="search-othello-minimax"/);
+  assert.match(html, /href="\.\.\/\.\.\/lessons\/search-othello-minimax\/"/);
   assert.doesNotMatch(html, /search-route-case/);
   assert.doesNotMatch(html, /search-local-case/);
 
   const cardMatches = html.match(/class="lesson-card"/g) ?? [];
-  assert.equal(cardMatches.length, 1, "허브는 단일 활동 카드만 가져야 함");
+  assert.equal(cardMatches.length, 2, "허브는 활동 카드 두 개를 가져야 함");
 });
 
 test("허브는 외부 네트워크 요청 없이 저장소 안의 상대 경로 자산만 사용한다", async () => {
