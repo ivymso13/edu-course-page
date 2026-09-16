@@ -660,13 +660,12 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && treeOverlayState) closeTreeOverlay();
 });
 
-// 트리 세부정보 열림(toggle) 및 창 크기 변경 시 축소 배율과 간선 좌표를 다시 계산
+// "Min-Max 의사결정 트리로 보기"를 펼치는 즉시(추가 클릭 없이) 전체화면 팝업을 띄운다.
+// 팝업을 닫으면 트리는 카드 안으로 돌아가고, 그 카드의 "크게 보기" 버튼으로 다시 열 수 있다.
 document.addEventListener("toggle", (event) => {
   if (event.target && event.target.classList && event.target.classList.contains("tree-details") && event.target.open) {
-    requestAnimationFrame(() => {
-      event.target.querySelectorAll(".decision-tree").forEach((decisionTree) => applyTreeFit(decisionTree));
-      updateTreeConnectors(event.target);
-    });
+    const decisionTree = event.target.querySelector(".decision-tree");
+    if (decisionTree) openTreeOverlay(decisionTree, decisionTree.querySelector(".tree-fit-toggle"));
   }
 }, true);
 
