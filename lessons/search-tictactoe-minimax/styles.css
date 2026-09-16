@@ -653,6 +653,124 @@ h2 {
   flex-shrink: 0;
 }
 
+/* 트리는 기본적으로 카드 너비에 맞춰 축소해 구조 전체를 한눈에 보여주고,
+   "크게 보기"를 누르면 화면 전체를 덮는 팝업(같은 탭 안 오버레이, 새 창 아님)으로 옮겨
+   훨씬 넓은 너비 기준으로 다시 축소 배율을 계산해 보여준다. */
+.tree-scale-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.6rem;
+}
+
+.tree-fit-toggle {
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: 36px;
+}
+
+.tree-fit-toggle:hover {
+  background: var(--soft);
+}
+
+.tree-fit-toggle:focus-visible {
+  outline: 3px solid var(--accent-hover);
+  outline-offset: 2px;
+}
+
+/* 팝업 안으로 옮겨진 트리에서는 "크게 보기" 버튼을 다시 보여줄 필요가 없다 */
+.is-in-overlay .tree-scale-controls {
+  display: none;
+}
+
+/* 트리 전체화면 팝업 (같은 탭 안 오버레이) */
+.tree-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.tree-overlay-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(1200px, 96vw);
+  height: 92vh;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
+}
+
+.tree-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.tree-overlay-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.tree-overlay-close {
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.tree-overlay-close:hover {
+  background: var(--soft);
+}
+
+.tree-overlay-close:focus-visible {
+  outline: 3px solid var(--accent-hover);
+  outline-offset: 2px;
+}
+
+.tree-overlay-body {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.tree-overlay-open {
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .tree-overlay-panel {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+}
+
+.tree-scale-wrap {
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* 의사결정 트리 다이어그램 (수평 분기 구조 및 최소 너비 보호) */
 .tree-diagram {
   min-width: 660px;

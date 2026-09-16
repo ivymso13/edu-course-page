@@ -458,27 +458,102 @@ function renderDecisionTree(tree) {
 
   return `<div class="decision-tree">
       ${flowGuide}
-      <div class="tree-diagram">
-        <div class="tree-node tree-node--root is-chosen has-children">
-          <div class="tree-node-head">
-            <span class="tree-level-tag">루트 · 현재 보드</span>
-            <span class="tree-move">지금 게임판 상황</span>
-            <span class="tree-turn-badge tree-turn-badge--max">MAX 차례 (컴퓨터)</span>
-            <span class="tree-root-goal">최종 판단: 최댓값 선택</span>
-          </div>
-          <div class="tree-node-body">
-            ${renderMiniBoard(tree.board)}
-            <div class="tree-node-info">
-              <p class="tree-state">컴퓨터가 둘 차례입니다. 비어 있는 칸마다 상대의 최선 대응을 따져 본 뒤 가장 유리한 수를 골라냅니다.</p>
+      <div class="tree-scale-controls">
+        <button type="button" class="tree-fit-toggle">크게 보기</button>
+      </div>
+      <div class="tree-scale-wrap">
+        <div class="tree-diagram">
+          <div class="tree-node tree-node--root is-chosen has-children">
+            <div class="tree-node-head">
+              <span class="tree-level-tag">루트 · 현재 보드</span>
+              <span class="tree-move">지금 게임판 상황</span>
+              <span class="tree-turn-badge tree-turn-badge--max">MAX 차례 (컴퓨터)</span>
+              <span class="tree-root-goal">최종 판단: 최댓값 선택</span>
             </div>
+            <div class="tree-node-body">
+              ${renderMiniBoard(tree.board)}
+              <div class="tree-node-info">
+                <p class="tree-state">컴퓨터가 둘 차례입니다. 비어 있는 칸마다 상대의 최선 대응을 따져 본 뒤 가장 유리한 수를 골라냅니다.</p>
+              </div>
+            </div>
+            ${rootOmitted}
           </div>
-          ${rootOmitted}
+          ${rootConnector}
+          <ul class="tree-children tree-children--root">${branchesHtml}</ul>
+          <div class="tree-root-summary">${rootCompareNote}</div>
         </div>
-        ${rootConnector}
-        <ul class="tree-children tree-children--root">${branchesHtml}</ul>
-        <div class="tree-root-summary">${rootCompareNote}</div>
       </div>
     </div>`;
+}
+
+// 트리 전체 구조가 한눈에 들어오도록, 트리가 놓인 컨테이너(카드 내부 또는 전체화면 팝업)
+// 너비에 맞춰 항상 축소 배율을 다시 계산해 적용한다.
+// (닫힌 <details> 안에서는 레이아웃 크기를 잴 수 없으므로, 보이는 상태일 때만 호출해야 한다.)
+const MIN_TREE_FIT_SCALE = 0.42;
+
+function applyTreeFit(decisionTree) {
+  const wrap = decisionTree.querySelector(".tree-scale-wrap");
+  const diagram = decisionTree.querySelector(".tree-diagram");
+  if (!wrap || !diagram) return;
+
+  // 배율을 적용하기 전에 원래(축소되지 않은) 크기를 측정해야 한다.
+  diagram.style.transform = "";
+  const naturalWidth = diagram.scrollWidth;
+  const naturalHeight = diagram.scrollHeight;
+  const wrapWidth = wrap.clientWidth || naturalWidth;
+  const fitScale = Math.max(MIN_TREE_FIT_SCALE, Math.min(1, wrapWidth / naturalWidth));
+
+  diagram.style.transform = `scale(${fitScale})`;
+  // top left 기준으로 축소해야, 컨테이너보다 넓어 auto-margin이 0으로 접히는 좁은 화면에서도
+  // 왼쪽 끝부터 정확히 채워지고(중앙 기준이면 잘린 것처럼 오른쪽으로 밀려 보임), 여유가 있는
+  // 화면에서는 기존 margin:auto 중앙 정렬이 그대로 유지된다.
+  diagram.style.transformOrigin = "top left";
+  wrap.style.height = `${naturalHeight * fitScale}px`;
+  wrap.style.overflowY = "hidden";
+  // 최소 배율까지 줄여도 다 안 들어오면(팝업 안에서도 매우 깊은 트리 등), 가로 스크롤을 허용해 잘리지 않게 한다.
+  wrap.style.overflowX = fitScale <= MIN_TREE_FIT_SCALE ? "auto" : "hidden";
+}
+
+// "크게 보기"를 누른 트리 하나를 화면 전체를 덮는 팝업으로 옮겨 보여준다(새 창이 아니라
+// 같은 탭 안의 오버레이). 팝업 안에서도 같은 축소 로직을 더 넓은 너비 기준으로 다시 적용한다.
+let treeOverlayState = null; // { node, parent, next, trigger }
+
+function openTreeOverlay(decisionTree, trigger) {
+  const overlay = $("#tree-overlay");
+  const body = $("#tree-overlay-body");
+  if (!overlay || !body || treeOverlayState) return;
+
+  const moveBadge = decisionTree.closest(".review-item")?.querySelector(".review-move-badge");
+  $("#tree-overlay-title").textContent = moveBadge
+    ? `${moveBadge.textContent} · Min-Max 의사결정 트리`
+    : "Min-Max 의사결정 트리";
+
+  treeOverlayState = { node: decisionTree, parent: decisionTree.parentNode, next: decisionTree.nextSibling, trigger };
+  decisionTree.classList.add("is-in-overlay");
+  body.appendChild(decisionTree);
+  overlay.hidden = false;
+  document.body.classList.add("tree-overlay-open");
+  requestAnimationFrame(() => {
+    applyTreeFit(decisionTree);
+    updateTreeConnectors(decisionTree);
+  });
+  $("#tree-overlay-close").focus();
+}
+
+function closeTreeOverlay() {
+  const overlay = $("#tree-overlay");
+  if (!overlay || overlay.hidden || !treeOverlayState) return;
+  const { node, parent, next, trigger } = treeOverlayState;
+  node.classList.remove("is-in-overlay");
+  parent.insertBefore(node, next);
+  overlay.hidden = true;
+  document.body.classList.remove("tree-overlay-open");
+  treeOverlayState = null;
+  requestAnimationFrame(() => {
+    applyTreeFit(node);
+    updateTreeConnectors(node);
+  });
+  if (trigger) trigger.focus();
 }
 
 function renderCandidateList(candidates) {
@@ -552,19 +627,54 @@ if (projectorToggle) {
   projectorToggle.addEventListener("click", () => {
     const enabled = document.body.classList.toggle("projector-mode");
     projectorToggle.setAttribute("aria-pressed", String(enabled));
-    requestAnimationFrame(() => updateTreeConnectors());
+    requestAnimationFrame(() => {
+      refitVisibleTrees();
+      updateTreeConnectors();
+    });
   });
 }
 
-// 트리 세부정보 열림(toggle) 및 창 크기 변경 시 간선 좌표 재계산
+// 지금 화면에 보이는 모든 트리(열려 있는 복기 항목 안 + 전체화면 팝업 안)의 축소 배율을
+// 다시 계산해 적용한다. 닫힌 <details> 안의 트리는 크기를 잴 수 없으므로 건드리지 않는다.
+function refitVisibleTrees() {
+  document.querySelectorAll(".tree-details[open] .decision-tree").forEach((decisionTree) => applyTreeFit(decisionTree));
+  if (treeOverlayState) applyTreeFit(treeOverlayState.node);
+}
+
+$("#review-list").addEventListener("click", (event) => {
+  const opener = event.target.closest(".tree-fit-toggle");
+  if (!opener) return;
+  const decisionTree = opener.closest(".decision-tree");
+  if (decisionTree) openTreeOverlay(decisionTree, opener);
+});
+
+const treeOverlay = $("#tree-overlay");
+if (treeOverlay) {
+  $("#tree-overlay-close").addEventListener("click", closeTreeOverlay);
+  treeOverlay.addEventListener("click", (event) => {
+    if (event.target === treeOverlay) closeTreeOverlay();
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && treeOverlayState) closeTreeOverlay();
+});
+
+// 트리 세부정보 열림(toggle) 및 창 크기 변경 시 축소 배율과 간선 좌표를 다시 계산
 document.addEventListener("toggle", (event) => {
   if (event.target && event.target.classList && event.target.classList.contains("tree-details") && event.target.open) {
-    requestAnimationFrame(() => updateTreeConnectors(event.target));
+    requestAnimationFrame(() => {
+      event.target.querySelectorAll(".decision-tree").forEach((decisionTree) => applyTreeFit(decisionTree));
+      updateTreeConnectors(event.target);
+    });
   }
 }, true);
 
 window.addEventListener("resize", () => {
-  requestAnimationFrame(() => updateTreeConnectors());
+  requestAnimationFrame(() => {
+    refitVisibleTrees();
+    updateTreeConnectors();
+  });
 });
 
 renderBoard();
