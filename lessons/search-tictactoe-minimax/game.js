@@ -133,8 +133,11 @@ function renderMiniBoard(board) {
 }
 
 // MAX/MIN이 형제 후보들 중에서 값을 골라 자기 자리의 값으로 삼는 과정을 문장으로 보여준다.
+// 후보 값이 전부 같으면(무승부로 흘러가는 흔한 경우) "가장 큰/작은 값을 고른다"는 설명이
+// 실제로 보여주는 대비가 없어 반복 소음만 되므로, 값이 실제로 갈릴 때만 표시한다.
 function renderComparisonNote(items, turnLabel) {
-  if (items.length === 0) return "";
+  if (items.length < 2) return "";
+  if (items.every((item) => item.score === items[0].score)) return "";
   const parts = items
     .map((item) => `${describeMove(item.move)} = ${scoreLabel(item.score)}${item.isChosen ? " (선택)" : ""}`)
     .join(", ");
