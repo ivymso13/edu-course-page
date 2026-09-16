@@ -18,7 +18,7 @@ test("허브(units/search-problem-cases)는 fonts.css·hub.css·guard.css를 링
   assert.match(html, /class="back-link" href="\.\.\/\.\.\/"/);
 });
 
-test("허브는 게임 트리 탐색·돌 뒤집기 게임 탐색 두 활동을 담고, 제거된 경로 탐색·지역 탐색 카드는 없다", async () => {
+test("허브는 게임 트리 예시 1·2 두 활동을 담고, 제거된 경로 탐색·지역 탐색 카드는 없다", async () => {
   const html = await readFile(hubPath, "utf8");
   assert.match(html, /data-lesson-card="search-tictactoe-minimax"/);
   assert.match(html, /href="\.\.\/\.\.\/lessons\/search-tictactoe-minimax\/"/);

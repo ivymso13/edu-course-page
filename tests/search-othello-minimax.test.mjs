@@ -405,7 +405,7 @@ test("buildDecisionTree는 대표로 보여주지 않는 가지·대응을 trunc
 test("독립 lesson 페이지가 fonts.css·guard.css와 그룹/활동 가드 속성을 갖춘다", async () => {
   const html = await readFile(new URL("index.html", lessonRoot), "utf8");
   assert.match(html, /<html lang="ko">/);
-  assert.match(html, /<title>돌 뒤집기 게임 탐색 \| 탐색의 다양한 문제 해결 사례/);
+  assert.match(html, /<title>게임 트리 예시 2 \| 탐색의 다양한 문제 해결 사례/);
   assert.match(html, /href="\.\.\/\.\.\/assets\/fonts\.css"/);
   assert.match(html, /href="\.\.\/\.\.\/assets\/guard\.css"/);
   assert.match(html, /src="\.\.\/\.\.\/assets\/group-guard\.js"/);
