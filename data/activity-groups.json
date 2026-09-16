@@ -68,10 +68,32 @@
     },
     {
       "id": "ai-learning",
-      "order": 4,
-      "title": "AI는 어떻게 학습할까?",
-      "description": "마트 과일 선별 AI를 직접 학습시키고 시험하며 입력 정보, 관계없는 정보, 편향된 데이터 같은 인공지능 기초 개념을 순서대로 체험합니다.",
+      "order": 5,
+      "title": "기계학습과 데이터",
+      "description": "여러 문제의 특징을 살펴보고, 사람이 정한 규칙과 계산으로 해결할지 여러 사례를 학습한 인공지능으로 해결할지 구분합니다.",
       "path": "units/ai-learning/",
+      "status": "published",
+      "active": true,
+      "children": [
+        {
+          "id": "ai-problem-method",
+          "order": 1,
+          "title": "어떤 방법으로 해결할까?",
+          "path": "lessons/ai-problem-method/",
+          "duration": 15,
+          "difficulty": "입문",
+          "status": "published",
+          "active": true,
+          "objective": "문제의 특징을 살펴보고 규칙과 계산이 알맞은 경우와 여러 사례에서 학습하는 방법이 알맞은 경우를 구분한다."
+        }
+      ]
+    },
+    {
+      "id": "machine-learning-algorithms",
+      "order": 6,
+      "title": "기계학습 알고리즘",
+      "description": "마트 과일 선별 AI를 학습시키고 시험하며 입력 정보, 관계없는 정보, 치우친 학습 자료가 판단에 미치는 영향을 차례로 체험합니다.",
+      "path": "units/machine-learning-algorithms/",
       "status": "published",
       "active": false,
       "children": [
@@ -195,6 +217,28 @@
           "status": "published",
           "active": true,
           "objective": "3단계와 같은 학교 지도에서 A* 탐색이 균일 비용 탐색보다 적은 상태만 확인하고도 같은 길을 찾는 것을 확인한 뒤, 8-퍼즐 새 문제에서 g(n), h(n), f(n)을 비교하며 다음 상태를 선택하는 원리를 체험한다."
+        }
+      ]
+    },
+    {
+      "id": "search-problem-cases",
+      "order": 4,
+      "title": "탐색의 다양한 문제 해결 사례",
+      "description": "상대가 있는 게임에서 컴퓨터가 Min-Max 알고리즘으로 수를 고르는 과정을 틱택토로 체험하고, 그 판단이 어떻게 만들어지는지 의사결정 트리로 직접 따라가 봅니다.",
+      "path": "units/search-problem-cases/",
+      "status": "published",
+      "active": true,
+      "children": [
+        {
+          "id": "search-tictactoe-minimax",
+          "order": 1,
+          "title": "게임 트리 탐색",
+          "path": "lessons/search-tictactoe-minimax/",
+          "duration": 20,
+          "difficulty": "입문",
+          "status": "published",
+          "active": true,
+          "objective": "Min-Max 알고리즘을 적용한 컴퓨터와 틱택토를 하며 상대가 있는 게임에서의 탐색 과정을 체험하고, 컴퓨터의 선택이 만들어지는 의사결정 트리를 직접 따라간다."
         }
       ]
     }

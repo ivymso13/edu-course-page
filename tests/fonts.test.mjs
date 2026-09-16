@@ -11,6 +11,7 @@ const HTML_FILES = [
   "units/ai-vocabulary/index.html",
   "units/ai-evaluation/index.html",
   "units/ai-learning/index.html",
+  "lessons/search-tictactoe-minimax/index.html",
   "lessons/ai-keyword-bingo/index.html",
   "lessons/turing-test-questions/index.html",
   "lessons/arc-puzzle-challenge/index.html",

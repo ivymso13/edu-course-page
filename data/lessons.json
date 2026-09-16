@@ -1,9 +1,20 @@
 {
   "lessons": [
     {
+      "id": "ai-problem-method",
+      "subject": "인공지능 기초",
+      "unit": "기계학습과 데이터",
+      "order": 1,
+      "title": "어떤 방법으로 해결할까?",
+      "path": "lessons/ai-problem-method/",
+      "duration": 15,
+      "difficulty": "입문",
+      "status": "published"
+    },
+    {
       "id": "ai-inference-ripeness",
       "subject": "인공지능 기초",
-      "unit": "AI의 판단과 추론",
+      "unit": "기계학습 알고리즘",
       "order": 1,
       "title": "잘 익은 과일 찾기",
       "path": "lessons/ai-inference-ripeness/",
@@ -12,9 +23,20 @@
       "status": "published"
     },
     {
+      "id": "search-tictactoe-minimax",
+      "subject": "인공지능 기초",
+      "unit": "탐색의 다양한 문제 해결 사례",
+      "order": 1,
+      "title": "게임 트리 탐색",
+      "path": "lessons/search-tictactoe-minimax/",
+      "duration": 20,
+      "difficulty": "입문",
+      "status": "published"
+    },
+    {
       "id": "ai-signal-noise",
       "subject": "인공지능 기초",
-      "unit": "AI의 판단과 추론",
+      "unit": "기계학습 알고리즘",
       "order": 2,
       "title": "정보가 많으면 더 정확할까?",
       "path": "lessons/ai-signal-noise/",
@@ -25,7 +47,7 @@
     {
       "id": "ai-biased-data",
       "subject": "인공지능 기초",
-      "unit": "AI의 판단과 추론",
+      "unit": "기계학습 알고리즘",
       "order": 3,
       "title": "학습 자료가 한쪽으로 치우치면?",
       "path": "lessons/ai-biased-data/",

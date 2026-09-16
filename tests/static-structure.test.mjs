@@ -142,7 +142,7 @@ test("시험 제출 후 결과 화면은 개별 정답이나 O\\/X 없이 전체
 test("README와 활동지 목록 페이지 소개 문구는 시험 5문제를 한 화면에서 동시에 치른다고 설명한다", async () => {
   const [readme, groupPage] = await Promise.all([
     readFile(new URL("../../README.md", lessonRoot), "utf8"),
-    readFile(new URL("../../units/ai-learning/index.html", lessonRoot), "utf8"),
+    readFile(new URL("../../units/machine-learning-algorithms/index.html", lessonRoot), "utf8"),
   ]);
   assert.match(readme, /한 화면에 모두 띄워|동시에/);
   assert.match(groupPage, /한 화면에서 동시에/);
@@ -152,7 +152,7 @@ test("시험 안내는 '한 번도 보여주지 않은 새 과일' 대신 같은
   const [html, readme, groupPage] = await Promise.all([
     readFile(new URL("index.html", lessonRoot), "utf8"),
     readFile(new URL("../../README.md", lessonRoot), "utf8"),
-    readFile(new URL("../../units/ai-learning/index.html", lessonRoot), "utf8"),
+    readFile(new URL("../../units/machine-learning-algorithms/index.html", lessonRoot), "utf8"),
   ]);
   assert.doesNotMatch(html, /한 번도 보여주지 않은|처음 보는 과일/);
   assert.match(html, /같은 판단 규칙|같은 규칙/);
@@ -227,7 +227,7 @@ test("숨은 판정 규칙(빨강 항상 익음·초록 항상 안 익음·노�
 test("활동1 페이지·활동지 목록 페이지·data/lessons.json의 난이도 표기가 '보통'으로 통일되어 있다", async () => {
   const [html, groupPage, lessonsJson] = await Promise.all([
     readFile(new URL("index.html", lessonRoot), "utf8"),
-    readFile(new URL("../../units/ai-learning/index.html", lessonRoot), "utf8"),
+    readFile(new URL("../../units/machine-learning-algorithms/index.html", lessonRoot), "utf8"),
     readFile(new URL("../../data/lessons.json", lessonRoot), "utf8"),
   ]);
   assert.match(html, /<dt>난이도<\/dt><dd>보통<\/dd>/);

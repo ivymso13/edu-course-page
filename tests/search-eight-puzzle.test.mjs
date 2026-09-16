@@ -58,4 +58,5 @@ test("활동 데이터에는 강 건너기와 8-퍼즐이 별도 항목으로 �
   assert.equal(group.children[0].id, "search-bfs-delivery");
   assert.equal(group.children[1].id, "search-eight-puzzle");
   assert.equal(group.children[1].path, "lessons/search-eight-puzzle/");
+  assert.equal(group.children[3].id, "search-astar-delivery");
 });

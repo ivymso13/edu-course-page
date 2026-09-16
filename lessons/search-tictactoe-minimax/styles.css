@@ -1,0 +1,1324 @@
+:root {
+  --ink: #172033;
+  --muted: #5b687c;
+  --line: #cbd3df;
+  --line-light: #e2e8f0;
+  --line-strong: #94a3b8;
+  --accent: #3157d5;
+  --accent-hover: #2446b8;
+  --soft: #eef3ff;
+  --soft-hover: #e0e9ff;
+  --paper: #ffffff;
+  --surface: #f8fafc;
+  --bg: #f5f7fb;
+  --win: #10b981;
+  --lose: #dc2626;
+  --draw: #475569;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--ink);
+  background: var(--bg);
+  font-family: var(--font-sans);
+  word-break: keep-all;
+}
+
+.skip-link {
+  position: fixed;
+  left: 8px;
+  top: 8px;
+  z-index: 100;
+  padding: 0.7rem 1rem;
+  color: #fff;
+  background: #111;
+  text-decoration: none;
+  border-radius: 4px;
+  transform: translateY(-150%);
+  transition: transform 0.15s ease;
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.topbar,
+main {
+  width: min(780px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.topbar {
+  min-height: 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.back-link:hover,
+.back-link:focus-visible {
+  color: var(--accent);
+}
+
+.module-title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.88rem;
+}
+
+.module-title span {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: var(--soft);
+  color: var(--accent);
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.module-title strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.utility-button {
+  min-height: 38px;
+  padding: 0.4rem 0.85rem;
+  color: var(--muted);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.utility-button:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: var(--soft);
+}
+
+.utility-button[aria-pressed="true"] {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+main {
+  padding-bottom: 4rem;
+}
+
+section {
+  margin-top: 2rem;
+}
+
+.intro {
+  margin-top: 0.5rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.45rem;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+
+h1 {
+  margin: 0 0 0.85rem;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 760;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+}
+
+h2 {
+  margin: 0;
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: 720;
+}
+
+.lead {
+  margin: 0 0 1.1rem;
+  color: var(--muted);
+  line-height: 1.75;
+  font-size: 0.98rem;
+}
+
+.scoreboard {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.scoreboard span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.85rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: var(--muted);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.scoreboard strong {
+  color: var(--ink);
+  margin-left: 0.4rem;
+  font-size: 1rem;
+}
+
+.activity {
+  padding: 1.8rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.board-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.4rem;
+}
+
+#turn-status {
+  margin: 0 0 1.1rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 0.94rem;
+  min-height: 1.3em;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  width: min(340px, 100%);
+  margin: 0 auto;
+}
+
+.cell {
+  aspect-ratio: 1 / 1;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(2rem, 9vw, 2.8rem);
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.cell:hover:not([disabled]) {
+  background: var(--soft);
+  border-color: var(--accent);
+}
+
+.cell:active:not([disabled]) {
+  transform: scale(0.97);
+}
+
+.cell[disabled] {
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.cell--x {
+  color: var(--accent);
+}
+
+.cell--o {
+  color: #b45309;
+}
+
+.cell:focus-visible {
+  outline: 3px solid var(--accent-hover);
+  outline-offset: 2px;
+}
+
+.board-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.4rem;
+}
+
+#restart-button {
+  min-height: 44px;
+  padding: 0.75rem 1.6rem;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+#restart-button:hover {
+  background: var(--accent-hover);
+}
+
+#restart-button:focus-visible {
+  outline: 3px solid var(--accent-hover);
+  outline-offset: 2px;
+}
+
+.hint {
+  margin: 0.9rem 0 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+/* 단계 구분 및 섹션 헤더 */
+.section-step-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 99px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  background: var(--soft);
+  color: var(--accent);
+  border: 1px solid #d4e0fc;
+}
+
+.section-step-badge--review {
+  background: #eef2ff;
+  color: #4338ca;
+  border-color: #c7d2fe;
+}
+
+.section-step-badge--glossary {
+  background: #f1f5f9;
+  color: #334155;
+  border-color: #cbd5e1;
+}
+
+.section-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.section-tag-row .eyebrow {
+  margin: 0;
+}
+
+/* 활동지 메인 섹션 분리 (본 게임판 vs 복기 분석 vs 개념 정리) */
+.activity {
+  position: relative;
+  padding: 1.8rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.review {
+  position: relative;
+  padding: 2rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--accent);
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+  margin-top: 2.5rem;
+}
+
+.glossary {
+  padding: 1.8rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--line-strong);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  margin-top: 2.5rem;
+}
+
+#review-summary {
+  color: var(--ink);
+  line-height: 1.75;
+  font-size: 0.98rem;
+  margin: 0.8rem 0 0;
+  padding: 0.9rem 1.1rem;
+  background: var(--soft);
+  border-radius: 10px;
+  border-left: 3px solid var(--accent);
+}
+
+/* 복기 목록 (컴퓨터의 수별 분석 카드) */
+.review-list {
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.review-item {
+  padding: 1.4rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+.review-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.review-move-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.review-item h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 750;
+  color: var(--ink);
+}
+
+.review-item-lead,
+.review-item p {
+  margin: 0 0 0.85rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+/* 컴퓨터가 비교한 후보 수 목록 */
+.candidate-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.candidate-item {
+  padding: 0.85rem 1rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.candidate-item--chosen {
+  border-color: var(--accent);
+  background: #fbfdff;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.candidate-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  font-size: 0.94rem;
+}
+
+.candidate-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.candidate-item--chosen .candidate-rank {
+  color: var(--accent);
+  background: var(--soft);
+  border-color: #c7d7fc;
+}
+
+.candidate-move {
+  font-weight: 750;
+  color: var(--ink);
+}
+
+.candidate-chosen {
+  padding: 0.15rem 0.55rem;
+  background: var(--win);
+  color: #fff;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(16, 185, 129, 0.25);
+}
+
+.candidate-outcome {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.candidate-outcome--win {
+  color: #059669;
+  font-weight: 750;
+}
+
+.candidate-outcome--draw {
+  color: #475569;
+  font-weight: 750;
+}
+
+.candidate-outcome--lose {
+  color: #dc2626;
+  font-weight: 750;
+}
+
+.candidate-reply {
+  margin: 0.4rem 0 0 !important;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.candidate-reply strong {
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   Min-Max 의사결정 트리 (시각 계층, 간선, MAX/MIN 구분, 역전파 안내)
+   ========================================================================== */
+
+.tree-details {
+  margin-top: 1rem;
+}
+
+.tree-details summary {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  color: var(--accent);
+  background: var(--soft);
+  border: 1.5px solid #c7d7fc;
+  border-radius: 8px;
+  font-weight: 750;
+  font-size: 0.9rem;
+  cursor: pointer;
+  list-style: none;
+  transition: all 0.15s ease;
+}
+
+.tree-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.tree-details summary:before {
+  content: "▸ ";
+  font-size: 1rem;
+  transition: transform 0.15s ease;
+}
+
+.tree-details[open] summary:before {
+  content: "▾ ";
+}
+
+.tree-details summary:hover {
+  background: var(--soft-hover);
+  border-color: var(--accent);
+}
+
+.tree-details summary:focus-visible {
+  outline: 3px solid var(--accent-hover);
+  outline-offset: 2px;
+}
+
+.summary-hint {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* 의사결정 트리 메인 컨테이너 (가로 넘침 방지 및 부드러운 인라인 스크롤) */
+.decision-tree {
+  margin-top: 1rem;
+  padding: 1.3rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 트리 읽기 가이드 띠 (탐색 방향: 아래로 후보 탐색 ↓ → 말단 점수 확정 ★ → 위로 값 전달 ↑) */
+.tree-flow-guide {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  background: #ffffff;
+  border: 1px solid #d0dcf7;
+  border-radius: 10px;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+.tree-flow-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.tree-flow-step__badge {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.tree-flow-step__text {
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.tree-flow-arrow {
+  color: var(--line-strong);
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding: 0 0.25rem;
+  flex-shrink: 0;
+}
+
+/* 의사결정 트리 다이어그램 (수평 분기 구조 및 최소 너비 보호) */
+.tree-diagram {
+  min-width: 660px;
+  width: max-content;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+}
+
+/* 트리 간선(Edges) 및 수평 분기 레이아웃 */
+.tree-children {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  gap: 0.8rem;
+}
+
+.tree-children--root {
+  margin-top: 0;
+}
+
+.tree-branch-item {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 180px;
+  min-width: 170px;
+  max-width: 460px;
+}
+
+/* 복수 자식 분기를 가진 가지는 하위 자식이 겹치지 않도록 충분한 너비 확보 */
+.tree-branch-item.has-children-branch,
+.tree-branch-item:has(.tree-children) {
+  flex: 2 1 auto;
+  min-width: 380px;
+}
+
+/* 단일 수 연속 진행선(대표 진행선) 내부 가지는 콤팩트한 너비 유지 */
+.tree-children .tree-children .tree-branch-item:not(.has-branching-branch) {
+  flex: 1 1 auto;
+  min-width: 170px;
+  max-width: 220px;
+}
+
+/* 부모 중앙에서 자식 중앙으로 정확히 이어지는 SVG 간선 커넥터 */
+.tree-connector-svg {
+  display: block;
+  width: 100%;
+  height: 36px;
+  margin: 0;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.tree-connector-svg--single {
+  max-width: 240px;
+}
+
+.tree-edge {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 선택된 최적 가지 (굵은 강조 연속 간선) */
+.tree-edge--chosen {
+  stroke: var(--accent);
+  stroke-width: 4px;
+}
+
+/* 대안 후보 가지 (점선 및 보조 색상) */
+.tree-edge--alt {
+  stroke: var(--line-strong);
+  stroke-width: 2px;
+  stroke-dasharray: 5 4;
+}
+
+/* 역전파 방향 안내 배지 (원형 화살표) */
+.tree-edge-flow-circle {
+  fill: var(--accent);
+  filter: drop-shadow(0 1px 2px rgba(49, 87, 213, 0.25));
+}
+
+.tree-edge-flow-text {
+  fill: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  user-select: none;
+}
+
+/* 계층 단계 배지 (루트 / 1단계 / 2단계 / 대표 진행선 / 말단 판정) */
+.tree-level-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line-light);
+  letter-spacing: 0.02em;
+}
+
+.tree-level-tag--terminal {
+  color: #047857;
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+
+/* 트리 노드 카드 (공통) */
+.tree-node {
+  position: relative;
+  width: 100%;
+  max-width: 240px;
+  padding: 0.65rem 0.8rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  word-break: keep-all;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  text-align: left;
+  box-sizing: border-box;
+}
+
+/* 루트 노드 (현재 상황) */
+.tree-node--root {
+  max-width: 440px;
+  background: #ffffff;
+  border: 2.5px solid var(--accent);
+  box-shadow: 0 4px 14px rgba(49, 87, 213, 0.1);
+  padding: 0.8rem 1rem;
+}
+
+/* 선택된 가지 (선택된 최선 수) */
+.tree-node.is-chosen {
+  border: 2.5px solid var(--accent);
+  background: #fbfdff;
+  box-shadow: 0 4px 14px rgba(49, 87, 213, 0.1);
+}
+
+/* 미선택 가지 (대안 후보) */
+.tree-node:not(.is-chosen):not(.tree-node--root) {
+  border: 1px solid var(--line);
+  background: #ffffff;
+  opacity: 0.95;
+}
+
+/* 말단 노드 (게임 종료) */
+.tree-node.is-terminal {
+  border-width: 2px;
+  background: #ffffff;
+}
+
+/* 노드 헤더 */
+.tree-node-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.45rem;
+  font-size: 0.82rem;
+  margin-bottom: 0.45rem;
+}
+
+.tree-move {
+  font-weight: 750;
+  font-size: 0.86rem;
+  color: var(--ink);
+}
+
+/* 노드 본문 (미니 보드 + 설명 가로 배치) */
+.tree-node-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  flex-wrap: nowrap;
+}
+
+.tree-node-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* 차례 배지 (MAX: 컴퓨터 청색 vs MIN: 상대 황색 vs 말단) */
+.tree-turn-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.tree-turn-badge--max {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.tree-turn-badge--min {
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+}
+
+.tree-turn-badge--terminal {
+  color: #475569;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+}
+
+/* 선택 배지 vs 대안 배지 */
+.tree-chosen-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--accent);
+  box-shadow: 0 1px 3px rgba(49, 87, 213, 0.3);
+}
+
+.tree-alt-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 650;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line-light);
+}
+
+.tree-root-goal {
+  margin-left: auto;
+  font-size: 0.76rem;
+  font-weight: 750;
+  color: var(--accent);
+  background: var(--soft);
+  padding: 0.15rem 0.55rem;
+  border-radius: 4px;
+}
+
+/* Min-Max 점수 배지 (+1 승리 녹색, 0 무승부 슬레이트, -1 패배 적색) */
+.tree-score {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: -0.01em;
+}
+
+.tree-score-label {
+  font-size: 0.66rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  opacity: 0.88;
+}
+
+.tree-score--win {
+  color: #065f46;
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+}
+
+.tree-score--lose {
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+}
+
+.tree-score--draw {
+  color: #1e293b;
+  background: #e2e8f0;
+  border: 1px solid #94a3b8;
+}
+
+/* 미니 보드 (3행 3열 콤팩트 보드) */
+.mini-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  width: 66px;
+  margin: 0.2rem 0;
+  flex-shrink: 0;
+}
+
+.mini-cell {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--line-light);
+  border-radius: 3px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.mini-cell--x {
+  color: var(--accent);
+  background: #eff6ff;
+}
+
+.mini-cell--o {
+  color: #b45309;
+  background: #fffbeb;
+}
+
+.tree-state {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* 말단 노드 역전파 힌트 */
+.tree-leaf-hint {
+  margin: 0.35rem 0 0;
+  color: #047857;
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+/* 생략·안내 콜아웃 카드 */
+.tree-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  line-height: 1.35;
+  word-break: normal;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+}
+
+.tree-notice-icon {
+  flex-shrink: 0;
+  font-size: 0.82rem;
+}
+
+.tree-truncated-note {
+  background: #f8fafc;
+  border: 1px dashed var(--line-strong);
+  color: var(--muted);
+}
+
+.tree-omitted-note {
+  background: #fdf8f6;
+  border: 1px dashed #fdba74;
+  color: #9a3412;
+}
+
+/* 값 전달 (역전파) 및 형제 후보 비교 노트 */
+.tree-compare-note {
+  margin-top: 0.85rem;
+  padding: 0.8rem 1rem;
+  background: #eff6ff;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  color: var(--ink);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.tree-propagation-badge {
+  display: inline-block;
+  padding: 0.12rem 0.5rem;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.02em;
+}
+
+.tree-compare-text {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.86rem;
+}
+
+.tree-compare-note strong {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.tree-root-summary {
+  margin-top: 1.1rem;
+}
+
+/* 용어 설명 (Glossary) */
+.glossary dl {
+  margin: 1.4rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.glossary div {
+  padding: 0.9rem 1.1rem;
+  background: var(--paper);
+  border: 1px solid var(--line-light);
+  border-radius: 10px;
+}
+
+.glossary dt {
+  font-weight: 750;
+  color: var(--ink);
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+}
+
+.glossary dd {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 0.92rem;
+}
+
+/* ==========================================================================
+   반응형 미디어 쿼리 (모바일 가로 넘침 방지 & 태블릿 최적화)
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .topbar {
+    font-size: 0.82rem;
+  }
+
+  .module-title strong {
+    display: none;
+  }
+
+  .tree-flow-guide {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .tree-flow-arrow {
+    transform: rotate(90deg);
+    align-self: center;
+    padding: 0;
+  }
+
+  .tree-diagram {
+    min-width: 660px;
+    width: max-content;
+    margin-inline: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    font-size: 0.82rem;
+  }
+
+  .activity,
+  .review,
+  .glossary {
+    padding: 1.2rem;
+    border-radius: 12px;
+  }
+
+  .scoreboard span {
+    font-size: 0.84rem;
+    padding: 0.4rem 0.7rem;
+  }
+
+  .cell {
+    min-height: 44px;
+  }
+
+  .candidate-head {
+    gap: 0.4rem;
+  }
+
+  .candidate-outcome {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  #restart-button {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .decision-tree {
+    padding: 0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tree-diagram {
+    min-width: 660px;
+    width: max-content;
+    margin-inline: 0;
+  }
+
+  .tree-node {
+    padding: 0.55rem 0.65rem;
+  }
+
+  .mini-board {
+    width: 50px;
+  }
+
+  .mini-cell {
+    font-size: 0.62rem;
+  }
+
+  .tree-score {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+    padding: 0.15rem 0.45rem;
+    font-size: 0.82rem;
+  }
+
+  .tree-root-goal {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   프로젝터 모드 (교실 프로젝터 고대비·원거리 가독성)
+   ========================================================================== */
+
+body.projector-mode {
+  --ink: #000000;
+  --muted: #1e293b;
+  --line: #475569;
+  --line-strong: #0f172a;
+  --soft: #f1f5f9;
+  --paper: #ffffff;
+  --surface: #ffffff;
+  --bg: #ffffff;
+  --accent: #1e40af;
+  --accent-hover: #1e3a8a;
+  font-size: 112%;
+}
+
+.projector-mode .topbar {
+  border-bottom: 2px solid #000;
+}
+
+.projector-mode .activity,
+.projector-mode .review,
+.projector-mode .glossary {
+  border: 2px solid #000000;
+  box-shadow: none;
+}
+
+.projector-mode .cell {
+  border: 3px solid #000000;
+  background: #ffffff;
+  font-weight: 900;
+}
+
+.projector-mode #restart-button {
+  border: 2px solid #000000;
+  font-weight: 800;
+}
+
+.projector-mode .decision-tree {
+  border: 2px solid #000000;
+  background: #ffffff;
+}
+
+.projector-mode .tree-flow-guide {
+  border: 2px solid #000000;
+  background: #ffffff;
+}
+
+.projector-mode .tree-flow-step__badge {
+  color: #000000;
+}
+
+.projector-mode .tree-children {
+  border-color: #000000;
+}
+
+.projector-mode .tree-edge--chosen {
+  stroke: #000000;
+  stroke-width: 4px;
+}
+
+.projector-mode .tree-edge--alt {
+  stroke: #475569;
+  stroke-width: 2.5px;
+}
+
+.projector-mode .tree-edge-flow-circle {
+  fill: #000000;
+}
+
+.projector-mode .tree-level-tag {
+  border-color: #000000;
+  color: #000000;
+  background: #ffffff;
+}
+
+.projector-mode .tree-node {
+  border-width: 2px;
+  border-color: #000000;
+  background: #ffffff;
+}
+
+.projector-mode .tree-node.is-chosen {
+  border: 3px solid #000000;
+  box-shadow: none;
+}
+
+.projector-mode .tree-turn-badge,
+.projector-mode .tree-chosen-badge,
+.projector-mode .tree-score {
+  border: 2px solid #000000;
+}
+
+.projector-mode .tree-compare-note {
+  border: 2px solid #000000;
+  background: #f8fafc;
+}
+
+/* ==========================================================================
+   접근성: prefers-reduced-motion 존중
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

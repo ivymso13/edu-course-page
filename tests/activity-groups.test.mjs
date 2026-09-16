@@ -3,7 +3,8 @@ import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 const repoRoot = new URL("../", import.meta.url);
-const LESSON_IDS = ["ai-inference-ripeness", "ai-signal-noise", "ai-biased-data"];
+const LEARNING_LESSON_IDS = ["ai-problem-method"];
+const ALGORITHM_LESSON_IDS = ["ai-inference-ripeness", "ai-signal-noise", "ai-biased-data"];
 
 async function loadGroups() {
   const raw = await readFile(new URL("data/activity-groups.json", repoRoot), "utf8");
@@ -74,7 +75,7 @@ test("group.path와 children.path가 가리키는 index.html 파일이 실제로
   }
 });
 
-test("ai-learning group의 children은 lessons.json의 세 활동과 순서·경로·난이도·시간이 일치한다", async () => {
+test("활동지 04와 05의 children은 lessons.json과 순서·경로·난이도·시간이 일치한다", async () => {
   const [groupsData, lessonsRaw] = await Promise.all([
     loadGroups(),
     readFile(new URL("data/lessons.json", repoRoot), "utf8"),
@@ -82,18 +83,19 @@ test("ai-learning group의 children은 lessons.json의 세 활동과 순서·경
   const lessons = JSON.parse(lessonsRaw).lessons;
   const lessonsById = Object.fromEntries(lessons.map((lesson) => [lesson.id, lesson]));
 
-  const group = groupsData.groups.find((candidate) => candidate.id === "ai-learning");
-  assert.ok(group, "ai-learning group을 찾을 수 없음");
-  assert.equal(group.children.length, LESSON_IDS.length);
-
-  for (const child of group.children) {
-    const lesson = lessonsById[child.id];
-    assert.ok(lesson, `${child.id}가 data/lessons.json에 없음`);
-    assert.equal(child.order, lesson.order, `${child.id}의 order가 lessons.json과 다름`);
-    assert.equal(child.duration, lesson.duration, `${child.id}의 duration이 lessons.json과 다름`);
-    assert.equal(child.difficulty, lesson.difficulty, `${child.id}의 difficulty가 lessons.json과 다름`);
-    assert.equal(child.path, lesson.path, `${child.id}의 path가 lessons.json과 다름`);
-    assert.equal(child.status, lesson.status, `${child.id}의 status가 lessons.json과 다름`);
+  for (const [groupId, ids] of [["ai-learning", LEARNING_LESSON_IDS], ["machine-learning-algorithms", ALGORITHM_LESSON_IDS]]) {
+    const group = groupsData.groups.find((candidate) => candidate.id === groupId);
+    assert.ok(group, `${groupId} group을 찾을 수 없음`);
+    assert.deepEqual(group.children.map((child) => child.id), ids);
+    for (const child of group.children) {
+      const lesson = lessonsById[child.id];
+      assert.ok(lesson, `${child.id}가 data/lessons.json에 없음`);
+      assert.equal(child.order, lesson.order, `${child.id}의 order가 lessons.json과 다름`);
+      assert.equal(child.duration, lesson.duration, `${child.id}의 duration이 lessons.json과 다름`);
+      assert.equal(child.difficulty, lesson.difficulty, `${child.id}의 difficulty가 lessons.json과 다름`);
+      assert.equal(child.path, lesson.path, `${child.id}의 path가 lessons.json과 다름`);
+      assert.equal(child.status, lesson.status, `${child.id}의 status가 lessons.json과 다름`);
+    }
   }
 });
 

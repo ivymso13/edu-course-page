@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <script>document.documentElement.setAttribute("data-guard", "pending");</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Min-Max 알고리즘을 적용한 컴퓨터와 틱택토를 직접 플레이하고, 컴퓨터의 선택이 만들어지는 Min-Max 의사결정 트리를 직접 따라가며 탐색 과정을 체험하는 인공지능 기초 활동">
+  <title>게임 트리 탐색 | 탐색의 다양한 문제 해결 사례</title>
+  <link rel="stylesheet" href="../../assets/fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/guard.css">
+  <script type="module" src="../../assets/group-guard.js"></script>
+  <script type="module" src="game.js"></script>
+</head>
+<body data-guard-scope="page" data-guard-group="search-problem-cases" data-guard-lesson="search-tictactoe-minimax">
+  <a class="skip-link" href="#activity">활동으로 바로가기</a>
+  <div id="guard-loading" class="guard-panel"><p>활동 정보를 확인하는 중입니다…</p></div>
+  <div id="guard-blocked" class="guard-panel"><h1>아직 준비 중인 활동입니다</h1><p>이 활동은 현재 준비 중입니다.</p><a class="guard-home-link" href="../../">전체 활동지 홈으로 돌아가기</a></div>
+  <div id="guard-content">
+    <header class="topbar">
+      <a class="back-link" href="../../units/search-problem-cases/">← 활동 목록</a>
+      <div class="module-title"><span>활동지 04</span><strong>탐색의 다양한 문제 해결 사례</strong></div>
+      <button id="projector-toggle" class="utility-button" type="button" aria-pressed="false">프로젝터 모드</button>
+    </header>
+    <main>
+      <section id="intro" class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">활동 01 · 먼저 해보기</p>
+        <h1 id="page-title" tabindex="-1">이 컴퓨터를<br>이길 수 있을까요?</h1>
+        <p class="lead">아래에서 컴퓨터와 틱택토를 직접 두어 보세요. 컴퓨터를 이길 수 있는지 먼저 도전하고, 게임이 끝나면 컴퓨터가 왜 그 수를 두었는지 하나씩 살펴봅니다.</p>
+        <div class="scoreboard" aria-label="지금까지의 전적">
+          <span>나의 승 <strong id="score-win">0</strong></span>
+          <span>무 <strong id="score-draw">0</strong></span>
+          <span>나의 패 <strong id="score-lose">0</strong></span>
+        </div>
+      </section>
+
+      <section id="activity" class="activity" aria-labelledby="board-title">
+        <div class="board-head">
+          <span class="section-step-badge">1단계 · 대결</span>
+          <h2 id="board-title">게임판</h2>
+        </div>
+        <p id="turn-status" aria-live="polite">당신 차례입니다 (X)</p>
+        <div id="board" class="board" aria-label="3행 3열 틱택토 판"></div>
+        <div class="board-actions">
+          <button id="restart-button" type="button">새 게임 시작</button>
+        </div>
+        <p class="hint">칸은 Tab 또는 방향키로 이동하고, Enter나 Space로 표시할 수 있습니다.</p>
+      </section>
+
+      <section id="review" class="review" aria-labelledby="review-title" hidden>
+        <div class="section-tag-row">
+          <span class="section-step-badge section-step-badge--review">2단계 · 복기 분석</span>
+          <p class="eyebrow">게임이 끝난 뒤</p>
+        </div>
+        <h2 id="review-title" tabindex="-1">컴퓨터는 어떻게 수를 골랐을까?</h2>
+        <p id="review-summary"></p>
+        <ol id="review-list" class="review-list" aria-label="컴퓨터가 둔 수와 그 판단 과정"></ol>
+      </section>
+
+      <section id="glossary" class="glossary" aria-labelledby="glossary-title" hidden>
+        <div class="section-tag-row">
+          <span class="section-step-badge section-step-badge--glossary">3단계 · 개념 정리</span>
+          <p class="eyebrow">체험한 내용 정리하기</p>
+        </div>
+        <h2 id="glossary-title">알아두면 좋은 용어</h2>
+        <dl>
+          <div><dt>게임 트리</dt><dd>지금 상태에서 나올 수 있는 다음 수들과, 그 수마다 이어질 수 있는 다음 수들을 가지처럼 펼쳐 놓은 것입니다. 방금 살펴본 "컴퓨터의 수 → 상대의 최선 대응" 목록이 바로 게임 트리의 일부(부분 게임 트리)입니다.</dd></div>
+          <div><dt>Min-Max 알고리즘</dt><dd>나(컴퓨터)는 가장 유리한 결과가 나오는 수를 고르고(최대화), 상대는 나에게 가장 불리한 결과가 나오는 수를 고른다고(최소화) 가정하며 게임 트리를 탐색하는 방법입니다. 이렇게 하면 상대가 최선을 다해도 손해 보지 않는 수를 찾을 수 있습니다.</dd></div>
+          <div><dt>최선 대응</dt><dd>상대가 둘 수 있는 여러 수 가운데, 상대에게 가장 유리한(나에게 가장 불리한) 수를 뜻합니다. 컴퓨터는 자신의 각 후보 수마다 이 최선 대응을 먼저 계산해 본 뒤에 수를 고릅니다.</dd></div>
+          <div><dt>MAX와 MIN</dt><dd>Min-Max 트리에서 컴퓨터의 차례는 MAX(점수가 가장 높은 수를 고름), 상대의 차례는 MIN(점수가 가장 낮은 수를 고름)이라고 부릅니다. 각 의사결정 트리에서 두 차례가 한 수씩 번갈아 나타납니다.</dd></div>
+          <div><dt>말단 점수</dt><dd>게임이 끝난 상태(말단)에 매기는 점수로, 컴퓨터가 이기면 +1, 무승부면 0, 컴퓨터가 지면 -1입니다. 이 값이 트리의 아래에서 위로 하나씩 전달되며 각 수의 점수가 정해집니다.</dd></div>
+        </dl>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
