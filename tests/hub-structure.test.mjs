@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const repoRoot = new URL("../", import.meta.url);
-const LEARNING_LESSON_IDS = ["ai-problem-method"];
+const LEARNING_LESSON_IDS = ["ai-problem-method", "ai-prediction-lab"];
 const FRUIT_LESSON_IDS = ["ai-inference-ripeness", "ai-signal-noise", "ai-biased-data"];
 
 test("루트 허브는 메인 제목과 활동지 카드를 보여주고 그룹 목록 페이지로 연결한다", async () => {
@@ -37,7 +37,7 @@ test("루트 허브 제목은 작은 화면과 브라우저 글꼴 차이에도 
   assert.match(css, /\.hub-header h1\s*\{[^}]*font-size:clamp\([^}]*white-space:nowrap/s);
 });
 
-test("활동지 04는 문제 해결 방법 활동 하나만 담는다", async () => {
+test("활동지 05는 문제 해결 방법과 값 예측, 두 활동을 담는다", async () => {
   const html = await readFile(new URL("units/ai-learning/index.html", repoRoot), "utf8");
   assert.match(html, /<title>기계학습과 데이터 \| 인공지능 기초 활동지 모음<\/title>/);
   assert.match(html, /<h1>기계학습과 데이터<\/h1>/);
@@ -45,8 +45,9 @@ test("활동지 04는 문제 해결 방법 활동 하나만 담는다", async ()
   for (const [index, position] of positions.entries()) {
     assert.ok(position !== -1, `그룹 페이지에 lessons/${LEARNING_LESSON_IDS[index]}/ 링크가 없음`);
   }
-  assert.equal(positions.length, 1);
+  assert.equal(positions.length, 2);
   assert.match(html, />01</);
+  assert.match(html, />02</);
   for (const id of LEARNING_LESSON_IDS) {
     assert.match(html, new RegExp(`href="\\.\\./\\.\\./lessons/${id}/"`), `그룹 페이지의 ${id} 링크가 올바른 상대 경로가 아님`);
   }

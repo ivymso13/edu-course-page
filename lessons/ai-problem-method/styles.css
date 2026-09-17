@@ -1354,6 +1354,66 @@ th {
   }
 }
 
+/* 다른 활동으로 이동하는 하단 내비게이션 */
+.lesson-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.lesson-pager a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-width: 46%;
+  padding: 0.9rem 1.1rem;
+  color: inherit;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.lesson-pager a:hover {
+  border-color: var(--accent);
+}
+
+.lesson-pager a.next {
+  margin-left: auto;
+  text-align: right;
+  align-items: flex-end;
+}
+
+.lesson-pager em {
+  color: var(--accent);
+  font: 700 0.68rem var(--font-sans);
+  letter-spacing: 0.1em;
+  font-style: normal;
+}
+
+.lesson-pager strong {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 720px) {
+  .lesson-pager {
+    flex-direction: column;
+  }
+
+  .lesson-pager a {
+    max-width: 100%;
+  }
+
+  .lesson-pager a.next {
+    margin-left: 0;
+    text-align: left;
+    align-items: flex-start;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;

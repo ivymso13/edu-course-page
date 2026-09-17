@@ -1,0 +1,72 @@
+/* 활동 전용 스타일. 공통 레이아웃·컴포넌트는 ../shared/lab-base.css를 사용한다. */
+
+.predict-stage { padding-bottom: 1rem; }
+
+.table-wrap { margin: 0 clamp(1rem, 3vw, 1.8rem) 1.2rem; }
+.table-wrap table { min-width: 0; }
+
+.new-condition { margin: 0 clamp(1rem, 3vw, 1.8rem) 1.2rem; padding: .8rem 1rem; color: var(--ink); background: #f7f8fb; border: 1px dashed var(--line-strong); font-size: .92rem; }
+.new-condition strong { color: var(--accent); }
+
+/* --- 활동 1 산점도(SVG) --- */
+.chart-wrap { margin: 0 clamp(1rem, 3vw, 1.8rem) 1.4rem; padding: .8rem; background: #fff; border: 1px solid var(--line); }
+.predict-chart { display: block; width: 100%; height: auto; aspect-ratio: 280 / 200; }
+.grid-line { stroke: #e6e9ef; stroke-width: 1; }
+.axis-line { stroke: #97a0b0; stroke-width: 1.5; }
+.axis-label { fill: #7a8392; font: 700 .58rem ui-monospace, monospace; }
+.axis-caption { fill: #7a8392; font: 700 .55rem var(--font-sans); }
+.data-point { fill: #3157d5; stroke: #fff; stroke-width: 1.5; }
+.data-point.predicted-point { fill: #b3471f; }
+.trend-line { stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 4; }
+
+/* --- 예측 입력 폼(제출 전에는 입력, 제출 후에는 AI 예측을 공개) --- */
+.predict-form { margin: 0 clamp(1rem, 3vw, 1.8rem) 1.2rem; padding: 1rem 1.2rem; background: #f9fafc; border: 1px solid var(--line-strong); }
+.predict-form label { display: block; margin-bottom: .7rem; font-size: .95rem; }
+.predict-input-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+.predict-input-row input[type="number"] { width: 7em; min-height: 44px; padding: .5rem .7rem; color: var(--ink); background: #fff; border: 1px solid var(--line-strong); border-radius: 4px; font-size: 1rem; font-variant-numeric: tabular-nums; }
+.predict-input-row input[type="number"]:disabled { opacity: .6; }
+.predict-input-row span[aria-hidden] { color: var(--muted); font-size: .9rem; }
+.predict-input-row button { min-height: 44px; padding: .6rem 1rem; color: #fff; background: var(--accent); border: 1px solid var(--accent); border-radius: 4px; font-size: .85rem; font-weight: 720; }
+.predict-input-row button:hover:not(:disabled) { background: var(--accent-dark, #2444ae); }
+.predict-input-row button:disabled { opacity: .5; cursor: not-allowed; }
+.predict-feedback { margin: .6rem 0 0; color: var(--accent); font-size: .86rem; font-weight: 650; min-height: 1.2em; }
+
+.stage-footer { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 1rem; margin: 0 clamp(1rem, 3vw, 1.8rem) 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.stage-next { min-height: 48px; padding: .7rem 1.2rem; color: #fff; background: var(--accent); border: 1px solid var(--accent); border-radius: 3px; font-size: .88rem; font-weight: 720; white-space: nowrap; }
+.stage-next:hover:not(:disabled) { background: var(--accent-dark, #2444ae); }
+.stage-next:disabled { opacity: .45; cursor: not-allowed; }
+
+.reveal-box { margin: 0 clamp(1rem, 3vw, 1.8rem) 1.4rem; padding: 1rem 1.2rem; background: #f2f5ff; border-left: 3px solid var(--accent); }
+.reveal-box span { color: var(--accent); font: 750 .68rem var(--font-sans); letter-spacing: .1em; }
+.reveal-box p { margin: .5rem 0 0; line-height: 1.65; }
+.reveal-box .score-compare { margin: .8rem 0 0; }
+
+/* --- 활동 2·3 탐색 모드(슬라이더로 실시간 재계산) --- */
+.explore-box { margin: 0 clamp(1rem, 3vw, 1.8rem) 1.4rem; padding: 1rem 1.2rem; background: #f7f8fb; border: 1px dashed var(--line-strong); }
+.explore-label { margin: 0 0 .9rem; color: var(--muted); font-size: .86rem; line-height: 1.55; }
+.explore-box label:not(.toggle-field) { display: flex; flex-direction: column; gap: .35rem; margin-bottom: .8rem; color: var(--muted); font-size: .82rem; font-weight: 650; }
+.explore-box input[type="range"] { width: 100%; accent-color: var(--accent); }
+.explore-box output { align-self: flex-start; color: var(--ink); font-weight: 750; font-variant-numeric: tabular-nums; }
+.toggle-field { display: inline-flex; align-items: center; gap: .5rem; margin: 0 .9rem .8rem 0; color: var(--ink); font-size: .88rem; font-weight: 650; }
+.toggle-field input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); }
+.live-prediction { margin: .6rem 0 0; padding: .6rem .8rem; color: var(--ink); background: #eef1f6; border-radius: 4px; font-weight: 750; font-variant-numeric: tabular-nums; }
+
+/* --- 활동 3 체크박스 자기점검(채점 없음) --- */
+.checklist-form { margin: 0 clamp(1rem, 3vw, 1.8rem) 1.2rem; padding: 1rem 1.2rem; background: #fff; border: 1px solid var(--line); }
+.checklist-form p { margin: 0 0 .8rem; font-size: .92rem; }
+.checklist-hint { color: var(--muted); font-size: .78rem; font-weight: 500; }
+.checklist-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .6rem; }
+.checklist-options label { display: flex; align-items: center; gap: .5rem; min-height: 44px; padding: .5rem .7rem; color: var(--ink); background: #f9fafc; border: 1px solid var(--line-strong); border-radius: 3px; font-size: .86rem; font-weight: 650; cursor: pointer; }
+.checklist-options label:has(input:checked) { border-color: var(--accent); background: #f4f6ff; color: var(--accent-dark, #2444ae); }
+.checklist-options label:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }
+.checklist-options input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); }
+
+@media (max-width: 720px) {
+  .checklist-options { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .checklist-options { grid-template-columns: 1fr; }
+  .predict-input-row { flex-direction: column; align-items: stretch; }
+  .predict-input-row input[type="number"] { width: 100%; }
+}

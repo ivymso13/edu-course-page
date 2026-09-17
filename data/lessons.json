@@ -12,6 +12,17 @@
       "status": "published"
     },
     {
+      "id": "ai-prediction-lab",
+      "subject": "인공지능 기초",
+      "unit": "기계학습과 데이터",
+      "order": 2,
+      "title": "AI는 어떻게 값을 예측할까?",
+      "path": "lessons/ai-prediction-lab/",
+      "duration": 28,
+      "difficulty": "보통",
+      "status": "published"
+    },
+    {
       "id": "ai-inference-ripeness",
       "subject": "인공지능 기초",
       "unit": "기계학습 알고리즘",

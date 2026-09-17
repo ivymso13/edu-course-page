@@ -10,7 +10,7 @@ async function loadGroups() {
 }
 
 const GROUP_PAGES = {
-  "ai-learning": ["units/ai-learning/index.html", "lessons/ai-problem-method/index.html"],
+  "ai-learning": ["units/ai-learning/index.html", "lessons/ai-problem-method/index.html", "lessons/ai-prediction-lab/index.html"],
   "machine-learning-algorithms": ["units/machine-learning-algorithms/index.html", "lessons/ai-inference-ripeness/index.html", "lessons/ai-signal-noise/index.html", "lessons/ai-biased-data/index.html"],
   "ai-vocabulary": ["units/ai-vocabulary/index.html", "lessons/ai-keyword-bingo/index.html"],
   "ai-evaluation": ["units/ai-evaluation/index.html", "lessons/turing-test-questions/index.html", "lessons/arc-puzzle-challenge/index.html", "lessons/turing-vs-arc-compare/index.html"],
@@ -42,7 +42,7 @@ test("활동지 03·04·05는 공개하고 활동지 06은 비활성화한다", 
   assert.equal(learning.active, true);
   assert.equal(search.active, true);
   assert.equal(problemCases.active, true);
-  assert.deepEqual(learning.children.map(({ active }) => active), [true]);
+  assert.deepEqual(learning.children.map(({ active }) => active), [true, true]);
   assert.equal(algorithms.active, false);
   assert.deepEqual(algorithms.children.map(({ active }) => active), [true, true, true]);
   assert.deepEqual(search.children.map(({ active }) => active), [true, true, true, true]);
@@ -138,7 +138,9 @@ test("모든 활동 페이지(<body>)는 data-guard-lesson으로 자기 자신�
     "lessons/ai-signal-noise/index.html": "ai-signal-noise",
     "lessons/ai-biased-data/index.html": "ai-biased-data",
     "lessons/ai-problem-method/index.html": "ai-problem-method",
+    "lessons/ai-prediction-lab/index.html": "ai-prediction-lab",
     "lessons/search-tictactoe-minimax/index.html": "search-tictactoe-minimax",
+    "lessons/search-othello-minimax/index.html": "search-othello-minimax",
     "lessons/turing-test-questions/index.html": "turing-test-questions",
     "lessons/arc-puzzle-challenge/index.html": "arc-puzzle-challenge",
     "lessons/turing-vs-arc-compare/index.html": "turing-vs-arc-compare",

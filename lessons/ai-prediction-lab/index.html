@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <script>document.documentElement.setAttribute("data-guard", "pending");</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="공부 시간 하나로 점수를 예측하는 것부터 시작해, 기온·강수량 두 가지, 마지막엔 관계없는 정보까지 섞인 다섯 가지 정보로 값을 예측하며 AI의 예측이 데이터 패턴에 기반한 추정값임을 체험하는 활동">
+  <title>AI는 어떻게 값을 예측할까? | 기계학습과 데이터</title>
+  <link rel="stylesheet" href="../../assets/fonts.css">
+  <link rel="stylesheet" href="../shared/lab-base.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/guard.css">
+  <script type="module" src="../../assets/group-guard.js"></script>
+  <script type="module" src="game.js"></script>
+</head>
+<body data-guard-scope="page" data-guard-group="ai-learning" data-guard-lesson="ai-prediction-lab">
+  <a class="skip-link" href="#experiment">실험으로 바로가기</a>
+  <div id="guard-loading" class="guard-panel"><p>활동 정보를 확인하는 중입니다…</p></div>
+  <div id="guard-blocked" class="guard-panel">
+    <h1>아직 준비 중인 활동입니다</h1>
+    <p>이 활동은 현재 준비 중입니다. 곧 열릴 예정이니 잠시 후 다시 확인해 주세요.</p>
+    <a class="guard-home-link" href="../../">← 전체 활동지 홈으로 돌아가기</a>
+  </div>
+  <div id="guard-content">
+  <header class="topbar">
+    <a class="back-link" href="../../units/ai-learning/">← 활동 목록</a>
+    <div class="module-title"><span>활동 02</span><strong>기계학습과 데이터</strong></div>
+    <button id="projector-toggle" class="utility-button" type="button" aria-pressed="false">프로젝터 모드</button>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">데이터의 패턴으로 값 예측하기</p>
+        <h1 id="page-title">AI는 어떻게<br>값을 예측할까?</h1>
+      </div>
+      <div class="intro-copy">
+        <p>데이터를 보고 <strong>내가 먼저 값을 예측</strong>한 뒤, AI의 예측과 비교해 봅니다. 정보를 <strong>1개 → 2개 → 5개(그중 2개는 관계없는 정보)</strong> 순서로 늘려가며, 정보가 많다고 항상 예측이 더 정확해지는 건 아니라는 것도 함께 확인합니다.</p>
+        <dl><div><dt>단계</dt><dd>3단계</dd></div><div><dt>난이도</dt><dd>보통</dd></div></dl>
+      </div>
+    </section>
+
+    <section id="experiment" class="experiment" aria-labelledby="experiment-title">
+      <div class="experiment-head" id="experiment-head">
+        <div><span id="stage-label">1 / 3단계 · 하나의 속성으로 예측하기</span><div class="progress" aria-hidden="true"><i id="progress-bar"></i></div></div>
+      </div>
+
+      <!-- 활동 1: 속성 1개 -->
+      <div id="stage1-view" class="predict-stage">
+        <div class="sample-head">
+          <div><span class="sample-id">활동 1 · 속성 1개</span><h2 id="experiment-title">공부 시간으로 시험 점수 예측하기</h2></div>
+          <p>학생 5명의 공부 시간과 시험 점수입니다. 규칙을 살펴보고 6시간 공부한 학생의 점수를 예측해 보세요.</p>
+        </div>
+        <div class="table-wrap">
+          <table id="study-table"><caption class="sr-only">공부 시간과 시험 점수</caption></table>
+        </div>
+        <div class="chart-wrap">
+          <svg id="stage1-chart" class="predict-chart" viewBox="0 0 280 200" role="img" aria-label="공부 시간과 시험 점수의 관계를 보여주는 산점도"></svg>
+        </div>
+        <form class="predict-form" id="stage1-form">
+          <label for="stage1-guess"><strong>6시간 공부한 학생의 시험 점수는 몇 점 정도일까요?</strong></label>
+          <div class="predict-input-row">
+            <input id="stage1-guess" type="number" inputmode="numeric" min="0" max="100" required>
+            <span aria-hidden="true">점</span>
+            <button type="submit">내 예측 제출하고 AI 예측 보기</button>
+          </div>
+          <p id="stage1-feedback" class="predict-feedback" aria-live="polite"></p>
+        </form>
+        <aside class="reveal-box" id="stage1-reveal" hidden>
+          <span>AI의 예측</span>
+          <p><strong id="stage1-ai-score">0점</strong> — 5명의 데이터를 지나는 <strong>추세선(회귀선)</strong>을 그어서, 그 선 위에서 6시간에 해당하는 점수를 읽은 값입니다. 위 그래프에 추세선이 추가로 표시됩니다.</p>
+        </aside>
+        <div class="discussion">
+          <span>함께 생각해 보기</span>
+          <p>나는 어떤 규칙을 찾아서 예측했나요?</p>
+          <p>AI는 무엇을 보고 값을 예측했을까요?</p>
+        </div>
+        <div class="stage-footer">
+          <button id="stage1-next" class="stage-next" type="button" disabled>다음: 속성 2개로 예측하기 <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+
+      <!-- 활동 2: 속성 2개 -->
+      <div id="stage2-view" class="predict-stage" hidden>
+        <div class="sample-head">
+          <div><span class="sample-id">활동 2 · 속성 2개</span><h2 id="stage2-title" tabindex="-1">기온·강수량으로 놀이공원 방문객 수 예측하기</h2></div>
+          <p>이번에는 기온과 강수량, 두 가지 정보를 함께 보고 방문객 수를 예측합니다.</p>
+        </div>
+        <div class="table-wrap">
+          <table id="park-table"><caption class="sr-only">기온·강수량과 놀이공원 방문객 수</caption></table>
+        </div>
+        <p class="new-condition">새로운 조건 — 기온 <strong>28℃</strong>, 강수량 <strong>5mm</strong></p>
+        <form class="predict-form" id="stage2-form">
+          <label for="stage2-guess"><strong>오늘 놀이공원에는 몇 명 정도 방문할까요?</strong></label>
+          <div class="predict-input-row">
+            <input id="stage2-guess" type="number" inputmode="numeric" min="0" required>
+            <span aria-hidden="true">명</span>
+            <button type="submit">내 예측 제출하고 AI 예측 보기</button>
+          </div>
+          <p id="stage2-feedback" class="predict-feedback" aria-live="polite"></p>
+        </form>
+        <aside class="reveal-box" id="stage2-reveal" hidden>
+          <span>AI의 예측</span>
+          <p><strong id="stage2-ai-visitors">0명</strong> — 기온과 강수량, 두 정보를 함께 사용해 계산한 값입니다.</p>
+        </aside>
+        <div class="explore-box" id="stage2-explore" hidden>
+          <p class="explore-label">직접 조건을 바꿔가며 AI 예측이 어떻게 달라지는지 관찰해 보세요.</p>
+          <label>기온<input type="range" id="stage2-temp" min="15" max="35" step="1" value="28"><output id="stage2-temp-value" for="stage2-temp">28℃</output></label>
+          <label>강수량<input type="range" id="stage2-rain" min="0" max="30" step="1" value="5"><output id="stage2-rain-value" for="stage2-rain">5mm</output></label>
+          <p class="live-prediction" id="stage2-live" aria-live="polite">AI 예측: 0명</p>
+        </div>
+        <div class="discussion">
+          <span>함께 생각해 보기</span>
+          <p>기온을 높이면 방문객 수는 어떻게 변하나요?</p>
+          <p>비가 많이 오면 방문객 수는 어떻게 변하나요?</p>
+          <p>하나의 정보만 사용할 때와 두 가지 정보를 사용할 때 어떤 차이가 있나요?</p>
+        </div>
+        <div class="stage-footer">
+          <button id="stage2-next" class="stage-next" type="button" disabled>다음: 여러 속성으로 예측하기 <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+
+      <!-- 활동 3: 속성 5개(2개는 무관) -->
+      <div id="stage3-view" class="predict-stage" hidden>
+        <div class="sample-head">
+          <div><span class="sample-id">활동 3 · 속성 5개(일부는 무관)</span><h2 id="stage3-title" tabindex="-1">여러 정보로 아이스크림 판매량 예측하기</h2></div>
+          <p>이번에는 다섯 가지 정보를 함께 보여드립니다. 그중 일부는 판매량 예측에 전혀 도움이 되지 않는 정보일 수 있습니다.</p>
+        </div>
+        <div class="table-wrap">
+          <table id="ice-cream-table"><caption class="sr-only">아이스크림 가게의 하루 판매 기록</caption></table>
+        </div>
+        <form class="checklist-form" id="stage3-checklist" aria-labelledby="stage3-checklist-legend">
+          <p id="stage3-checklist-legend"><strong>판매량을 예측할 때 중요하다고 생각하는 정보를 선택해보세요.</strong> <span class="checklist-hint">(채점되지 않는 자기 점검입니다)</span></p>
+          <div class="checklist-options">
+            <label><input type="checkbox" name="stage3-check" value="temp">기온</label>
+            <label><input type="checkbox" name="stage3-check" value="rain">비</label>
+            <label><input type="checkbox" name="stage3-check" value="weekend">주말 여부</label>
+            <label><input type="checkbox" name="stage3-check" value="pots">화분 개수</label>
+            <label><input type="checkbox" name="stage3-check" value="nameLength">직원 이름 글자 수</label>
+          </div>
+        </form>
+        <p class="new-condition">새로운 조건 — 기온 <strong>28℃</strong> · 비 <strong>없음</strong> · 주말 <strong>맞음</strong> · 화분 개수 <strong>1개</strong> · 직원 이름 글자 수 <strong>5글자</strong></p>
+        <form class="predict-form" id="stage3-form">
+          <label for="stage3-guess"><strong>오늘 아이스크림은 몇 개 정도 팔릴까요?</strong></label>
+          <div class="predict-input-row">
+            <input id="stage3-guess" type="number" inputmode="numeric" min="0" required>
+            <span aria-hidden="true">개</span>
+            <button type="submit">내 예측 제출하고 결과 보기</button>
+          </div>
+          <p id="stage3-feedback" class="predict-feedback" aria-live="polite"></p>
+        </form>
+        <aside class="reveal-box" id="stage3-reveal" hidden>
+          <span>AI의 예측 vs 실제 결과</span>
+          <div class="score-compare cols-3">
+            <div class="score-block"><span>내 예측</span><strong id="stage3-my-guess">0<span class="unit">개</span></strong></div>
+            <div class="score-block"><span>AI의 예측</span><strong id="stage3-ai-sales">0<span class="unit">개</span></strong></div>
+            <div class="score-block"><span>실제 판매량</span><strong id="stage3-actual-sales">0<span class="unit">개</span></strong></div>
+          </div>
+          <p>AI의 예측 오차: <strong id="stage3-error">0개</strong> — AI의 예측은 정답이 아니라 데이터의 패턴을 이용한 추정값입니다.</p>
+        </aside>
+        <div class="explore-box" id="stage3-explore" hidden>
+          <p class="explore-label">입력값을 직접 바꿔가며 어떤 정보가 예측에 영향을 주는지 관찰해 보세요.</p>
+          <label>기온<input type="range" id="stage3-temp" min="15" max="35" step="1" value="28"><output id="stage3-temp-value" for="stage3-temp">28℃</output></label>
+          <label class="toggle-field"><input type="checkbox" id="stage3-rain">비 옴</label>
+          <label class="toggle-field"><input type="checkbox" id="stage3-weekend" checked>주말</label>
+          <label>화분 개수<input type="range" id="stage3-pots" min="1" max="10" step="1" value="1"><output id="stage3-pots-value" for="stage3-pots">1개</output></label>
+          <label>직원 이름 글자 수<input type="range" id="stage3-name-length" min="1" max="6" step="1" value="5"><output id="stage3-name-length-value" for="stage3-name-length">5글자</output></label>
+          <p class="live-prediction" id="stage3-live" aria-live="polite">AI 예측: 0개</p>
+        </div>
+        <div class="discussion">
+          <span>함께 생각해 보기</span>
+          <p>판매량을 예측할 때 가장 중요해 보이는 정보는 무엇인가요?</p>
+          <p>예측에 거의 필요 없어 보이는 정보는 무엇인가요?</p>
+          <p>정보가 많으면 항상 더 정확하게 예측할 수 있을까요?</p>
+          <p>AI의 예측값과 실제값이 조금 다른 이유는 무엇일까요?</p>
+        </div>
+        <div class="stage-footer">
+          <button id="stage3-next" class="stage-next" type="button" disabled>결과 정리 보기 <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+
+      <!-- 마무리 -->
+      <div id="results-view" class="summary" hidden>
+        <p class="eyebrow">3단계 완료</p>
+        <h2 id="results-title" tabindex="-1">오늘 확인한 내용</h2>
+        <div class="discussion">
+          <span>정리하기</span>
+          <p>인공지능은 기존 데이터에서 패턴을 찾아 새로운 값을 예측합니다.</p>
+          <p>여러 정보를 함께 사용할 수 있지만, 모든 정보가 예측에 도움이 되는 것은 아닙니다.</p>
+          <p>인공지능의 예측은 실제 결과와 완전히 일치하지 않을 수 있으며, 어느 정도의 오차가 존재할 수 있습니다.</p>
+        </div>
+        <button id="restart-button" type="button">처음부터 다시 하기</button>
+      </div>
+    </section>
+
+    <nav class="lesson-pager">
+      <a href="../ai-problem-method/"><em>이전 활동</em><strong>← 활동 01 · 어떤 방법으로 해결할까?</strong></a>
+      <a class="next" href="../../units/ai-learning/"><em>활동 목록</em><strong>활동지 목록으로 →</strong></a>
+    </nav>
+  </main>
+  <footer><span>정보 · 인공지능 기초</span><span>예측하기 · 비교하기 · 확인하기</span></footer>
+  </div>
+</body>
+</html>

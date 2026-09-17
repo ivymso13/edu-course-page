@@ -3,7 +3,7 @@ import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 const repoRoot = new URL("../", import.meta.url);
-const LEARNING_LESSON_IDS = ["ai-problem-method"];
+const LEARNING_LESSON_IDS = ["ai-problem-method", "ai-prediction-lab"];
 const ALGORITHM_LESSON_IDS = ["ai-inference-ripeness", "ai-signal-noise", "ai-biased-data"];
 
 async function loadGroups() {

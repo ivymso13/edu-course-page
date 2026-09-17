@@ -70,7 +70,7 @@
       "id": "ai-learning",
       "order": 5,
       "title": "기계학습과 데이터",
-      "description": "여러 문제의 특징을 살펴보고, 사람이 정한 규칙과 계산으로 해결할지 여러 사례를 학습한 인공지능으로 해결할지 구분합니다.",
+      "description": "여러 문제의 특징을 살펴보고, 사람이 정한 규칙과 계산으로 해결할지 여러 사례를 학습한 인공지능으로 해결할지 구분합니다. 이어서 데이터의 패턴으로 값을 예측하는 AI를 직접 체험합니다.",
       "path": "units/ai-learning/",
       "status": "published",
       "active": true,
@@ -85,6 +85,17 @@
           "status": "published",
           "active": true,
           "objective": "문제의 특징을 살펴보고 규칙과 계산이 알맞은 경우와 여러 사례에서 학습하는 방법이 알맞은 경우를 구분한다."
+        },
+        {
+          "id": "ai-prediction-lab",
+          "order": 2,
+          "title": "AI는 어떻게 값을 예측할까?",
+          "path": "lessons/ai-prediction-lab/",
+          "duration": 28,
+          "difficulty": "보통",
+          "status": "published",
+          "active": true,
+          "objective": "속성이 1개, 2개, 여러 개(일부는 무관한 정보)로 늘어날 때 데이터의 패턴으로 값을 예측하는 AI의 원리를 체험하고, 관계없는 정보가 예측에 도움이 되지 않는다는 것과 AI의 예측에는 오차가 있을 수 있다는 것을 확인한다."
         }
       ]
     },
