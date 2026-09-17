@@ -16,7 +16,7 @@
 .axis-label { fill: #7a8392; font: 700 .58rem ui-monospace, monospace; }
 .axis-caption { fill: #7a8392; font: 700 .55rem var(--font-sans); }
 .data-point { fill: #3157d5; stroke: #fff; stroke-width: 1.5; }
-.data-point.predicted-point { fill: #b3471f; }
+.data-point.predicted-point { fill: #dc2626; stroke: #fff; stroke-width: 2; }
 .trend-line { stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 4; }
 
 /* --- 예측 입력 폼(제출 전에는 입력, 제출 후에는 AI 예측을 공개) --- */

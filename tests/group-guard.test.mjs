@@ -42,7 +42,7 @@ test("활동지 03·04·05는 공개하고 활동지 06은 비활성화한다", 
   assert.equal(learning.active, true);
   assert.equal(search.active, true);
   assert.equal(problemCases.active, true);
-  assert.deepEqual(learning.children.map(({ active }) => active), [true, true]);
+  assert.deepEqual(learning.children.map(({ active }) => active), [true, false]);
   assert.equal(algorithms.active, false);
   assert.deepEqual(algorithms.children.map(({ active }) => active), [true, true, true]);
   assert.deepEqual(search.children.map(({ active }) => active), [true, true, true, true]);

@@ -256,7 +256,8 @@ test("data/activity-groups.json과 data/lessons.json에 이 활동이 ai-learnin
   assert.ok(child, "ai-prediction-lab이 ai-learning 그룹의 활동으로 등록되어 있어야 함");
   assert.equal(child.path, "lessons/ai-prediction-lab/");
   assert.equal(child.order, 2);
-  assert.equal(child.active, true);
+  // 아직 다듬는 중이라 비공개(active:false) 상태 — 완성되면 true로 전환한다.
+  assert.equal(child.active, false);
 
   const lessons = JSON.parse(lessonsRaw).lessons;
   const lesson = lessons.find((candidate) => candidate.id === "ai-prediction-lab");
