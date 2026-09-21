@@ -57,7 +57,7 @@
             <span class="sample-id">활동 1 · 속성 1개</span>
           </div>
           <h2 id="experiment-title" tabindex="-1">공부 시간으로 시험 점수 예측하기</h2>
-          <p class="sample-desc">학생 5명의 공부 시간과 시험 점수를 보고, 6시간 공부한 학생의 점수를 예측해 보세요.</p>
+          <p class="sample-desc">학생 10명의 공부 시간과 시험 점수를 보고, 6시간 공부한 학생의 점수를 예측해 보세요.</p>
         </div>
 
         <div class="stage1-flow">
@@ -83,7 +83,7 @@
                 <span class="step-badge">STEP 1</span>
                 <h3 id="stage1-step1-heading" class="step-card-title">데이터 살펴보기</h3>
               </div>
-              <p class="step-card-caption">학생 5명의 공부 시간과 시험 점수입니다.</p>
+              <p class="step-card-caption">학생 10명의 공부 시간과 시험 점수입니다.</p>
               <div class="table-wrap">
                 <table id="study-table"><caption class="sr-only">공부 시간과 시험 점수</caption></table>
               </div>
@@ -151,7 +151,8 @@
 
             <!-- AI 설명 문구 -->
             <div class="reveal-explanation">
-              <p class="reveal-desc">AI는 5명의 데이터를 바탕으로 공부 시간과 시험 점수의 관계를 나타내는 추세선을 그리고, 그 선을 기준으로 6시간에 해당하는 점수를 예측했습니다.</p>
+              <p class="reveal-desc">AI는 10명의 데이터를 바탕으로 공부 시간과 시험 점수의 관계를 나타내는 추세선을 그리고, 그 선을 기준으로 6시간에 해당하는 점수를 예측했습니다.</p>
+              <p class="regression-equation" id="stage1-equation" aria-live="polite"></p>
             </div>
             <div class="concept-note">
               <div class="concept-header">

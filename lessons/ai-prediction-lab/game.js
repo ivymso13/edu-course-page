@@ -206,12 +206,22 @@ function renderStage1() {
   }
 }
 
+// 회귀 결과를 y = ax + b 형태의 수식 문자열로 보여준다(기울기·절편은 소수 첫째 자리까지).
+function formatLinearEquation(slope, intercept) {
+  const a = Math.round(slope);
+  const b = Math.round(Math.abs(intercept));
+  const sign = intercept < 0 ? "-" : "+";
+  return `y = ${a}x ${sign} ${b}`;
+}
+
 function handleStage1Submit(event) {
   event.preventDefault();
   const input = $("#stage1-guess");
   const guess = Number(input.value);
   const aiScore = predictStudyScore(STUDY_QUESTION_HOURS);
 
+  $("#stage1-equation").textContent =
+    `${formatLinearEquation(STUDY_TREND_LINE.slope, STUDY_TREND_LINE.intercept)} (x = 공부 시간, y = 예측 점수)`;
   $("#stage1-feedback").textContent = "내 예측과 AI의 예측을 그래프에서 비교해 보세요.";
   $("#stage1-my-score").innerHTML = `${guess}<span class="unit">점</span>`;
   $("#stage1-ai-score").innerHTML = `${aiScore}<span class="unit">점</span>`;

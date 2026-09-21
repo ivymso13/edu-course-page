@@ -49,12 +49,22 @@ export function multipleLinearRegression(rows, ys) {
 }
 
 // --- 활동 1: 공부 시간 -> 시험 점수 (속성 1개) --------------------------------
+// 최소제곱 회귀식(y = 7x + 45)이 소수 없는 정수로 딱 떨어지도록 고른 값. 같은 시간을
+// 공부해도 학생마다 점수가 다를 수 있음을 보여주려고 각 시간대마다 두 명씩(총 10명) 두되,
+// 추세선을 기준으로 한 편차를 시간대마다 부호·크기가 제각각이도록(대칭으로 짝짓지 않고)
+// 흩어 놓았다. 편차들의 합과 (시간-평균)·편차 가중합이 둘 다 0이 되도록만 맞추면 되므로,
+// 이렇게 불규칙하게 흩어도 최소제곱 결과는 그대로 y = 7x + 45가 된다(node로 직접 계산해 확인).
 export const STUDY_DATA = [
-  { hours: 1, score: 52 },
-  { hours: 2, score: 58 },
-  { hours: 3, score: 65 },
-  { hours: 4, score: 72 },
-  { hours: 5, score: 78 },
+  { hours: 1, score: 50 },
+  { hours: 1, score: 53 },
+  { hours: 2, score: 53 },
+  { hours: 2, score: 64 },
+  { hours: 3, score: 67 },
+  { hours: 3, score: 69 },
+  { hours: 4, score: 68 },
+  { hours: 4, score: 77 },
+  { hours: 5, score: 77 },
+  { hours: 5, score: 82 },
 ];
 
 // 추세선 계수 자체도 내보내, 화면에서는 (반올림하지 않은) 정확한 직선을 그릴 수 있게 한다.

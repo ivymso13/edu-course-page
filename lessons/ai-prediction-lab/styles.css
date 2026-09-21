@@ -1230,6 +1230,14 @@
   line-height: 1.6;
 }
 
+.regression-equation {
+  margin: 0.6rem 0 0;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--slate-200);
+  color: var(--ink);
+  font: 700 0.95rem/1.5 ui-monospace, monospace;
+}
+
 /* 활동 3: 예측 오차 강조 블록 */
 .error-callout {
   display: flex;

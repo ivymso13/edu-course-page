@@ -57,7 +57,7 @@ test("활동1: 공부 시간 데이터로 만든 추세선이 5개 데이터와 
 test("활동1: predictStudyScore(6)은 추세선 값을 내림한 정수를 돌려준다", () => {
   const raw = STUDY_TREND_LINE.intercept + STUDY_TREND_LINE.slope * STUDY_QUESTION_HOURS;
   assert.equal(predictStudyScore(STUDY_QUESTION_HOURS), Math.floor(raw));
-  assert.equal(predictStudyScore(STUDY_QUESTION_HOURS), 84);
+  assert.equal(predictStudyScore(STUDY_QUESTION_HOURS), 87);
 });
 
 test("활동1: 공부 시간이 늘어날수록 예측 점수도 늘어난다(단조 증가)", () => {
@@ -286,6 +286,25 @@ test("활동 1은 내 예측과 AI의 예측을 점수로도, 그래프의 점�
   assert.match(js, /predicted-point/);
   assert.match(js, /\$\("#stage1-my-score"\)\.innerHTML/);
   assert.match(js, /\$\("#stage1-ai-score"\)\.innerHTML/);
+});
+
+test("활동 1은 제출 후 추세선의 회귀식을 y = ax + b 형태로도 보여준다", async () => {
+  const [html, js] = await Promise.all([
+    readFile(new URL("index.html", lessonRoot), "utf8"),
+    readFile(new URL("game.js", lessonRoot), "utf8"),
+  ]);
+  const revealMatch = html.match(/<aside class="reveal-box" id="stage1-reveal"[\s\S]*?<\/aside>/);
+  assert.ok(revealMatch, "stage1-reveal을 찾을 수 없음");
+  assert.match(revealMatch[0], /id="stage1-equation"/);
+  assert.match(js, /\$\("#stage1-equation"\)\.textContent/, "제출 시 회귀식을 채워 넣어야 함");
+
+  // STUDY_DATA로 계산한 실제 최소제곱 회귀식 값과 일치해야 함(정수로 딱 떨어지도록 고른 데이터)
+  assert.equal(STUDY_TREND_LINE.slope, 7);
+  assert.equal(STUDY_TREND_LINE.intercept, 45);
+  assert.match(js, /`y = \$\{a\}x \$\{sign\} \$\{b\}`/, "y = ax + b(또는 ax - b) 형태의 문자열을 만들어야 함");
+  // a, b는 학생이 보기 쉽도록 소수가 아닌 정수로 반올림해서 보여준다(6.6 -> 7, 45.2 -> 45)
+  assert.match(js, /const a = Math\.round\(slope\);/, "기울기를 정수로 반올림해야 함");
+  assert.match(js, /const b = Math\.round\(Math\.abs\(intercept\)\);/, "절편을 정수로 반올림해야 함");
 });
 
 test("상단 탭은 숨김 처리된 (구)활동 2를 제외하고 세 활동만 오갈 수 있게 보여준다(내부적으로는 one·three·four)", async () => {
