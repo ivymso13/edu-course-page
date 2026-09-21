@@ -89,7 +89,7 @@
         {
           "id": "ai-prediction-lab",
           "order": 2,
-          "title": "AI는 어떻게 값을 예측할까?",
+          "title": "AI는 어떤 문제를 풀 수 있을까?",
           "path": "lessons/ai-prediction-lab/",
           "duration": 28,
           "difficulty": "보통",

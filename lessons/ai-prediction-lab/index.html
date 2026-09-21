@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <script>document.documentElement.setAttribute("data-guard", "pending");</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="공부 시간 하나로 점수를 예측하는 것부터 시작해, 기온·강수량 두 가지, 마지막엔 관계없는 정보까지 섞인 다섯 가지 정보로 값을 예측하며 AI의 예측이 데이터 패턴에 기반한 추정값임을 체험하는 활동">
-  <title>AI는 어떻게 값을 예측할까? | 기계학습과 데이터</title>
+  <meta name="description" content="공부 시간 하나로 점수를 예측하는 회귀부터 시작해, 관계없는 정보까지 섞인 네 가지 정보로 붐빔/한산을 가르는 분류를 거쳐, 마지막엔 라벨 없는 데이터를 AI가 스스로 묶는 군집까지 세 가지 기계학습 방식을 체험하는 활동">
+  <title>AI는 어떤 문제를 풀 수 있을까? | 기계학습과 데이터</title>
   <link rel="stylesheet" href="../../assets/fonts.css">
   <link rel="stylesheet" href="../shared/lab-base.css">
   <link rel="stylesheet" href="styles.css">
@@ -31,11 +31,11 @@
   <main>
     <section class="intro" aria-labelledby="page-title">
       <div>
-        <p class="eyebrow">데이터의 패턴으로 값 예측하기</p>
-        <h1 id="page-title">AI는 어떻게<br>값을 예측할까?</h1>
+        <p class="eyebrow">데이터로 문제 풀어보기</p>
+        <h1 id="page-title">AI는 어떤 문제를 풀 수 있을까?</h1>
       </div>
       <div class="intro-copy">
-        <p>데이터를 보고 <strong>내가 먼저 값을 예측</strong>한 뒤, AI의 예측과 비교해 봅니다. 정보를 <strong>1개 → 2개 → 5개(그중 2개는 관계없는 정보)</strong> 순서로 늘려가며, 정보가 많다고 항상 예측이 더 정확해지는 건 아니라는 것도 함께 확인합니다.</p>
+        <p>데이터를 보고 <strong>내가 먼저 값을 예측</strong>한 뒤, AI와 비교해 봅니다. 활동 1에서는 공부 시간으로 점수를 예측하는 <strong>회귀</strong>를, 활동 2에서는 숫자가 아니라 "붐빔/한산" 같은 카테고리를 맞히는 <strong>분류</strong>를(관계없는 정보를 섞어도 예측이 흔들리지 않는지도 함께 확인), 활동 3에서는 정답 라벨이 아예 없는 데이터를 AI가 스스로 비슷한 것끼리 묶는 <strong>군집</strong>을 체험합니다.</p>
         <dl><div><dt>단계</dt><dd>3단계</dd></div><div><dt>난이도</dt><dd>보통</dd></div></dl>
       </div>
     </section>
@@ -43,139 +43,496 @@
     <section id="experiment" class="experiment" aria-labelledby="experiment-title">
       <div class="experiment-head" id="experiment-head">
         <div><span id="stage-label">1 / 3단계 · 하나의 속성으로 예측하기</span><div class="progress" aria-hidden="true"><i id="progress-bar"></i></div></div>
+        <nav class="stage-tabs" id="stage-tabs" aria-label="활동 이동">
+          <button type="button" class="stage-tab" data-stage="one">활동 1</button>
+          <button type="button" class="stage-tab" data-stage="three">활동 2</button>
+          <button type="button" class="stage-tab" data-stage="four">활동 3</button>
+        </nav>
       </div>
 
       <!-- 활동 1: 속성 1개 -->
       <div id="stage1-view" class="predict-stage">
         <div class="sample-head">
-          <div><span class="sample-id">활동 1 · 속성 1개</span><h2 id="experiment-title">공부 시간으로 시험 점수 예측하기</h2></div>
-          <p>학생 5명의 공부 시간과 시험 점수입니다. 규칙을 살펴보고 6시간 공부한 학생의 점수를 예측해 보세요.</p>
-        </div>
-        <div class="table-wrap">
-          <table id="study-table"><caption class="sr-only">공부 시간과 시험 점수</caption></table>
-        </div>
-        <div class="chart-wrap">
-          <svg id="stage1-chart" class="predict-chart" viewBox="0 0 280 200" role="img" aria-label="공부 시간과 시험 점수의 관계를 보여주는 산점도"></svg>
-        </div>
-        <form class="predict-form" id="stage1-form">
-          <label for="stage1-guess"><strong>6시간 공부한 학생의 시험 점수는 몇 점 정도일까요?</strong></label>
-          <div class="predict-input-row">
-            <input id="stage1-guess" type="number" inputmode="numeric" min="0" max="100" required>
-            <span aria-hidden="true">점</span>
-            <button type="submit">내 예측 제출하고 AI 예측 보기</button>
+          <div class="sample-badge-wrap">
+            <span class="sample-id">활동 1 · 속성 1개</span>
           </div>
-          <p id="stage1-feedback" class="predict-feedback" aria-live="polite"></p>
-        </form>
-        <aside class="reveal-box" id="stage1-reveal" hidden>
-          <span>AI의 예측</span>
-          <p><strong id="stage1-ai-score">0점</strong> — 5명의 데이터를 지나는 <strong>추세선(회귀선)</strong>을 그어서, 그 선 위에서 6시간에 해당하는 점수를 읽은 값입니다. 위 그래프에 추세선이 추가로 표시됩니다.</p>
-        </aside>
-        <div class="discussion">
-          <span>함께 생각해 보기</span>
-          <p>나는 어떤 규칙을 찾아서 예측했나요?</p>
-          <p>AI는 무엇을 보고 값을 예측했을까요?</p>
+          <h2 id="experiment-title" tabindex="-1">공부 시간으로 시험 점수 예측하기</h2>
+          <p class="sample-desc">학생 5명의 공부 시간과 시험 점수를 보고, 6시간 공부한 학생의 점수를 예측해 보세요.</p>
         </div>
+
+        <div class="stage1-flow">
+          <!-- 공통 예측 대상 카드: 이번에 예측할 학생 -->
+          <section class="target-card" aria-label="예측 대상 정보">
+            <div class="target-card-header">
+              <span class="target-badge">예측 대상</span>
+              <h3 class="target-title">이번에 예측할 학생</h3>
+            </div>
+            <div class="target-grid target-grid--1">
+              <div class="target-prop">
+                <span class="prop-name">공부 시간</span>
+                <strong class="prop-val">6<span class="prop-unit">시간</span></strong>
+              </div>
+            </div>
+          </section>
+
+          <!-- 상단 2열: STEP 1 데이터 살펴보기 & STEP 2 내가 예측하기 -->
+          <div class="steps-row">
+            <!-- 좌측 카드: STEP 1 데이터 살펴보기 -->
+            <section class="step-card step-card--step1" aria-labelledby="stage1-step1-heading">
+              <div class="step-card-header">
+                <span class="step-badge">STEP 1</span>
+                <h3 id="stage1-step1-heading" class="step-card-title">데이터 살펴보기</h3>
+              </div>
+              <p class="step-card-caption">학생 5명의 공부 시간과 시험 점수입니다.</p>
+              <div class="table-wrap">
+                <table id="study-table"><caption class="sr-only">공부 시간과 시험 점수</caption></table>
+              </div>
+            </section>
+
+            <!-- 우측 카드: STEP 2 내가 예측하기 -->
+            <section class="step-card step-card--step2" aria-labelledby="stage1-step2-heading">
+              <div class="step-card-header">
+                <span class="step-badge">STEP 2</span>
+                <h3 id="stage1-step2-heading" class="step-card-title">내가 예측하기</h3>
+              </div>
+              <p class="step-card-caption">데이터의 변화 규칙을 보고 이 학생의 점수를 추측해 보세요.</p>
+              <form class="predict-form" id="stage1-form">
+                <label for="stage1-guess" class="predict-label">
+                  <strong>이 학생의 시험 점수는 몇 점 정도일까요?</strong>
+                </label>
+                <div class="predict-input-row">
+                  <div class="quantity-input">
+                    <input id="stage1-guess" type="number" inputmode="numeric" min="0" max="100" placeholder="예: 80" required>
+                    <span aria-hidden="true">점</span>
+                  </div>
+                  <button type="submit" class="submit-btn">AI와 비교하기</button>
+                </div>
+                <p id="stage1-feedback" class="predict-feedback" aria-live="polite"></p>
+              </form>
+            </section>
+          </div>
+
+          <!-- 하단 카드: STEP 3 AI와 비교하기 (제출 후 표시) -->
+          <aside class="reveal-box" id="stage1-reveal" hidden aria-labelledby="stage1-step3-heading">
+            <span class="method-tag">회귀</span>
+            <div class="step3-header-row">
+              <div class="step3-title-wrap">
+                <div class="step-card-header">
+                  <span class="step-badge step-badge--active">STEP 3</span>
+                  <h3 id="stage1-step3-heading" class="step-card-title">AI와 비교하기</h3>
+                </div>
+                <span class="target-summary-chip">예측 대상 · 공부 시간 6시간</span>
+              </div>
+
+              <!-- 간결한 내 예측 / AI 예측 비교 칩 -->
+              <div class="score-compare">
+                <div class="score-block score-block--mine">
+                  <span class="score-label">내 예측</span>
+                  <strong id="stage1-my-score">0<span class="unit">점</span></strong>
+                </div>
+                <div class="score-block score-block--ai">
+                  <span class="score-label">AI의 예측</span>
+                  <strong id="stage1-ai-score">0<span class="unit">점</span></strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- 메인 중심: 큰 그래프 영역 -->
+            <div class="chart-wrap" id="stage1-chart-wrap" hidden>
+              <div class="chart-header">
+                <h4 class="chart-title">공부 시간과 시험 점수 관계 그래프</h4>
+                <div class="chart-legend">
+                  <span class="legend-chip legend-chip--mine">내 예측</span>
+                  <span class="legend-chip legend-chip--ai">AI의 예측</span>
+                </div>
+              </div>
+              <svg id="stage1-chart" class="predict-chart" viewBox="0 0 280 200" role="img" aria-label="공부 시간과 시험 점수의 관계, 그리고 내 예측과 AI의 예측을 보여주는 산점도"></svg>
+            </div>
+
+            <!-- AI 설명 문구 -->
+            <div class="reveal-explanation">
+              <p class="reveal-desc">AI는 5명의 데이터를 바탕으로 공부 시간과 시험 점수의 관계를 나타내는 추세선을 그리고, 그 선을 기준으로 6시간에 해당하는 점수를 예측했습니다.</p>
+            </div>
+            <div class="concept-note">
+              <div class="concept-header">
+                <span class="concept-badge">
+                  <svg class="concept-icon" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.5a4.5 4.5 0 0 0-2.8 8c.6.5.9 1.1.9 1.7h3.8c0-.6.3-1.2.9-1.7a4.5 4.5 0 0 0-2.8-8z"/><path d="M6.5 14h3M7 15.5h2"/></svg>
+                  핵심 개념
+                </span>
+                <h4 class="concept-title">회귀(Regression)란?</h4>
+              </div>
+              <p>데이터를 바탕으로 연속적인 숫자 값을 예측하는 방법입니다. 입력과 출력 사이의 관계(추세선)를 찾아, 아직 본 적 없는 새로운 입력에 대한 값을 추정합니다.</p>
+            </div>
+          </aside>
+        </div>
+
         <div class="stage-footer">
-          <button id="stage1-next" class="stage-next" type="button" disabled>다음: 속성 2개로 예측하기 <span aria-hidden="true">→</span></button>
+          <button id="stage1-next" class="stage-next" type="button" disabled>다음: 카테고리 분류하기 <span aria-hidden="true">→</span></button>
         </div>
       </div>
 
-      <!-- 활동 2: 속성 2개 -->
+      <!-- 활동 2였던 "속성 2개" 회귀 활동은 숨김 처리(비활성 탭·내비게이션에서 제외, 코드는 보존) -->
       <div id="stage2-view" class="predict-stage" hidden>
         <div class="sample-head">
-          <div><span class="sample-id">활동 2 · 속성 2개</span><h2 id="stage2-title" tabindex="-1">기온·강수량으로 놀이공원 방문객 수 예측하기</h2></div>
-          <p>이번에는 기온과 강수량, 두 가지 정보를 함께 보고 방문객 수를 예측합니다.</p>
-        </div>
-        <div class="table-wrap">
-          <table id="park-table"><caption class="sr-only">기온·강수량과 놀이공원 방문객 수</caption></table>
-        </div>
-        <p class="new-condition">새로운 조건 — 기온 <strong>28℃</strong>, 강수량 <strong>5mm</strong></p>
-        <form class="predict-form" id="stage2-form">
-          <label for="stage2-guess"><strong>오늘 놀이공원에는 몇 명 정도 방문할까요?</strong></label>
-          <div class="predict-input-row">
-            <input id="stage2-guess" type="number" inputmode="numeric" min="0" required>
-            <span aria-hidden="true">명</span>
-            <button type="submit">내 예측 제출하고 AI 예측 보기</button>
+          <div class="sample-badge-wrap">
+            <span class="sample-id">활동 2 · 속성 2개</span>
           </div>
-          <p id="stage2-feedback" class="predict-feedback" aria-live="polite"></p>
-        </form>
-        <aside class="reveal-box" id="stage2-reveal" hidden>
-          <span>AI의 예측</span>
-          <p><strong id="stage2-ai-visitors">0명</strong> — 기온과 강수량, 두 정보를 함께 사용해 계산한 값입니다.</p>
-        </aside>
-        <div class="explore-box" id="stage2-explore" hidden>
-          <p class="explore-label">직접 조건을 바꿔가며 AI 예측이 어떻게 달라지는지 관찰해 보세요.</p>
-          <label>기온<input type="range" id="stage2-temp" min="15" max="35" step="1" value="28"><output id="stage2-temp-value" for="stage2-temp">28℃</output></label>
-          <label>강수량<input type="range" id="stage2-rain" min="0" max="30" step="1" value="5"><output id="stage2-rain-value" for="stage2-rain">5mm</output></label>
-          <p class="live-prediction" id="stage2-live" aria-live="polite">AI 예측: 0명</p>
+          <h2 id="stage2-title" tabindex="-1">기온·날씨로 놀이공원 방문객 수 예측하기</h2>
+          <p class="sample-desc">이번에는 기온과 날씨, 두 가지 정보를 함께 보고 방문객 수를 예측합니다.</p>
         </div>
-        <div class="discussion">
-          <span>함께 생각해 보기</span>
-          <p>기온을 높이면 방문객 수는 어떻게 변하나요?</p>
-          <p>비가 많이 오면 방문객 수는 어떻게 변하나요?</p>
-          <p>하나의 정보만 사용할 때와 두 가지 정보를 사용할 때 어떤 차이가 있나요?</p>
+
+        <div class="stage-flow">
+          <!-- 공통 예측 대상 카드 -->
+          <section class="target-card" aria-label="예측 대상 정보">
+            <div class="target-card-header">
+              <span class="target-badge">예측 대상</span>
+              <h3 class="target-title">이번에 예측할 놀이공원 조건</h3>
+            </div>
+            <div class="target-grid target-grid--2">
+              <div class="target-prop">
+                <span class="prop-name">기온</span>
+                <strong class="prop-val">26<span class="prop-unit">℃</span></strong>
+              </div>
+              <div class="target-prop">
+                <span class="prop-name">날씨</span>
+                <strong class="prop-val">비</strong>
+              </div>
+            </div>
+          </section>
+
+          <!-- 상단 2열: STEP 1 데이터 살펴보기 & STEP 2 내가 예측하기 -->
+          <div class="steps-row">
+            <section class="step-card step-card--step1" aria-labelledby="stage2-step1-heading">
+              <div class="step-card-header">
+                <span class="step-badge">STEP 1</span>
+                <h3 id="stage2-step1-heading" class="step-card-title">데이터 살펴보기</h3>
+              </div>
+              <p class="step-card-caption">기온과 날씨에 따른 놀이공원 방문객 수입니다.</p>
+              <div class="table-wrap">
+                <table id="park-table"><caption class="sr-only">기온·날씨와 놀이공원 방문객 수</caption></table>
+              </div>
+            </section>
+
+            <section class="step-card step-card--step2" aria-labelledby="stage2-step2-heading">
+              <div class="step-card-header">
+                <span class="step-badge">STEP 2</span>
+                <h3 id="stage2-step2-heading" class="step-card-title">내가 예측하기</h3>
+              </div>
+              <p class="step-card-caption">기온과 날씨 규칙을 보고 오늘 방문객 수를 추측해 보세요.</p>
+              <form class="predict-form" id="stage2-form">
+                <label for="stage2-guess" class="predict-label"><strong>오늘 놀이공원에는 몇 명 정도 방문할까요?</strong></label>
+                <div class="predict-input-row">
+                  <div class="quantity-input"><input id="stage2-guess" type="number" inputmode="numeric" min="0" required><span aria-hidden="true">명</span></div>
+                  <button type="submit" class="submit-btn">AI와 비교하기</button>
+                </div>
+                <p id="stage2-feedback" class="predict-feedback" aria-live="polite"></p>
+                <button type="button" id="stage2-hint-chart-btn" class="ghost-btn-hint" aria-expanded="false">
+                  <span aria-hidden="true">📈</span> 도출 과정 그래프 먼저 보기
+                </button>
+              </form>
+            </section>
+          </div>
+
+          <!-- 하단: STEP 3 AI와 비교하기 (활동 1처럼 전체 너비로 시원하게 전개!) -->
+          <aside class="reveal-box" id="stage2-reveal" hidden aria-labelledby="stage2-step3-heading">
+            <div class="step3-header-row">
+              <div class="step3-title-wrap">
+                <div class="step-card-header">
+                  <span class="step-badge step-badge--active">STEP 3</span>
+                  <h3 id="stage2-step3-heading" class="step-card-title">AI와 비교하기</h3>
+                </div>
+                <span class="target-summary-chip">예측 조건 · 기온 26℃ · 비</span>
+              </div>
+              <div class="score-compare">
+                <div class="score-block score-block--mine">
+                  <span class="score-label">내 예측</span>
+                  <strong id="stage2-my-score">0<span class="unit">명</span></strong>
+                </div>
+                <div class="score-block score-block--ai">
+                  <span class="score-label">AI의 예측</span>
+                  <strong id="stage2-ai-visitors">0<span class="unit">명</span></strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI의 정답 도출 과정 3단계 분해 블록 -->
+            <div class="formula-breakdown" aria-label="AI 예측값 도출 과정">
+              <div class="breakdown-step">
+                <span class="breakdown-step-badge">1단계 · 기온 기본 예측</span>
+                <span class="breakdown-desc">26℃ 맑은 날 기준</span>
+                <strong class="breakdown-val breakdown-val--base" id="stage2-breakdown-base">2,600<span class="unit">명</span></strong>
+              </div>
+              <span class="breakdown-operator" aria-hidden="true">−</span>
+              <div class="breakdown-step breakdown-step--sub">
+                <span class="breakdown-step-badge">2단계 · 날씨 영향</span>
+                <span class="breakdown-desc" id="stage2-breakdown-diff-desc">비 오는 날 차감</span>
+                <strong class="breakdown-val breakdown-val--diff" id="stage2-breakdown-diff">500<span class="unit">명</span></strong>
+              </div>
+              <span class="breakdown-operator" aria-hidden="true">=</span>
+              <div class="breakdown-step breakdown-step--result">
+                <span class="breakdown-step-badge">3단계 · 최종 AI 예측</span>
+                <span class="breakdown-desc">기온 + 날씨 종합</span>
+                <strong class="breakdown-val breakdown-val--final" id="stage2-breakdown-final">2,100<span class="unit">명</span></strong>
+              </div>
+            </div>
+
+            <!-- 시원하고 넓은 관계 그래프 영역 -->
+            <div class="chart-wrap" id="stage2-chart-wrap">
+              <div class="chart-header">
+                <h4 class="chart-title">기온·날씨에 따른 방문객 수 추세 그래프</h4>
+                <div class="chart-legend">
+                  <span class="legend-chip legend-chip--sunny">맑은 날 (기온×100)</span>
+                  <span class="legend-chip legend-chip--rainy">비 오는 날 (-500명 평행선)</span>
+                  <span class="legend-chip legend-chip--mine">내 예측</span>
+                  <span class="legend-chip legend-chip--ai">AI의 예측</span>
+                </div>
+              </div>
+              <svg id="stage2-chart" class="predict-chart predict-chart--wide" viewBox="0 0 540 220" role="img" aria-label="기온과 날씨에 따른 방문객 수 추세선과 예측값을 보여주는 넓은 그래프"></svg>
+            </div>
+
+            <div class="reveal-explanation">
+              <p class="reveal-desc">AI는 맑은 날의 데이터로 <strong>기온 1℃당 100명 증가</strong>하는 기본 추세선(26℃ 기준 2,600명)을 찾고, 비가 올 때 <strong>500명이 감소</strong>하는 규칙을 적용하여 <strong>2,100명</strong>을 최종 도출했습니다.</p>
+            </div>
+
+            <!-- 실시간 조건 탐색 박스 -->
+            <div class="explore-box" id="stage2-explore" hidden>
+              <p class="explore-label">직접 조건을 바꿔가며 AI 예측이 어떻게 달라지는지 관찰해 보세요.</p>
+              <div class="explore-controls">
+                <label>기온<input type="range" id="stage2-temp" min="15" max="35" step="1" value="26"><output id="stage2-temp-value" for="stage2-temp">26℃</output></label>
+                <div class="explore-toggles">
+                  <label class="toggle-field"><input type="checkbox" id="stage2-rain" checked>비 옴 (-500명)</label>
+                </div>
+              </div>
+              <p class="live-prediction" id="stage2-live" aria-live="polite">AI 예측: 0명</p>
+            </div>
+          </aside>
         </div>
         <div class="stage-footer">
           <button id="stage2-next" class="stage-next" type="button" disabled>다음: 여러 속성으로 예측하기 <span aria-hidden="true">→</span></button>
         </div>
       </div>
 
-      <!-- 활동 3: 속성 5개(2개는 무관) -->
+      <!-- 활동 3: 속성 4개(2개는 무관), 숫자가 아니라 카테고리를 맞히는 분류(classification) -->
       <div id="stage3-view" class="predict-stage" hidden>
         <div class="sample-head">
-          <div><span class="sample-id">활동 3 · 속성 5개(일부는 무관)</span><h2 id="stage3-title" tabindex="-1">여러 정보로 아이스크림 판매량 예측하기</h2></div>
-          <p>이번에는 다섯 가지 정보를 함께 보여드립니다. 그중 일부는 판매량 예측에 전혀 도움이 되지 않는 정보일 수 있습니다.</p>
-        </div>
-        <div class="table-wrap">
-          <table id="ice-cream-table"><caption class="sr-only">아이스크림 가게의 하루 판매 기록</caption></table>
-        </div>
-        <form class="checklist-form" id="stage3-checklist" aria-labelledby="stage3-checklist-legend">
-          <p id="stage3-checklist-legend"><strong>판매량을 예측할 때 중요하다고 생각하는 정보를 선택해보세요.</strong> <span class="checklist-hint">(채점되지 않는 자기 점검입니다)</span></p>
-          <div class="checklist-options">
-            <label><input type="checkbox" name="stage3-check" value="temp">기온</label>
-            <label><input type="checkbox" name="stage3-check" value="rain">비</label>
-            <label><input type="checkbox" name="stage3-check" value="weekend">주말 여부</label>
-            <label><input type="checkbox" name="stage3-check" value="pots">화분 개수</label>
-            <label><input type="checkbox" name="stage3-check" value="nameLength">직원 이름 글자 수</label>
+          <div class="sample-badge-wrap">
+            <span class="sample-id">활동 2 · 속성 4개(일부는 무관) · 분류</span>
           </div>
-        </form>
-        <p class="new-condition">새로운 조건 — 기온 <strong>28℃</strong> · 비 <strong>없음</strong> · 주말 <strong>맞음</strong> · 화분 개수 <strong>1개</strong> · 직원 이름 글자 수 <strong>5글자</strong></p>
-        <form class="predict-form" id="stage3-form">
-          <label for="stage3-guess"><strong>오늘 아이스크림은 몇 개 정도 팔릴까요?</strong></label>
-          <div class="predict-input-row">
-            <input id="stage3-guess" type="number" inputmode="numeric" min="0" required>
-            <span aria-hidden="true">개</span>
-            <button type="submit">내 예측 제출하고 결과 보기</button>
-          </div>
-          <p id="stage3-feedback" class="predict-feedback" aria-live="polite"></p>
-        </form>
-        <aside class="reveal-box" id="stage3-reveal" hidden>
-          <span>AI의 예측 vs 실제 결과</span>
-          <div class="score-compare cols-3">
-            <div class="score-block"><span>내 예측</span><strong id="stage3-my-guess">0<span class="unit">개</span></strong></div>
-            <div class="score-block"><span>AI의 예측</span><strong id="stage3-ai-sales">0<span class="unit">개</span></strong></div>
-            <div class="score-block"><span>실제 판매량</span><strong id="stage3-actual-sales">0<span class="unit">개</span></strong></div>
-          </div>
-          <p>AI의 예측 오차: <strong id="stage3-error">0개</strong> — AI의 예측은 정답이 아니라 데이터의 패턴을 이용한 추정값입니다.</p>
-        </aside>
-        <div class="explore-box" id="stage3-explore" hidden>
-          <p class="explore-label">입력값을 직접 바꿔가며 어떤 정보가 예측에 영향을 주는지 관찰해 보세요.</p>
-          <label>기온<input type="range" id="stage3-temp" min="15" max="35" step="1" value="28"><output id="stage3-temp-value" for="stage3-temp">28℃</output></label>
-          <label class="toggle-field"><input type="checkbox" id="stage3-rain">비 옴</label>
-          <label class="toggle-field"><input type="checkbox" id="stage3-weekend" checked>주말</label>
-          <label>화분 개수<input type="range" id="stage3-pots" min="1" max="10" step="1" value="1"><output id="stage3-pots-value" for="stage3-pots">1개</output></label>
-          <label>직원 이름 글자 수<input type="range" id="stage3-name-length" min="1" max="6" step="1" value="5"><output id="stage3-name-length-value" for="stage3-name-length">5글자</output></label>
-          <p class="live-prediction" id="stage3-live" aria-live="polite">AI 예측: 0개</p>
+          <h2 id="stage3-title" tabindex="-1">여러 정보로 매장이 붐빌지 예측하기</h2>
+          <p class="sample-desc">이번에는 숫자가 아니라 "붐빔" 또는 "한산" 같은 카테고리를 예측합니다. 기온과 유동인구는 산점도 위에 바로 점으로 보이고, 그중 일부 정보는 예측에 전혀 도움이 되지 않을 수 있습니다.</p>
         </div>
-        <div class="discussion">
-          <span>함께 생각해 보기</span>
-          <p>판매량을 예측할 때 가장 중요해 보이는 정보는 무엇인가요?</p>
-          <p>예측에 거의 필요 없어 보이는 정보는 무엇인가요?</p>
-          <p>정보가 많으면 항상 더 정확하게 예측할 수 있을까요?</p>
-          <p>AI의 예측값과 실제값이 조금 다른 이유는 무엇일까요?</p>
+
+        <div class="stage-flow">
+          <!-- 공통 예측 대상 카드 -->
+          <section class="target-card" aria-label="예측 대상 정보">
+            <div class="target-card-header">
+              <span class="target-badge">예측 대상</span>
+              <h3 class="target-title">이번에 예측할 아이스크림 가게 조건</h3>
+            </div>
+            <div class="target-grid target-grid--4">
+              <div class="target-prop">
+                <span class="prop-name">기온</span>
+                <strong class="prop-val">28<span class="prop-unit">℃</span></strong>
+              </div>
+              <div class="target-prop">
+                <span class="prop-name">유동인구</span>
+                <strong class="prop-val">150<span class="prop-unit">명</span></strong>
+              </div>
+              <div class="target-prop">
+                <span class="prop-name">사장님 기분</span>
+                <strong class="prop-val">좋음</strong>
+              </div>
+              <div class="target-prop">
+                <span class="prop-name">지나가는 고양이 수</span>
+                <strong class="prop-val">3<span class="prop-unit">마리</span></strong>
+              </div>
+            </div>
+          </section>
+
+          <div class="stage-grid">
+            <div class="stage-col stage-col--data">
+              <div class="table-wrap">
+                <table id="ice-cream-table"><caption class="sr-only">아이스크림 가게의 하루 기록</caption></table>
+              </div>
+            </div>
+            <div class="stage-col stage-col--interactive">
+              <form class="predict-form" id="stage3-form">
+                <fieldset class="choice-fieldset">
+                  <legend class="predict-label"><strong>오늘 아이스크림 가게는 붐빌까요, 한산할까요?</strong></legend>
+                  <div class="choice-row">
+                    <label class="choice-option"><input type="radio" name="stage3-guess" value="붐빔" required> 붐빔</label>
+                    <label class="choice-option"><input type="radio" name="stage3-guess" value="한산" required> 한산</label>
+                  </div>
+                </fieldset>
+                <div class="predict-input-row">
+                  <button type="submit" class="submit-btn">내 예측 제출하고 결과 보기</button>
+                </div>
+                <p id="stage3-feedback" class="predict-feedback" aria-live="polite"></p>
+              </form>
+            </div>
+          </div>
+
+          <!-- 자기점검: 전체 너비로 한 줄에 나란히 배치 -->
+          <form class="checklist-form" id="stage3-checklist" aria-labelledby="stage3-checklist-legend">
+            <p id="stage3-checklist-legend"><strong>매장이 붐빌지 예측할 때 중요하다고 생각하는 정보를 선택해보세요.</strong> <span class="checklist-hint">(채점되지 않는 자기 점검입니다)</span></p>
+            <div class="checklist-options">
+              <label><input type="checkbox" name="stage3-check" value="temp">기온</label>
+              <label><input type="checkbox" name="stage3-check" value="traffic">유동인구</label>
+              <label><input type="checkbox" name="stage3-check" value="mood">사장님 기분</label>
+              <label><input type="checkbox" name="stage3-check" value="cats">지나가는 고양이 수</label>
+            </div>
+          </form>
+
+          <!-- 하단: STEP 3 AI와 비교하기 (활동 1·2처럼 전체 너비로 그래프를 시원하게 전개) -->
+          <aside class="reveal-box" id="stage3-reveal" hidden>
+            <span class="method-tag">분류</span>
+            <div class="step3-header-row">
+              <div class="step3-title-wrap">
+                <span class="reveal-badge">AI의 예측 vs 실제 결과</span>
+                <span class="target-summary-chip">예측 조건 확인 · 기온 28℃ · 유동인구 150명</span>
+              </div>
+              <div class="score-compare cols-3">
+                <div class="score-block score-block--mine"><span class="score-label">내 예측</span><strong id="stage3-my-guess">-</strong></div>
+                <div class="score-block score-block--ai"><span class="score-label">AI의 예측</span><strong id="stage3-ai-label">-</strong></div>
+                <div class="score-block score-block--actual"><span class="score-label">실제 결과</span><strong id="stage3-actual-label">-</strong></div>
+              </div>
+            </div>
+
+            <div class="chart-wrap" id="stage3-chart-wrap">
+              <div class="chart-header">
+                <h4 class="chart-title">기온·유동인구 산점도로 보는 분류 과정</h4>
+                <div class="chart-legend">
+                  <span class="legend-chip legend-chip--calm">한산(과거)</span>
+                  <span class="legend-chip legend-chip--busy">붐빔(과거)</span>
+                  <span class="legend-chip legend-chip--mine">내 예측</span>
+                  <span class="legend-chip legend-chip--ai">AI의 예측</span>
+                </div>
+              </div>
+              <svg id="stage3-chart" class="predict-chart" viewBox="0 0 280 200" role="img" aria-label="기온과 유동인구에 따른 과거 사례 산점도, 가장 가까운 이웃, 내 예측과 AI의 예측을 보여주는 그래프"></svg>
+            </div>
+
+            <div class="error-callout" id="stage3-match-callout">
+              <div class="error-badge-group">
+                <span class="error-badge" id="stage3-match-badge">-</span>
+                <p id="stage3-match-text">AI의 예측과 실제 결과를 비교해 보세요.</p>
+              </div>
+              <span class="error-note">AI의 예측은 정답이 아니라 가장 가까운 과거 사례들을 참고한 추정입니다.</span>
+            </div>
+
+            <div class="explore-box" id="stage3-explore" hidden>
+              <p class="explore-label">입력값을 직접 바꿔가며 어떤 정보가 예측에 영향을 주는지 관찰해 보세요.</p>
+              <div class="explore-controls">
+                <label>기온<input type="range" id="stage3-temp" min="15" max="35" step="1" value="28"><output id="stage3-temp-value" for="stage3-temp">28℃</output></label>
+                <label>유동인구<input type="range" id="stage3-traffic" min="50" max="260" step="10" value="150"><output id="stage3-traffic-value" for="stage3-traffic">150명</output></label>
+                <div class="explore-toggles">
+                  <label class="toggle-field"><input type="checkbox" id="stage3-mood" checked>사장님 기분 좋음</label>
+                </div>
+                <label>지나가는 고양이 수<input type="range" id="stage3-cats" min="0" max="8" step="1" value="3"><output id="stage3-cats-value" for="stage3-cats">3마리</output></label>
+              </div>
+              <p class="live-prediction" id="stage3-live" aria-live="polite">AI 예측: -</p>
+            </div>
+            <div class="concept-note">
+              <div class="concept-header">
+                <span class="concept-badge">
+                  <svg class="concept-icon" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.5a4.5 4.5 0 0 0-2.8 8c.6.5.9 1.1.9 1.7h3.8c0-.6.3-1.2.9-1.7a4.5 4.5 0 0 0-2.8-8z"/><path d="M6.5 14h3M7 15.5h2"/></svg>
+                  핵심 개념
+                </span>
+                <h4 class="concept-title">분류(Classification)란?</h4>
+              </div>
+              <p>데이터를 미리 정해진 몇 개의 카테고리 중 하나로 구분하는 방법입니다. 값을 그대로 예측하는 회귀와 달리, "어느 범주에 속하는가"를 판단합니다.</p>
+            </div>
+          </aside>
         </div>
         <div class="stage-footer">
-          <button id="stage3-next" class="stage-next" type="button" disabled>결과 정리 보기 <span aria-hidden="true">→</span></button>
+          <button id="stage3-next" class="stage-next" type="button" disabled>다음: 비슷한 것끼리 묶어보기 <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+
+      <!-- 활동 4: 라벨 없는 데이터를 스스로 묶는 군집(비지도학습) -->
+      <div id="stage4-view" class="predict-stage" hidden>
+        <div class="sample-head">
+          <div class="sample-badge-wrap">
+            <span class="sample-id">활동 3 · 군집(비슷한 것끼리 묶기)</span>
+          </div>
+          <h2 id="stage4-title" tabindex="-1">비슷한 특징을 가진 도시끼리 묶어보세요</h2>
+          <p class="sample-desc">서로 다른 12개 도시의 연평균 기온과 강수량만 보여드립니다. 어느 도시인지, 정답(라벨)은 전혀 없습니다. 기온과 강수량을 살펴보고 서로 비슷하다고 생각되는 도시를 같은 그룹으로 묶어보세요. 정해진 정답은 없습니다.</p>
+        </div>
+
+        <div class="step-badge-row">
+          <span class="step-badge" id="stage4-step1-badge">STEP 1 · 직접 군집하기</span>
+          <span class="step-badge" id="stage4-step2-badge">STEP 2 · AI와 비교하기</span>
+        </div>
+
+        <!-- STEP 1: 비슷하다고 생각되는 점을 먼저 선택한 뒤 [선택한 도시 묶기]로 그때그때
+             묶음을 만든다 — 처음부터 그룹 번호를 주지 않는다. 표 행·산점도 점 클릭이 같은
+             선택 토글을 공유한다(마우스 편의). 표의 "선택" 버튼은 키보드로 완전히 조작 가능한
+             공식 컨트롤이다. -->
+        <div class="stage-flow" id="stage4-assign-view">
+          <div class="stage-grid">
+            <div class="stage-col stage-col--data">
+              <div class="table-wrap">
+                <table id="city-cluster-table"><caption class="sr-only">12개 도시의 연평균 기온·강수량, 선택·묶음 상태</caption></table>
+              </div>
+            </div>
+            <div class="stage-col stage-col--interactive">
+              <div class="chart-wrap" id="stage4-preview-wrap">
+                <div class="chart-header">
+                  <h4 class="chart-title">기온·강수량 산점도(점을 클릭해 선택하세요)</h4>
+                </div>
+                <svg id="stage4-preview-chart" class="predict-chart" viewBox="0 0 280 220" role="img" aria-label="12개 도시의 연평균 기온과 강수량 산점도. 점을 클릭해 선택하고 묶을 수 있습니다."></svg>
+              </div>
+              <div class="predict-input-row">
+                <button id="stage4-bundle-selected" class="submit-btn" type="button" disabled>선택한 도시 묶기</button>
+              </div>
+              <p class="predict-feedback" id="stage4-progress" aria-live="polite">12개 중 0개 데이터가 묶였습니다.</p>
+            </div>
+          </div>
+
+          <div class="bundle-list" id="stage4-bundle-list" aria-live="polite">
+            <p class="bundle-list-empty">아직 만든 묶음이 없어요. 비슷한 도시를 선택하고 "선택한 도시 묶기"를 눌러보세요.</p>
+          </div>
+
+          <div class="stage-footer">
+            <button id="stage4-compare-btn" class="stage-next" type="button">AI와 비교하기 <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+
+        <!-- STEP 2: 내가 만든 묶음과 AI가 만든 군집을 나란히 비교한다(묶음 번호가 아니라
+             어떤 데이터가 함께 묶였는지로 비교) -->
+        <div class="stage-flow" id="stage4-result-view" hidden>
+          <span class="method-tag">군집</span>
+          <div class="compare-grid">
+            <div class="chart-wrap">
+              <div class="chart-header">
+                <h4 class="chart-title">내가 만든 묶음</h4>
+              </div>
+              <svg id="stage4-my-chart" class="predict-chart" viewBox="0 0 280 220" role="img" aria-label="내가 직접 묶은 도시별 기온·강수량 산점도"></svg>
+            </div>
+            <div class="chart-wrap">
+              <div class="chart-header">
+                <h4 class="chart-title">AI가 만든 군집</h4>
+              </div>
+              <svg id="stage4-ai-chart" class="predict-chart" viewBox="0 0 280 220" role="img" aria-label="AI가 k-평균 알고리즘으로 묶은 도시별 기온·강수량 산점도"></svg>
+            </div>
+          </div>
+          <p class="explore-label" id="stage4-compare-stats">AI는 기온과 강수량이 비슷한 데이터를 찾아 4개의 그룹으로 묶었습니다. 묶음 번호가 서로 같은 것을 뜻하지는 않습니다 — 어떤 도시끼리 함께 묶였는지를 비교해 보세요.</p>
+          <div class="diff-callout" id="stage4-diff-callout">
+            <p><strong>나와 AI의 결과가 다르게 나온 데이터</strong> <span id="stage4-diff-list">-</span></p>
+          </div>
+          <div class="concept-note">
+            <div class="concept-header">
+              <span class="concept-badge">
+                <svg class="concept-icon" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.5a4.5 4.5 0 0 0-2.8 8c.6.5.9 1.1.9 1.7h3.8c0-.6.3-1.2.9-1.7a4.5 4.5 0 0 0-2.8-8z"/><path d="M6.5 14h3M7 15.5h2"/></svg>
+                핵심 개념
+              </span>
+              <h4 class="concept-title">군집(Clustering)이란?</h4>
+            </div>
+            <p>정답이 미리 주어지지 않은 데이터에서 비슷한 특징을 가진 데이터끼리 그룹으로 묶는 방법입니다.</p>
+            <p>사람과 AI가 데이터를 묶은 결과는 서로 다를 수도 있습니다. 군집은 기준에 따라 다르게 나올 수 있어 — 내가 틀린 게 아닙니다.</p>
+          </div>
+          <div class="stage-footer">
+            <button id="stage4-next" class="stage-next" type="button">결과 정리 보기 <span aria-hidden="true">→</span></button>
+          </div>
         </div>
       </div>
 
@@ -188,6 +545,7 @@
           <p>인공지능은 기존 데이터에서 패턴을 찾아 새로운 값을 예측합니다.</p>
           <p>여러 정보를 함께 사용할 수 있지만, 모든 정보가 예측에 도움이 되는 것은 아닙니다.</p>
           <p>인공지능의 예측은 실제 결과와 완전히 일치하지 않을 수 있으며, 어느 정도의 오차가 존재할 수 있습니다.</p>
+          <p>정답 라벨이 없는 데이터에서는 AI가 스스로 비슷한 것끼리 묶을 뿐, 그룹의 의미는 사람이 해석해야 합니다.</p>
         </div>
         <button id="restart-button" type="button">처음부터 다시 하기</button>
       </div>

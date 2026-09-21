@@ -16,7 +16,7 @@
       "subject": "인공지능 기초",
       "unit": "기계학습과 데이터",
       "order": 2,
-      "title": "AI는 어떻게 값을 예측할까?",
+      "title": "AI는 어떤 문제를 풀 수 있을까?",
       "path": "lessons/ai-prediction-lab/",
       "duration": 28,
       "difficulty": "보통",
