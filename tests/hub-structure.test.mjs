@@ -11,6 +11,8 @@ test("루트 허브는 메인 제목과 활동지 카드를 보여주고 그룹 
   assert.match(html, /<title>인공지능 기초 활동지 모음<\/title>/);
   assert.match(html, /<h1>인공지능 기초 활동지 모음<\/h1>/);
   assert.match(html, /class="group-card" href="units\/ai-learning\/"/);
+  assert.match(html, /class="group-card" href="units\/ml-data-practice-1\/"/);
+  assert.match(html, /class="group-card" href="units\/ml-data-practice-2\/"/);
   assert.match(html, /class="group-card" href="units\/machine-learning-algorithms\/"/);
   assert.match(html, />기계학습과 데이터</);
   assert.doesNotMatch(html, /href="lessons\//, "루트 허브는 개별 lesson으로 바로 연결하지 않아야 함");
@@ -22,14 +24,18 @@ test("루트 허브는 활동지 01~03과 04 이후를 서로 다른 단원으�
   const activity01 = html.indexOf('data-group-card="ai-evaluation"');
   const activity03 = html.indexOf('data-group-card="ai-search"');
   const learningHeading = html.indexOf('id="learning-unit-title">인공지능과 학습');
-  const activity04 = html.indexOf('data-group-card="ai-learning"');
-  const activity05 = html.indexOf('data-group-card="machine-learning-algorithms"');
+  const activity05 = html.indexOf('data-group-card="ai-learning"');
+  const activity06 = html.indexOf('data-group-card="ml-data-practice-1"');
+  const activity07 = html.indexOf('data-group-card="ml-data-practice-2"');
+  const activity08 = html.indexOf('data-group-card="machine-learning-algorithms"');
 
   assert.ok(understandingHeading < activity01);
   assert.ok(activity01 < activity03);
   assert.ok(activity03 < learningHeading);
-  assert.ok(learningHeading < activity04);
-  assert.ok(activity04 < activity05);
+  assert.ok(learningHeading < activity05);
+  assert.ok(activity05 < activity06);
+  assert.ok(activity06 < activity07);
+  assert.ok(activity07 < activity08);
 });
 
 test("루트 허브 제목은 작은 화면과 브라우저 글꼴 차이에도 한 줄로 유지된다", async () => {
@@ -62,6 +68,28 @@ test("활동지 04와 05의 활동은 각각 소속 목록 페이지로 돌아�
     const html = await readFile(new URL(`lessons/${id}/index.html`, repoRoot), "utf8");
     assert.match(html, /class="back-link" href="\.\.\/\.\.\/units\/machine-learning-algorithms\/"/);
   }
+});
+
+test("활동지 06·07 허브 카드는 번호를 표시하고 과일 활동은 활동지 08로 표시된다", async () => {
+  const html = await readFile(new URL("index.html", repoRoot), "utf8");
+  for (const [groupId, number] of [["ml-data-practice-1", "06"], ["ml-data-practice-2", "07"], ["machine-learning-algorithms", "08"]]) {
+    const card = html.match(new RegExp(`data-group-card="${groupId}"[\\s\\S]*?</a>`));
+    assert.ok(card, `${groupId} 카드를 찾을 수 없음`);
+    assert.match(card[0], new RegExp(`활동지 ${number}`), `${groupId} 카드의 번호가 ${number}이 아님`);
+  }
+});
+
+test("활동지 06과 07 목록 페이지는 각각 두 개의 활동 페이지를 연결하고 소속 그룹 가드를 선언한다", async () => {
+  const [practice1, practice2] = await Promise.all([
+    readFile(new URL("units/ml-data-practice-1/index.html", repoRoot), "utf8"),
+    readFile(new URL("units/ml-data-practice-2/index.html", repoRoot), "utf8"),
+  ]);
+  assert.match(practice1, /data-guard-group="ml-data-practice-1"/);
+  assert.match(practice1, /href="\.\.\/\.\.\/lessons\/digital-life-data\/" data-lesson-card="digital-life-data"/);
+  assert.match(practice1, /data-lesson-card="digital-life-filter"/);
+  assert.match(practice2, /data-lesson-card="penguins-graphs"/);
+  assert.match(practice2, /data-guard-group="ml-data-practice-2"/);
+  assert.match(practice2, /href="\.\.\/\.\.\/lessons\/penguins-data\/" data-lesson-card="penguins-data"/);
 });
 
 test("data/lessons.json은 활동지 04와 05의 활동 순서를 구분한다", async () => {
@@ -116,9 +144,11 @@ test("shared 모듈은 유효한 함수를 내보내고 과일 활동 세 개의
 
 test("README는 활동 구조와 로컬 실행법을 설명한다", async () => {
   const readme = await readFile(new URL("README.md", repoRoot), "utf8");
-  for (const id of [...LEARNING_LESSON_IDS, ...FRUIT_LESSON_IDS]) {
+  for (const id of [...LEARNING_LESSON_IDS, ...FRUIT_LESSON_IDS, "digital-life-data", "penguins-data"]) {
     assert.match(readme, new RegExp(`lessons/${id}/`));
   }
+  assert.match(readme, /활동지 08 · 기계학습 알고리즘/);
+  assert.match(readme, /배치 근거/);
   assert.match(readme, /npm test/);
   assert.match(readme, /python3 -m http\.server/);
 });

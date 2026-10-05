@@ -58,4 +58,5 @@ a:focus-visible,button:focus-visible { outline:3px solid #5d7be1; outline-offset
 .term-preview { display:flex; flex-wrap:wrap; gap:.5rem; margin:.6rem 0 0; padding:0; list-style:none; }
 .term-preview li { padding:.4rem .9rem; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:99px; font-size:.84rem; font-weight:650; }
 @media(max-width:600px){.lesson-card{grid-template-columns:auto 1fr}.group-card{grid-template-columns:1fr;gap:.85rem;padding:1.35rem 1.15rem}.group-number{align-self:start;width:fit-content;min-width:unset;padding:.3rem .65rem;font-size:.8rem}.arrow{display:none}.group-cta{display:none}.section-head strong{display:none}.curriculum-unit__heading h3,.curriculum-unit__title{font-size:1.4rem}}
+@media(max-width:420px){.lesson-card{padding:1.15rem 1rem;gap:1rem;border-radius:8px}.lesson-card h3{font-size:1.25rem}.concept-list{grid-template-columns:1fr}.group-page-header{padding:2.5rem 0 1.5rem}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}

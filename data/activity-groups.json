@@ -100,8 +100,85 @@
       ]
     },
     {
-      "id": "machine-learning-algorithms",
+      "id": "ml-data-practice-1",
       "order": 6,
+      "title": "기계학습과 데이터 실습(1)",
+      "description": "실제 회원 정보 표(20행 6열)를 읽고, 한 가지 조건과 두 가지 조건을 결합해 원하는 행을 골라내며 데이터의 구조를 익힙니다. 이어서 코랩에서 같은 CSV를 불러와 직접 조건 검색을 해 봅니다.",
+      "path": "units/ml-data-practice-1/",
+      "status": "published",
+      "active": true,
+      "children": [
+        {
+          "id": "digital-life-data",
+          "order": 1,
+          "title": "표의 구조 살펴보기",
+          "path": "lessons/digital-life-data/",
+          "duration": 12,
+          "difficulty": "입문",
+          "status": "published",
+          "active": true,
+          "objective": "데이터 표를 직접 관찰하고 구조와 특징을 설명한다."
+        },
+        {
+          "id": "digital-life-columns",
+          "order": 2,
+          "title": "속성으로 열 선택하기",
+          "path": "lessons/digital-life-columns/",
+          "duration": 7,
+          "difficulty": "입문",
+          "status": "published",
+          "active": true,
+          "objective": "속성 이름을 사용해 데이터프레임의 열을 선택한다."
+        },
+        {
+          "id": "digital-life-filter",
+          "order": 3,
+          "title": "조건식 만들기",
+          "path": "lessons/digital-life-filter/",
+          "duration": 13,
+          "difficulty": "입문",
+          "status": "published",
+          "active": true,
+          "objective": "비교 연산자와 논리 연산자로 조건식을 만든다."
+        }
+      ]
+    },
+    {
+      "id": "ml-data-practice-2",
+      "order": 7,
+      "title": "기계학습과 데이터 실습(2)",
+      "description": "실제 펭귄 자료(344행 7열)의 표와 그래프를 직접 관찰하며 종류·몸무게·신체 특징에서 규칙을 찾고, 분류 실습은 코랩 노트북으로 이어 갑니다.",
+      "path": "units/ml-data-practice-2/",
+      "status": "published",
+      "active": true,
+      "children": [
+        {
+          "id": "penguins-data",
+          "order": 1,
+          "title": "표만 보고 알아낼 수 있을까?",
+          "path": "lessons/penguins-data/",
+          "duration": 15,
+          "difficulty": "보통",
+          "status": "published",
+          "active": true,
+          "objective": "데이터 표를 직접 관찰하고 구조와 특징을 설명한다."
+        },
+        {
+          "id": "penguins-graphs",
+          "order": 2,
+          "title": "그래프에서 어떤 특징을 찾을 수 있을까?",
+          "path": "lessons/penguins-graphs/",
+          "duration": 15,
+          "difficulty": "보통",
+          "status": "published",
+          "active": true,
+          "objective": "그래프를 조작하고 관찰한 특징의 근거를 설명한다."
+        }
+      ]
+    },
+    {
+      "id": "machine-learning-algorithms",
+      "order": 8,
       "title": "기계학습 알고리즘",
       "description": "마트 과일 선별 AI를 학습시키고 시험하며 입력 정보, 관계없는 정보, 치우친 학습 자료가 판단에 미치는 영향을 차례로 체험합니다.",
       "path": "units/machine-learning-algorithms/",

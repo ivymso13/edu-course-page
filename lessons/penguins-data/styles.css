@@ -1,0 +1,1094 @@
+/* 펭귄 데이터 탐색 활동 전용 스타일 */
+
+/* 공통 레이아웃 보완 */
+.materials-section,
+.activity-card,
+.colab-section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 30px rgba(25, 35, 54, 0.05);
+  border-radius: 6px;
+  margin-bottom: 2.5rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+}
+
+.section-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1rem;
+}
+
+.section-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.25rem 0.6rem;
+  background: var(--soft);
+  color: var(--accent);
+  font: 700 0.72rem var(--font-sans);
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+}
+
+.section-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 1.85rem);
+  font-weight: 750;
+  color: var(--ink);
+}
+
+.section-desc {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* 수업 준비 자료 */
+.materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.material-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.25rem;
+  background: #f9fafc;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.material-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.material-card p {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.1rem;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-decoration: none;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.btn-download {
+  color: var(--ink);
+  background: #fff;
+  border-color: var(--line-strong);
+}
+
+.btn-download:hover {
+  background: #f1f4f9;
+  border-color: var(--ink);
+}
+
+.btn-colab {
+  color: #fff;
+  background: #ea580c;
+  border-color: #c2410c;
+}
+
+.btn-colab:hover {
+  background: #c2410c;
+}
+
+.dataset-summary-box {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: #eef2ff;
+  border-left: 4px solid var(--accent);
+  border-radius: 4px;
+}
+
+.dataset-summary-box h4 {
+  margin: 0 0 0.4rem;
+  font-size: 0.92rem;
+  color: var(--accent-dark);
+}
+
+.dataset-summary-box ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.85rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
+/* 표 컨트롤 & 반응형 테이블 */
+.table-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.table-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.search-input {
+  min-width: 220px;
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.88rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.select-control {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.88rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.table-info-bar {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  margin-bottom: 0.9rem;
+  box-shadow: inset -6px 0 8px -4px rgba(15, 23, 42, 0.06);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.data-table caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.data-table th {
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 700;
+  border-bottom: 2px solid var(--line-strong);
+}
+
+.data-table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+.data-table td.num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.badge-na {
+  display: inline-block;
+  padding: 0.15rem 0.4rem;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 3px;
+}
+
+/* 종별 배지 */
+.species-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.species-adelie {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.species-gentoo {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.species-chinstrap {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+/* 페이지네이션 */
+.pagination-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.pagination-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-page {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 0.5rem;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.btn-page:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: var(--ink);
+}
+
+.btn-page:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  padding: 0 0.5rem;
+}
+
+/* 활동 1 퀴즈 양식 */
+.quiz-container {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.quiz-container h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.quiz-container > p {
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.question-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.question-card {
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.question-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.options-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.85rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.option-label:hover {
+  background: #eef2ff;
+  border-color: var(--accent);
+}
+
+.option-label input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+.btn-primary {
+  margin-top: 1.25rem;
+  padding: 0.75rem 1.5rem;
+  color: #fff;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-primary:hover {
+  background: var(--accent-dark);
+}
+
+/* 활동 1 결과 공개 영역 */
+.activity1-results {
+  margin-top: 1.75rem;
+  padding: 1.5rem;
+  background: #fff;
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.75rem;
+}
+
+.results-header h4 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+.score-badge {
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  font-weight: 750;
+  font-size: 0.85rem;
+}
+
+.score-pass {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.score-partial {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.review-item {
+  margin-bottom: 1rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 4px;
+  background: #f8fafc;
+  border-left: 4px solid var(--line-strong);
+}
+
+.review-item.is-correct {
+  border-left-color: var(--ok);
+  background: #f0fdf4;
+}
+
+.review-item.is-wrong {
+  border-left-color: var(--no);
+  background: #fef2f2;
+}
+
+.review-item strong {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+}
+
+.review-item p {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.55;
+}
+
+.insight-callout {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: #eff6ff;
+  border-left: 4px solid var(--accent);
+  border-radius: 4px;
+}
+
+.insight-callout h5 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  color: var(--accent-dark);
+}
+
+.insight-callout p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #1e3a8a;
+  line-height: 1.6;
+}
+
+/* 활동 2: 그래프 섹션 */
+.graph-block {
+  margin-bottom: 2.5rem;
+  padding: 1.25rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.graph-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.graph-head h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.graph-head p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.graph-row-count {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.85rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 0.82rem;
+  color: #475569;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.graph-row-count strong {
+  color: var(--ink);
+}
+
+/* 상자그림 안내 박스 */
+.boxplot-guide {
+  margin-bottom: 1rem;
+  padding: 0.85rem 1.1rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.boxplot-guide-title {
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+
+.boxplot-guide ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #4b5563;
+}
+
+/* 산점도 컨트롤 */
+.scatter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.scatter-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.toggle-btn {
+  padding: 0.5rem 0.9rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.toggle-btn[aria-pressed="true"] {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent-dark);
+}
+
+.point-select-wrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.point-select-wrap label {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.point-select-wrap select {
+  flex: 1;
+  max-width: 360px;
+}
+
+/* SVG 그래픽 컨테이너 */
+.svg-chart-wrap {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.75rem;
+  overflow: hidden;
+}
+
+.chart-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 440px;
+  user-select: none;
+}
+
+.chart-svg text {
+  font-family: var(--font-sans);
+}
+
+/* 범례 */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.legend-marker {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* 산점도 점 인스펙터 카드 */
+.point-detail-card {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.point-detail-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.point-attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.6rem;
+}
+
+.point-attr-box {
+  background: #f8fafc;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+
+.point-attr-name {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.point-attr-val {
+  display: block;
+  font-size: 0.98rem;
+  font-weight: 750;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.15rem;
+}
+
+/* 관찰 및 질문 섹션 */
+.observation-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.observation-section h3 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.guided-qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.guided-qa-list summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.1rem;
+  background: #eef2ff;
+  color: var(--accent-dark);
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  font-weight: 750;
+  font-size: 0.95rem;
+  cursor: pointer;
+  list-style: none;
+  transition: background 0.15s;
+}
+
+.guided-qa-list summary::-webkit-details-marker {
+  display: none;
+}
+
+.guided-qa-list summary::after {
+  content: "▾";
+  font-size: 1.15rem;
+  transition: transform 0.2s;
+}
+
+.guided-qa-list[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.guided-qa-list summary:hover {
+  background: #e0e7ff;
+}
+
+.guided-qa-list summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.guided-qa-card {
+  padding: 1rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.guided-qa-card h4 {
+  margin: 0 0 0.4rem;
+  font-size: 0.92rem;
+  color: #1e293b;
+}
+
+.guided-qa-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.student-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.student-input-group label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.student-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.observation-feedback {
+  margin-top: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: #f0fdf4;
+  border-left: 4px solid var(--ok);
+  border-radius: 4px;
+  font-size: 0.88rem;
+  color: #166534;
+  line-height: 1.6;
+}
+
+/* 코랩 가이드 섹션 */
+.colab-section {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-top: 4px solid #ea580c;
+}
+
+.colab-notices {
+  margin: 1.25rem 0;
+  padding: 1rem 1.25rem;
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  border-radius: 6px;
+}
+
+.colab-notices h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #9a3412;
+}
+
+.colab-notices ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.88rem;
+  color: #7c2d12;
+  line-height: 1.7;
+}
+
+.colab-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.colab-step-card {
+  padding: 0.85rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.colab-step-num {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.colab-step-card h5 {
+  margin: 0 0 0.25rem;
+  font-size: 0.88rem;
+  color: var(--ink);
+}
+
+.colab-step-card p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.colab-links-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+/* 데이터 오류 배너 */
+.error-banner {
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  background: #fef2f2;
+  border: 1px solid var(--no);
+  border-radius: 4px;
+  color: #991b1b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* 모바일 390px 대응 */
+@media (max-width: 640px) {
+  .intro {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem 0 1rem;
+  }
+  
+  .table-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .table-filter-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .search-input {
+    min-width: 100%;
+    min-height: 44px;
+    font-size: 0.95rem;
+  }
+
+  .select-control {
+    min-height: 44px;
+    font-size: 0.95rem;
+  }
+
+  .table-info-bar {
+    text-align: center;
+    padding: 0.25rem 0;
+  }
+
+  .options-row {
+    flex-direction: column;
+  }
+
+  .option-label {
+    min-height: 44px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .pagination-wrap {
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .pagination-nav {
+    gap: 0.45rem;
+  }
+
+  .btn-page {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 0.88rem;
+  }
+
+  .scatter-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 0.85rem;
+  }
+
+  .scatter-controls label {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    width: 100%;
+    font-size: 0.86rem;
+  }
+
+  .scatter-controls select {
+    width: 100%;
+    min-height: 44px;
+    font-size: 0.95rem;
+  }
+
+  .toggle-btn {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.92rem;
+  }
+
+  .point-select-wrap {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    width: 100%;
+  }
+
+  .point-select-wrap label {
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .point-select-wrap select {
+    max-width: 100%;
+    min-height: 44px;
+    font-size: 0.92rem;
+  }
+
+  .student-input-group .btn-primary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .materials-section,
+  .activity-card,
+  .colab-section,
+  .quiz-container,
+  .graph-block,
+  .observation-section {
+    padding: 1.1rem 0.85rem;
+    border-radius: 6px;
+  }
+
+  .material-card {
+    padding: 1rem;
+  }
+
+  .material-card .btn-action {
+    width: 100%;
+  }
+
+  .point-attributes-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .chart-svg {
+    min-width: 480px;
+  }
+
+  .svg-chart-wrap {
+    box-shadow: inset -6px 0 8px -4px rgba(15, 23, 42, 0.08);
+  }
+
+  .student-textarea {
+    font-size: 1rem; /* 16px to prevent iOS auto-zoom */
+  }
+}
+
+/* ==========================================================================
+   프로젝터 모드 (교실 프로젝터 고대비 지원)
+   ========================================================================== */
+body.projector-mode .materials-section,
+body.projector-mode .activity-card,
+body.projector-mode .colab-section,
+body.projector-mode .table-wrap,
+body.projector-mode .svg-chart-wrap,
+body.projector-mode .point-detail-card,
+body.projector-mode .question-card,
+body.projector-mode .material-card,
+body.projector-mode .guided-qa-card,
+body.projector-mode .colab-step-card {
+  border-color: #333333;
+  box-shadow: none;
+}
+
+body.projector-mode .chart-svg text {
+  font-weight: 800;
+}
+

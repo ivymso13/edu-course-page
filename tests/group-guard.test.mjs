@@ -11,6 +11,8 @@ async function loadGroups() {
 
 const GROUP_PAGES = {
   "ai-learning": ["units/ai-learning/index.html", "lessons/ai-problem-method/index.html", "lessons/ai-prediction-lab/index.html"],
+  "ml-data-practice-1": ["units/ml-data-practice-1/index.html", "lessons/digital-life-data/index.html"],
+  "ml-data-practice-2": ["units/ml-data-practice-2/index.html", "lessons/penguins-data/index.html"],
   "machine-learning-algorithms": ["units/machine-learning-algorithms/index.html", "lessons/ai-inference-ripeness/index.html", "lessons/ai-signal-noise/index.html", "lessons/ai-biased-data/index.html"],
   "ai-vocabulary": ["units/ai-vocabulary/index.html", "lessons/ai-keyword-bingo/index.html"],
   "ai-evaluation": ["units/ai-evaluation/index.html", "lessons/turing-test-questions/index.html", "lessons/arc-puzzle-challenge/index.html", "lessons/turing-vs-arc-compare/index.html"],
@@ -33,22 +35,29 @@ test("새 그룹 ai-vocabulary는 초기 active=true다", async () => {
   assert.equal(group.children[0].id, "ai-keyword-bingo");
 });
 
-test("활동지 03·04·05는 공개하고 활동지 06은 비활성화한다", async () => {
+test("활동지 03~07은 공개하고, 활동지 08은 비공개다", async () => {
   const data = await loadGroups();
   const learning = data.groups.find((candidate) => candidate.id === "ai-learning");
   const search = data.groups.find((candidate) => candidate.id === "ai-search");
   const problemCases = data.groups.find((candidate) => candidate.id === "search-problem-cases");
+  const practice1 = data.groups.find((candidate) => candidate.id === "ml-data-practice-1");
+  const practice2 = data.groups.find((candidate) => candidate.id === "ml-data-practice-2");
   const algorithms = data.groups.find((candidate) => candidate.id === "machine-learning-algorithms");
   assert.equal(learning.active, true);
   assert.equal(search.active, true);
   assert.equal(problemCases.active, true);
-  assert.deepEqual(learning.children.map(({ active }) => active), [true, true]);
+  assert.equal(practice1.active, true);
+  assert.equal(practice2.active, true);
   assert.equal(algorithms.active, false);
-  assert.deepEqual(algorithms.children.map(({ active }) => active), [true, true, true]);
+  assert.ok(practice1.children.every(child => child.active));
+  assert.ok(practice2.children.every(child => child.active));
+  assert.deepEqual(learning.children.map(({ active }) => active), [true, true]);
   assert.deepEqual(search.children.map(({ active }) => active), [true, true, true, true]);
   assert.deepEqual(problemCases.children.map(({ active }) => active), [true, true]);
+  assert.deepEqual(algorithms.children.map(({ active }) => active), [true, true, true]);
+  const pending = new Set(["machine-learning-algorithms"]);
   for (const group of data.groups) {
-    if (group.id !== "machine-learning-algorithms") {
+    if (!pending.has(group.id)) {
       assert.equal(group.active, true, `${group.id}는 공개 상태여야 함`);
     }
   }
@@ -144,6 +153,8 @@ test("모든 활동 페이지(<body>)는 data-guard-lesson으로 자기 자신�
     "lessons/turing-test-questions/index.html": "turing-test-questions",
     "lessons/arc-puzzle-challenge/index.html": "arc-puzzle-challenge",
     "lessons/turing-vs-arc-compare/index.html": "turing-vs-arc-compare",
+    "lessons/digital-life-data/index.html": "digital-life-data",
+    "lessons/penguins-data/index.html": "penguins-data",
   };
   for (const [page, lessonId] of Object.entries(LESSON_PAGE_TO_ID)) {
     const html = await readFile(new URL(page, repoRoot), "utf8");

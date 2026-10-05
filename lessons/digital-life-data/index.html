@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <script>document.documentElement.setAttribute("data-guard", "pending");</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="20명의 디지털 생활 데이터 표를 읽고, 한 가지 조건과 두 가지 조건으로 원하는 행을 골라내며 데이터의 구조와 조건 검색을 익히는 기계학습과 데이터 실습">
+  <title>표의 구조 살펴보기 | 기계학습과 데이터 실습</title>
+  <link rel="stylesheet" href="../../assets/fonts.css">
+  <link rel="stylesheet" href="../shared/lab-base.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/guard.css">
+  <script type="module" src="../../assets/group-guard.js"></script>
+  <script type="module" src="game.js?v=relation-choice-3"></script>
+</head>
+<body data-guard-scope="page" data-guard-group="ml-data-practice-1" data-guard-lesson="digital-life-data">
+  <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+  <div id="guard-loading" class="guard-panel"><p>활동 정보를 확인하는 중입니다…</p></div>
+  <div id="guard-blocked" class="guard-panel">
+    <h1>아직 준비 중인 활동입니다</h1>
+    <p>이 활동은 현재 준비 중입니다. 곧 열릴 예정이니 잠시 후 다시 확인해 주세요.</p>
+    <a class="guard-home-link" href="../../">← 전체 활동지 홈으로 돌아가기</a>
+  </div>
+  <div id="guard-content">
+  <header class="topbar">
+    <a class="back-link" href="../../units/ml-data-practice-1/">← 활동 목록</a>
+    <div class="module-title"><span>활동지 06</span><strong>기계학습과 데이터 실습(1)</strong></div>
+    <span></span>
+  </header>
+
+  <main id="main-content">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">디지털 생활 데이터 살펴보기</p>
+        <h1 id="page-title">표의 구조 살펴보기</h1>
+      </div>
+      <div class="intro-copy">
+        <p>20명의 자료를 표로 읽고, 표에서 <strong>행</strong>과 <strong>열</strong>이 무엇인지 확인합니다. 표를 보고 행의 개수와 속성의 의미를 확인해 보세요.</p>
+        <dl><div><dt>자료</dt><dd>20행 6열</dd></div><div><dt>난이도</dt><dd>입문</dd></div><div><dt>예상 시간</dt><dd>12분</dd></div></dl>
+      </div>
+    </section>
+
+    <section class="dl-section" aria-labelledby="prep-title">
+      <div class="dl-section-head"><span class="sample-id">수업 준비 자료</span><h2 id="prep-title">자료의 열 설명</h2></div>
+      <div class="dl-table-wrap">
+        <table class="dl-table dl-table--compact">
+          <caption class="sr-only">자료의 열 이름과 뜻</caption>
+          <thead><tr><th scope="col">열 이름</th><th scope="col">뜻</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">ID</th><td>자료에 적힌 번호입니다. 표에서 몇 번째 줄인지를 나타내는 행 번호와는 다릅니다.</td></tr>
+            <tr><th scope="row">name</th><td>이름</td></tr>
+            <tr><th scope="row">gender</th><td>성별(M 또는 F)</td></tr>
+            <tr><th scope="row">phone</th><td>휴대폰 사용량 값(단위·척도는 자료에 적혀 있지 않습니다)</td></tr>
+            <tr><th scope="row">sns</th><td>SNS 사용량 값(단위·척도는 자료에 적혀 있지 않습니다)</td></tr>
+            <tr><th scope="row">stress</th><td>스트레스 값(단위·척도는 자료에 적혀 있지 않습니다)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="dl-note">단위와 측정 방식이 적혀 있지 않으므로 phone, sns, stress를 "시간"이나 "점수"처럼 단정하지 말고 <strong>값</strong>이라고 부르세요.</p>
+      <div class="dl-actions">
+        <a class="dl-button" href="../../data/ml-practice/digital_life.csv" download>CSV 파일 내려받기 (digital_life.csv)</a>
+        <a class="dl-button" href="https://colab.research.google.com/github/ivymso13/edu-course-page/blob/design-course-system/data/ml-practice/digital-life-student.ipynb" target="_blank" rel="noopener">코랩에서 실습 시작 ↗ (로그인 필요)</a>
+        <a class="dl-button dl-button--ghost" href="../../data/ml-practice/digital-life-student.ipynb" download>실습 노트북 내려받기 (.ipynb)</a>
+      </div>
+    <p class="dl-note">코랩 실습과 제출은 우리 반 클래스룸의 안내를 확인하세요.</p>
+    </section>
+
+    <section id="activity-1" class="dl-section" aria-labelledby="activity1-title">
+      <div class="dl-section-head"><span class="sample-id">웹 활동 1</span><h2 id="activity1-title">표의 구조 살펴보기</h2></div>
+      <p class="dl-lead">아래 표가 자료 전체입니다. 가로줄은 <strong>행</strong>, 세로줄은 <strong>열</strong>입니다. 표를 보며 질문에 답해 보세요.</p>
+      <p class="dl-load-error" id="load-error" role="alert" hidden>자료를 불러오지 못했습니다. 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요.</p>
+      <div class="dl-table-wrap">
+        <table class="dl-table" id="full-table">
+          <caption class="sr-only">디지털 생활 데이터 전체 표(20행 6열)</caption>
+          <thead id="full-head"></thead>
+          <tbody id="full-body"></tbody>
+        </table>
+      </div>
+
+      <ol class="dl-questions">
+        <li class="dl-question">
+          <fieldset>
+            <legend>1. 자료에는 사람이 몇 명 있나요? (행의 개수)</legend>
+            <div class="dl-answer-row"><label>답 <input type="number" id="q1-input" min="0" inputmode="numeric"></label>
+<button type="button" class="dl-button" data-check="q1">확인</button></div>
+            <p class="dl-feedback" id="q1-feedback" aria-live="polite"></p>
+          </fieldset>
+        </li>
+        <li class="dl-question">
+          <fieldset>
+            <legend>2. 속성(열)은 ID까지 포함해 몇 개인가요?</legend>
+            <div class="dl-answer-row"><label>답 <input type="number" id="q2-input" min="0" inputmode="numeric"></label>
+<button type="button" class="dl-button" data-check="q2">확인</button></div>
+            <p class="dl-feedback" id="q2-feedback" aria-live="polite"></p>
+          </fieldset>
+        </li>
+        <li class="dl-question">
+          <fieldset>
+            <legend>3. 사람의 이름이 적힌 속성은 무엇인가요?</legend>
+            <p class="dl-note">열 이름을 영어로 입력하세요.</p>
+            <div class="dl-answer-row"><label for="q3-input">답</label><input type="text" id="q3-input" autocomplete="off"><button type="button" class="dl-button" data-check="q3">확인</button></div>
+            <p class="dl-feedback" id="q3-feedback" aria-live="polite"></p>
+          </fieldset>
+        </li>
+        <li class="dl-question">
+          <fieldset>
+            <legend>4. SNS 값(sns)과 스트레스 값(stress) 사이에는 어떤 관계가 보이나요?</legend>
+            <p class="dl-note">표에서 여러 사람의 sns와 stress 값을 비교한 뒤, 가장 알맞은 설명을 하나 고르세요.</p>
+            <div class="dl-relation-options">
+              <label><input type="radio" name="q5" value="positive"> SNS 값이 높을수록 스트레스 값도 대체로 높다.</label>
+              <label><input type="radio" name="q5" value="negative"> SNS 값이 높을수록 스트레스 값은 대체로 낮다.</label>
+              <label><input type="radio" name="q5" value="none"> 두 값 사이에 뚜렷한 관계가 보이지 않는다.</label>
+              <label><input type="radio" name="q5" value="constant"> SNS 값에 관계없이 스트레스 값이 모두 같다.</label>
+            </div>
+            <button type="button" class="dl-button" data-check="q5">확인</button>
+            <p class="dl-feedback" id="q5-feedback" aria-live="polite"></p>
+          </fieldset>
+        </li>
+      </ol>
+    </section>
+
+    <nav class="lesson-pager" aria-label="활동 이동"><a href="../../units/ml-data-practice-1/"><em>← 활동 목록</em><strong>기계학습과 데이터 실습</strong></a><a class="next" href="../digital-life-columns/"><em>다음 활동 02</em><strong>속성으로 열 선택하기 →</strong></a></nav>
+  </main>
+  <footer>중·고등학교 정보·인공지능 수업 자료</footer>
+  </div>
+</body>
+</html>

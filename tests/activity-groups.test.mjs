@@ -5,6 +5,8 @@ import test from "node:test";
 const repoRoot = new URL("../", import.meta.url);
 const LEARNING_LESSON_IDS = ["ai-problem-method", "ai-prediction-lab"];
 const ALGORITHM_LESSON_IDS = ["ai-inference-ripeness", "ai-signal-noise", "ai-biased-data"];
+const PRACTICE_1_LESSON_IDS = ["digital-life-data", "digital-life-columns", "digital-life-filter"];
+const PRACTICE_2_LESSON_IDS = ["penguins-data", "penguins-graphs"];
 
 async function loadGroups() {
   const raw = await readFile(new URL("data/activity-groups.json", repoRoot), "utf8");
@@ -75,7 +77,7 @@ test("group.path와 children.path가 가리키는 index.html 파일이 실제로
   }
 });
 
-test("활동지 04와 05의 children은 lessons.json과 순서·경로·난이도·시간이 일치한다", async () => {
+test("활동지 05~08의 children은 lessons.json과 순서·경로·난이도·시간이 일치한다", async () => {
   const [groupsData, lessonsRaw] = await Promise.all([
     loadGroups(),
     readFile(new URL("data/lessons.json", repoRoot), "utf8"),
@@ -83,7 +85,12 @@ test("활동지 04와 05의 children은 lessons.json과 순서·경로·난이�
   const lessons = JSON.parse(lessonsRaw).lessons;
   const lessonsById = Object.fromEntries(lessons.map((lesson) => [lesson.id, lesson]));
 
-  for (const [groupId, ids] of [["ai-learning", LEARNING_LESSON_IDS], ["machine-learning-algorithms", ALGORITHM_LESSON_IDS]]) {
+  for (const [groupId, ids] of [
+    ["ai-learning", LEARNING_LESSON_IDS],
+    ["ml-data-practice-1", PRACTICE_1_LESSON_IDS],
+    ["ml-data-practice-2", PRACTICE_2_LESSON_IDS],
+    ["machine-learning-algorithms", ALGORITHM_LESSON_IDS],
+  ]) {
     const group = groupsData.groups.find((candidate) => candidate.id === groupId);
     assert.ok(group, `${groupId} group을 찾을 수 없음`);
     assert.deepEqual(group.children.map((child) => child.id), ids);
@@ -121,4 +128,28 @@ test("활동지 목록 페이지는 data/activity-groups.json의 children을 ord
   for (let i = 1; i < positions.length; i += 1) {
     assert.ok(positions[i - 1] < positions[i], "그룹 페이지의 활동 순서가 order와 다름");
   }
+});
+
+test("활동지 05부터 08까지는 group order가 연속으로 이어지고, 과일 활동은 경로를 바꾸지 않고 08로 번호만 옮겨졌다", async () => {
+  const data = await loadGroups();
+  const byId = Object.fromEntries(data.groups.map((group) => [group.id, group]));
+  assert.equal(byId["ai-learning"].order, 5);
+  assert.equal(byId["ml-data-practice-1"].order, 6);
+  assert.equal(byId["ml-data-practice-2"].order, 7);
+  assert.equal(byId["machine-learning-algorithms"].order, 8);
+  assert.equal(byId["machine-learning-algorithms"].path, "units/machine-learning-algorithms/");
+  assert.deepEqual(
+    byId["machine-learning-algorithms"].children.map((child) => child.path),
+    ["lessons/ai-inference-ripeness/", "lessons/ai-signal-noise/", "lessons/ai-biased-data/"],
+  );
+});
+
+test("새 실습 그룹은 각각 활동별 독립 페이지 두 개를 등록한다", async () => {
+  const data = await loadGroups();
+  const practice1 = data.groups.find((group) => group.id === "ml-data-practice-1");
+  const practice2 = data.groups.find((group) => group.id === "ml-data-practice-2");
+  assert.equal(practice1.path, "units/ml-data-practice-1/");
+  assert.equal(practice2.path, "units/ml-data-practice-2/");
+  assert.deepEqual(practice1.children.map((child) => [child.id, child.path]), [["digital-life-data", "lessons/digital-life-data/"], ["digital-life-columns", "lessons/digital-life-columns/"], ["digital-life-filter", "lessons/digital-life-filter/"]]);
+  assert.deepEqual(practice2.children.map((child) => [child.id, child.path]), [["penguins-data", "lessons/penguins-data/"], ["penguins-graphs", "lessons/penguins-graphs/"]]);
 });

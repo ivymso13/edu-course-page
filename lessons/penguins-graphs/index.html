@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <script>document.documentElement.setAttribute("data-guard", "pending");</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="남극 펭귄 344마리의 실제 측정 자료를 표와 다양한 대화형 그래프로 탐색하고 특징을 발견하는 기계학습과 데이터 실습 활동">
+  <title>그래프에서 어떤 특징을 찾을 수 있을까? | 기계학습과 데이터 실습</title>
+  <link rel="stylesheet" href="../../assets/fonts.css">
+  <link rel="stylesheet" href="../shared/lab-base.css">
+  <link rel="stylesheet" href="../penguins-data/styles.css">
+  <link rel="stylesheet" href="../../assets/guard.css">
+  <script type="module" src="../../assets/group-guard.js"></script>
+  <script type="module" src="../penguins-data/game.js"></script>
+</head>
+<body data-guard-scope="page" data-guard-group="ml-data-practice-2" data-guard-lesson="penguins-graphs">
+  <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+  <div id="guard-loading" class="guard-panel"><p>활동 정보를 확인하는 중입니다…</p></div>
+  <div id="guard-blocked" class="guard-panel">
+    <h1>아직 준비 중인 활동입니다</h1>
+    <p>이 활동은 현재 준비 중입니다. 곧 열릴 예정이니 잠시 후 다시 확인해 주세요.</p>
+    <a class="guard-home-link" href="../../">← 전체 활동지 홈으로 돌아가기</a>
+  </div>
+  <div id="guard-content">
+    <header class="topbar">
+      <a class="back-link" href="../../units/ml-data-practice-2/">← 활동 목록</a>
+      <div class="module-title"><span>활동지 07</span><strong>기계학습과 데이터 실습(2)</strong></div>
+      <button id="projector-toggle" class="utility-button" type="button" aria-pressed="false">프로젝터 모드</button>
+    </header>
+
+    <main id="main-content">
+      <!-- 데이터 로드 오류 알림 -->
+      <div id="data-fetch-error" class="error-banner" role="alert" hidden>
+        <strong>데이터를 불러오지 못했습니다.</strong>
+        <p>펭귄 CSV 파일을 읽어오는 중 문제가 발생했습니다. 브라우저를 새로고침하거나 파일 경로를 확인해 주세요.</p>
+      </div>
+
+      <!-- 소개 섹션 -->
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">데이터 관찰과 시각화</p>
+          <h1 id="page-title">그래프에서 어떤 특징을 찾을 수 있을까?</h1>
+        </div>
+        <div class="intro-copy">
+          <p>남극 펭귄 344마리의 실제 측정 자료를 표와 대화형 그래프로 직접 관찰하며 종류·몸무게·신체 특징에서 패턴을 찾습니다. 표만으로는 파악하기 힘든 데이터의 차이를 시각화로 발견하고, 구글 코랩(Colab)의 기계학습 분류 실습으로 연결합니다.</p>
+          <dl>
+            <div><dt>단계</dt><dd>웹 활동 2개 + 코랩 실습</dd></div>
+            <div><dt>난이도</dt><dd>보통</dd></div>
+            <div><dt>예상 시간</dt><dd>15분</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- 수업 준비 자료 섹션 -->
+      <section class="materials-section" aria-labelledby="materials-title">
+        <div class="section-title-wrap">
+          <span class="section-badge">수업 준비 자료</span>
+          <h2 id="materials-title" class="section-title">데이터셋과 실습 파일 다운로드</h2>
+          <p class="section-desc">이번 활동에서 사용하는 실제 펭귄 크기 측정 데이터와 코랩 실습용 주피터 노트북입니다.</p>
+        </div>
+
+        <div class="materials-grid">
+          <div class="material-card">
+            <div>
+              <h3>펭귄 원본 데이터 (CSV)</h3>
+              <p>남극 팔머 군도에 서식하는 펭귄 344마리의 종, 서식 섬, 부리 길이, 부리 깊이, 날개 길이, 체질량, 성별이 담긴 데이터셋입니다.</p>
+            </div>
+            <a class="btn-action btn-download" href="../../data/ml-practice/penguins_size.csv" download>penguins_size.csv 다운로드</a>
+          </div>
+
+          <div class="material-card">
+            <div>
+              <h3>실습 주피터 노트북 (.ipynb)</h3>
+              <p>파이썬 판다스(Pandas)로 데이터를 전처리하고, 사이킷런(scikit-learn) 결정트리로 펭귄 종을 분류하는 학생용 노트북입니다.</p>
+            </div>
+            <a class="btn-action btn-download" href="../../data/ml-practice/penguins-student.ipynb" download>penguins-student.ipynb 다운로드</a>
+          </div>
+
+          <div class="material-card">
+            <div>
+              <h3>Google Colab에서 바로 열기</h3>
+              <p>별도의 파이썬 설치 없이 웹 브라우저에서 바로 실습 노트북을 실행하고 코드를 작성할 수 있습니다.</p>
+            </div>
+            <a class="btn-action btn-colab" href="https://colab.research.google.com/github/ivymso13/edu-course-page/blob/design-course-system/data/ml-practice/penguins-student.ipynb" target="_blank" rel="noopener">Google Colab에서 원본 열기 ↗</a>
+          </div>
+        </div>
+
+        <p class="section-desc">코랩 실습과 제출은 우리 반 클래스룸의 안내를 확인하세요.</p>
+        <div class="dataset-summary-box">
+          <h4>데이터셋 구조 (총 344행 7열)</h4>
+          <ul>
+            <li><strong>species (종류)</strong>: Adelie (아델리 펭귄), Gentoo (젠투 펭귄), Chinstrap (턱끈 펭귄)</li>
+            <li><strong>island (서식 섬)</strong>: Biscoe, Dream, Torgersen 섬</li>
+            <li><strong>culmen_length_mm (부리 길이)</strong>: 부리 위쪽 능선의 길이 (단위: mm)</li>
+            <li><strong>culmen_depth_mm (부리 깊이)</strong>: 부리의 수직 두께 (단위: mm)</li>
+            <li><strong>flipper_length_mm (날개 길이)</strong>: 펭귄의 지느러미 날개 길이 (단위: mm)</li>
+            <li><strong>body_mass_g (체질량)</strong>: 펭귄의 몸무게 (단위: g)</li>
+            <li><strong>sex (성별)</strong>: MALE (수컷), FEMALE (암컷), 결측치(NA)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 웹 활동 2: 그래프에서 어떤 특징을 찾을 수 있을까? -->
+      <section class="activity-card" aria-labelledby="activity2-title">
+        <div class="section-title-wrap">
+          <span class="section-badge">웹 활동 2</span>
+          <h2 id="activity2-title" class="section-title">그래프에서 어떤 특징을 찾을 수 있을까?</h2>
+          <p class="section-desc">세 가지 그래프(막대그래프, 상자그림, 산점도)를 직접 조작하며 펭귄 종류별 특징과 차이를 탐색해 보세요.</p>
+        </div>
+
+        <!-- (가) 종류별 개수 막대그래프 -->
+        <div class="graph-block">
+          <div class="graph-head">
+            <h3>(가) 종류별 개수 막대그래프</h3>
+            <p>남극 팔머 군도에서 관측된 세 종류 펭귄의 개체 수를 비교합니다.</p>
+          </div>
+
+          <div class="svg-chart-wrap">
+            <svg id="bar-chart-svg" class="chart-svg" viewBox="0 0 700 220" role="img" aria-label="펭귄 종류별 개수 막대그래프"></svg>
+          </div>
+
+          <div class="chart-legend" aria-label="종류별 범례">
+            <span class="legend-item"><span class="legend-marker" style="color: #2563eb;">●</span> 아델리 펭귄 (Adelie, 원형)</span>
+            <span class="legend-item"><span class="legend-marker" style="color: #059669;">▲</span> 젠투 펭귄 (Gentoo, 삼각형)</span>
+            <span class="legend-item"><span class="legend-marker" style="color: #d97706;">■</span> 턱끈 펭귄 (Chinstrap, 사각형)</span>
+          </div>
+
+          <div id="bar-chart-row-count" class="graph-row-count">
+            <!-- 동적 계산 텍스트 삽입 -->
+          </div>
+        </div>
+
+        <!-- (나) 부리 길이 상자그림 -->
+        <div class="graph-block">
+          <div class="graph-head">
+            <h3>(나) 부리 길이 상자그림 (Box Plot)</h3>
+            <p>노트북과 같이 결측 행을 제거한 뒤 culmen_length_mm의 분포와 이상치 후보를 확인합니다.</p>
+          </div>
+
+          <div class="boxplot-guide">
+            <div class="boxplot-guide-title">상자그림을 읽는 방법:</div>
+            <ul>
+              <li><strong>중앙값 (굵은 가운데 선)</strong>: 데이터를 가벼운 순서대로 줄세웠을 때 정가운데(50%)에 위치한 값입니다.</li>
+              <li><strong>상자 (사분위범위 IQR, 25%~75%)</strong>: 전체 펭귄의 중간 50%가 모여 있는 부리 길이 구간입니다.</li>
+              <li><strong>수염 (양 끝 선)</strong>: 상자에서 IQR의 1.5배 이내에 있는 관측값 범위입니다. 그 밖의 값은 점으로 표시합니다.</li>
+            </ul>
+          </div>
+
+          <div class="svg-chart-wrap">
+            <svg id="box-chart-svg" class="chart-svg" viewBox="0 0 700 280" role="img" aria-label="펭귄 부리 길이 상자그림"></svg>
+          </div>
+
+          
+
+          <div id="box-chart-row-count" class="graph-row-count">
+            <!-- 동적 계산 텍스트 삽입 -->
+          </div>
+        </div>
+
+        <!-- (다) 신체 특징 산점도 -->
+        <div class="graph-block">
+          <div class="graph-head">
+            <h3>(다) 신체 특징 산점도 (Scatter Plot)</h3>
+            <p>두 가지 신체 측정값을 가로(X축)와 세로(Y축)에 놓고 점을 찍어 종류별 분포와 군집을 확인합니다.</p>
+          </div>
+
+          <!-- 산점도 컨트롤 -->
+          <div class="scatter-controls">
+            <label for="scatter-x-select">
+              <span>X축:</span>
+              <select id="scatter-x-select" class="select-control">
+                <option value="culmen_length_mm" selected>부리 길이 (mm)</option>
+                <option value="culmen_depth_mm">부리 깊이 (mm)</option>
+                <option value="flipper_length_mm">날개 길이 (mm)</option>
+                <option value="body_mass_g">체질량 (g)</option>
+              </select>
+            </label>
+
+            <label for="scatter-y-select">
+              <span>Y축:</span>
+              <select id="scatter-y-select" class="select-control">
+                <option value="culmen_depth_mm" selected>부리 깊이 (mm)</option>
+                <option value="culmen_length_mm">부리 길이 (mm)</option>
+                <option value="flipper_length_mm">날개 길이 (mm)</option>
+                <option value="body_mass_g">체질량 (g)</option>
+              </select>
+            </label>
+
+            <button type="button" id="toggle-color-btn" class="toggle-btn" aria-pressed="true">종류 색상 끄기</button>
+
+            <!-- 키보드 사용자를 위한 점 선택 UI -->
+            <div class="point-select-wrap">
+              <label for="keyboard-point-select">키보드로 펭귄 선택:</label>
+              <select id="keyboard-point-select" class="select-control" aria-label="개별 펭귄 데이터 선택"></select>
+            </div>
+          </div>
+
+          <div class="svg-chart-wrap">
+            <svg id="scatter-chart-svg" class="chart-svg" viewBox="0 0 700 440" role="img" aria-label="펭귄 신체 특징 산점도"></svg>
+          </div>
+
+          <div class="chart-legend" aria-label="산점도 기호 및 색상 범례">
+            <span class="legend-item"><span class="legend-marker" style="color: #2563eb;">●</span> 아델리 펭귄 (Adelie, 파란색 원)</span>
+            <span class="legend-item"><span class="legend-marker" style="color: #059669;">▲</span> 젠투 펭귄 (Gentoo, 초록색 삼각형)</span>
+            <span class="legend-item"><span class="legend-marker" style="color: #d97706;">■</span> 턱끈 펭귄 (Chinstrap, 황색 사각형)</span>
+            <span style="margin-left: auto; color: var(--muted); font-size: 0.8rem;">점을 클릭하거나 키보드로 선택하면 아래에 상세 정보가 표시됩니다.</span>
+          </div>
+
+          <!-- 선택된 점 상세 카드 -->
+          <div id="point-inspector" class="point-detail-card">
+            <h4>선택한 펭귄 상세 정보</h4>
+            <div id="point-inspector-body" class="point-attributes-grid">
+              <div class="point-attr-box"><span class="point-attr-name">상태</span><strong class="point-attr-val">점을 선택하세요</strong></div>
+            </div>
+          </div>
+
+          <div id="scatter-chart-row-count" class="graph-row-count">
+            <!-- 동적 계산 텍스트 삽입 -->
+          </div>
+        </div>
+
+        <!-- 관찰 질문 및 학생 입력란 -->
+        <div class="observation-section">
+          <h3>그래프 탐색 질문 및 관찰 기록</h3>
+
+          <details class="guided-qa-list"><summary>내 관찰과 비교할 해석 예시 보기</summary>
+            <div class="guided-qa-card">
+              <h4>질문 1. 가장 많은 종류와 가장 적은 종류는?</h4>
+              <p id="guided-qa-1">아델리 펭귄이 가장 많고, 턱끈 펭귄이 가장 적습니다.</p>
+            </div>
+
+            <div class="guided-qa-card">
+              <h4>질문 2. 부리 길이의 분포와 이상치 후보는 어떤가요?</h4>
+              <p id="guided-qa-2">부리 길이 상자그림에서 중앙값, 중간 50% 구간, 수염 밖의 점을 확인해 보세요.</p>
+            </div>
+
+            <div class="guided-qa-card">
+              <h4>질문 3. 어떤 축 조합에서 세 종류가 가장 잘 구별되나요?</h4>
+              <p><strong>[부리 길이]</strong>와 <strong>[부리 깊이]</strong>를 축으로 놓았을 때 세 종류가 확연하게 세 무리로 분리됩니다. 아델리는 부리가 짧고 두껍고, 턱끈은 부리가 길고 두껍고, 젠투는 부리가 길고 얇기 때문입니다.</p>
+            </div>
+          </details>
+
+          <!-- 학생 서술형 입력란 -->
+          <div class="student-input-group">
+            <label for="student-observation">내가 관찰한 특징 하나와, 그 특징의 근거가 된 그래프의 어떤 부분인지 적어보세요:</label>
+            <textarea id="student-observation" class="student-textarea" rows="3" placeholder="예: '부리 길이'와 '부리 깊이'를 축으로 선택했을 때 세 종류가 확연히 구분된다. 젠투는 부리가 길고 얇은 쪽에 모여 있고, 아델리는 짧고 두껍고, 턱끈은 길고 두꺼운 쪽에 뭉쳐 있다."></textarea>
+            <div>
+              <button type="button" id="save-observation-btn" class="btn-primary" style="margin-top:0.5rem;">내 생각 기록하기</button>
+            </div>
+            <div id="observation-feedback" class="observation-feedback" hidden>
+              <strong>기록 완료:</strong> 작성한 내용이 잘 정리되었습니다! 머신러닝 분류 알고리즘도 바로 이러한 신체 특징의 차이(경계선)를 찾아내어 새로운 펭귄의 종류를 예측합니다.
+            </div>
+          </div>
+
+          <!-- 원본 표 vs 전처리 자료 구분 안내 -->
+          <div class="dataset-summary-box" style="margin-top: 1.5rem;">
+            <h4>데이터 관찰 정리 (원본 표와 전처리 자료의 차이)</h4>
+            <p style="margin: 0; font-size: 0.85rem; line-height: 1.6; color: #374151;">
+              원본 표에는 344개의 모든 행(결측치 포함)이 그대로 남아 있으며, 위 그래프들은 해당 그래프에 필요한 측정값이 있는 행만 선별하여 그렸습니다. 인공지능 모델을 훈련할 때는 결측치를 어떻게 다룰지(제거할지, 채울지) 결정하는 <strong>데이터 전처리</strong>가 반드시 필요합니다.
+            </p>
+          </div>
+        </div>
+      </section>
+    <nav class="lesson-pager" aria-label="활동 이동"><a href="../../units/ml-data-practice-2/"><em>← 활동 목록</em><strong>기계학습과 데이터 실습</strong></a><a class="next" href="../penguins-data/"><em>이전 활동 01</em><strong>표만 보고 알아낼 수 있을까? ←</strong></a></nav>
+    </main>
+
+    <footer>중·고등학교 정보·인공지능 수업 자료</footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <script>document.documentElement.setAttribute("data-guard", "pending");</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="남극 펭귄 344마리의 실제 측정 자료를 표와 다양한 대화형 그래프로 탐색하고 특징을 발견하는 기계학습과 데이터 실습 활동">
+  <title>표만 보고 알아낼 수 있을까? | 기계학습과 데이터 실습</title>
+  <link rel="stylesheet" href="../../assets/fonts.css">
+  <link rel="stylesheet" href="../shared/lab-base.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/guard.css">
+  <script type="module" src="../../assets/group-guard.js"></script>
+  <script type="module" src="game.js"></script>
+</head>
+<body data-guard-scope="page" data-guard-group="ml-data-practice-2" data-guard-lesson="penguins-data">
+  <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+  <div id="guard-loading" class="guard-panel"><p>활동 정보를 확인하는 중입니다…</p></div>
+  <div id="guard-blocked" class="guard-panel">
+    <h1>아직 준비 중인 활동입니다</h1>
+    <p>이 활동은 현재 준비 중입니다. 곧 열릴 예정이니 잠시 후 다시 확인해 주세요.</p>
+    <a class="guard-home-link" href="../../">← 전체 활동지 홈으로 돌아가기</a>
+  </div>
+  <div id="guard-content">
+    <header class="topbar">
+      <a class="back-link" href="../../units/ml-data-practice-2/">← 활동 목록</a>
+      <div class="module-title"><span>활동지 07</span><strong>기계학습과 데이터 실습(2)</strong></div>
+      <button id="projector-toggle" class="utility-button" type="button" aria-pressed="false">프로젝터 모드</button>
+    </header>
+
+    <main id="main-content">
+      <!-- 데이터 로드 오류 알림 -->
+      <div id="data-fetch-error" class="error-banner" role="alert" hidden>
+        <strong>데이터를 불러오지 못했습니다.</strong>
+        <p>펭귄 CSV 파일을 읽어오는 중 문제가 발생했습니다. 브라우저를 새로고침하거나 파일 경로를 확인해 주세요.</p>
+      </div>
+
+      <!-- 소개 섹션 -->
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">데이터 관찰과 시각화</p>
+          <h1 id="page-title">표만 보고 알아낼 수 있을까?</h1>
+        </div>
+        <div class="intro-copy">
+          <p>남극 펭귄 344마리의 실제 측정 자료를 표와 대화형 그래프로 직접 관찰하며 종류·몸무게·신체 특징에서 패턴을 찾습니다. 표만으로는 파악하기 힘든 데이터의 차이를 시각화로 발견하고, 구글 코랩(Colab)의 기계학습 분류 실습으로 연결합니다.</p>
+          <dl>
+            <div><dt>단계</dt><dd>웹 활동 2개 + 코랩 실습</dd></div>
+            <div><dt>난이도</dt><dd>보통</dd></div>
+            <div><dt>예상 시간</dt><dd>15분</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- 수업 준비 자료 섹션 -->
+      <section class="materials-section" aria-labelledby="materials-title">
+        <div class="section-title-wrap">
+          <span class="section-badge">수업 준비 자료</span>
+          <h2 id="materials-title" class="section-title">데이터셋과 실습 파일 다운로드</h2>
+          <p class="section-desc">이번 활동에서 사용하는 실제 펭귄 크기 측정 데이터와 코랩 실습용 주피터 노트북입니다.</p>
+        </div>
+
+        <div class="materials-grid">
+          <div class="material-card">
+            <div>
+              <h3>펭귄 원본 데이터 (CSV)</h3>
+              <p>남극 팔머 군도에 서식하는 펭귄 344마리의 종, 서식 섬, 부리 길이, 부리 깊이, 날개 길이, 체질량, 성별이 담긴 데이터셋입니다.</p>
+            </div>
+            <a class="btn-action btn-download" href="../../data/ml-practice/penguins_size.csv" download>penguins_size.csv 다운로드</a>
+          </div>
+
+          <div class="material-card">
+            <div>
+              <h3>실습 주피터 노트북 (.ipynb)</h3>
+              <p>파이썬 판다스(Pandas)로 데이터를 전처리하고, 사이킷런(scikit-learn) 결정트리로 펭귄 종을 분류하는 학생용 노트북입니다.</p>
+            </div>
+            <a class="btn-action btn-download" href="../../data/ml-practice/penguins-student.ipynb" download>penguins-student.ipynb 다운로드</a>
+          </div>
+
+          <div class="material-card">
+            <div>
+              <h3>Google Colab에서 바로 열기</h3>
+              <p>별도의 파이썬 설치 없이 웹 브라우저에서 바로 실습 노트북을 실행하고 코드를 작성할 수 있습니다.</p>
+            </div>
+            <a class="btn-action btn-colab" href="https://colab.research.google.com/github/ivymso13/edu-course-page/blob/design-course-system/data/ml-practice/penguins-student.ipynb" target="_blank" rel="noopener">Google Colab에서 원본 열기 ↗</a>
+          </div>
+        </div>
+
+        <p class="section-desc">코랩 실습과 제출은 우리 반 클래스룸의 안내를 확인하세요.</p>
+        <div class="dataset-summary-box">
+          <h4>데이터셋 구조 (총 344행 7열)</h4>
+          <ul>
+            <li><strong>species (종류)</strong>: Adelie (아델리 펭귄), Gentoo (젠투 펭귄), Chinstrap (턱끈 펭귄)</li>
+            <li><strong>island (서식 섬)</strong>: Biscoe, Dream, Torgersen 섬</li>
+            <li><strong>culmen_length_mm (부리 길이)</strong>: 부리 위쪽 능선의 길이 (단위: mm)</li>
+            <li><strong>culmen_depth_mm (부리 깊이)</strong>: 부리의 수직 두께 (단위: mm)</li>
+            <li><strong>flipper_length_mm (날개 길이)</strong>: 펭귄의 지느러미 날개 길이 (단위: mm)</li>
+            <li><strong>body_mass_g (체질량)</strong>: 펭귄의 몸무게 (단위: g)</li>
+            <li><strong>sex (성별)</strong>: MALE (수컷), FEMALE (암컷), 결측치(NA)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 웹 활동 1: 표만 보고 알아낼 수 있을까? -->
+      <section class="activity-card" aria-labelledby="activity1-title">
+        <div class="section-title-wrap">
+          <span class="section-badge">웹 활동 1</span>
+          <h2 id="activity1-title" class="section-title">표만 보고 알아낼 수 있을까?</h2>
+          <p class="section-desc">344마리 펭귄의 측정 기록이 담긴 원본 표를 자유롭게 살펴보고 아래 세 가지 질문에 답해 보세요. 표를 끝까지 훑어본 뒤 답을 선택하고 <strong>[그래프로 확인하기]</strong>를 누르면 요약 그래프와 정답 해설이 열립니다.</p>
+        </div>
+
+        <!-- 표 조작 컨트롤 -->
+        <div class="table-controls">
+          <div class="table-filter-group">
+            <input type="search" id="table-search" class="search-input" placeholder="검색 (예: Adelie, Biscoe, MALE, 15)" aria-label="펭귄 데이터 검색">
+            <select id="table-species-filter" class="select-control" aria-label="종류 필터">
+              <option value="all">모든 종류 보기</option>
+              <option value="Adelie">아델리 펭귄 (Adelie)</option>
+              <option value="Gentoo">젠투 펭귄 (Gentoo)</option>
+              <option value="Chinstrap">턱끈 펭귄 (Chinstrap)</option>
+            </select>
+            <select id="table-page-size" class="select-control" aria-label="페이지당 행 수">
+              <option value="10">10개씩 보기</option>
+              <option value="25">25개씩 보기</option>
+              <option value="50">50개씩 보기</option>
+              <option value="0">344개 전체 보기</option>
+            </select>
+          </div>
+          <div id="table-status-info" class="table-info-bar">데이터를 불러오는 중…</div>
+        </div>
+
+        <!-- 스크롤 가능한 원본 표 -->
+        <div class="table-wrap" tabindex="0" aria-label="펭귄 원본 데이터 표 (좌우 스크롤 가능)">
+          <table class="data-table">
+            <caption>펭귄 344마리 원본 신체 측정 데이터</caption>
+            <thead>
+              <tr>
+                <th scope="col">번호</th>
+                <th scope="col">종류 (species)</th>
+                <th scope="col">서식 섬 (island)</th>
+                <th scope="col" class="num">부리 길이 (mm)</th>
+                <th scope="col" class="num">부리 깊이 (mm)</th>
+                <th scope="col" class="num">날개 길이 (mm)</th>
+                <th scope="col" class="num">체질량 (g)</th>
+                <th scope="col">성별 (sex)</th>
+              </tr>
+            </thead>
+            <tbody id="penguins-table-body">
+              <tr><td colspan="8" style="text-align:center; padding: 2rem;">데이터를 읽는 중입니다…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 페이지네이션 바 -->
+        <div class="pagination-wrap">
+          <div class="pagination-nav">
+            <button type="button" id="btn-first" class="btn-page" aria-label="첫 페이지">« 처음</button>
+            <button type="button" id="btn-prev" class="btn-page" aria-label="이전 페이지">‹ 이전</button>
+            <span id="page-indicator" class="page-indicator">1 / 35</span>
+            <button type="button" id="btn-next" class="btn-page" aria-label="다음 페이지">다음 ›</button>
+            <button type="button" id="btn-last" class="btn-page" aria-label="마지막 페이지">마지막 »</button>
+          </div>
+          <div id="table-rows-counter" class="table-info-bar">총 344행</div>
+        </div>
+
+        <!-- 질문 퀴즈 양식 -->
+        <form class="quiz-container" id="activity1-form">
+          <h3>표 관찰 질문</h3>
+          <p>표를 훑어보며 내가 추측한 답을 선택해 보세요.</p>
+
+          <div class="question-list">
+            <fieldset class="question-card">
+              <legend class="question-title">(a) 펭귄 종류는 몇 가지일까요?</legend>
+              <div class="options-row">
+                <label class="option-label"><input type="radio" name="q-species-count" value="2"> 2가지</label>
+                <label class="option-label"><input type="radio" name="q-species-count" value="3"> 3가지</label>
+                <label class="option-label"><input type="radio" name="q-species-count" value="4"> 4가지</label>
+                <label class="option-label"><input type="radio" name="q-species-count" value="5"> 5가지</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="question-card">
+              <legend class="question-title">(b) 가장 많은 종류는 무엇일까요?</legend>
+              <div class="options-row">
+                <label class="option-label"><input type="radio" name="q-most-common" value="Adelie"> Adelie (아델리 펭귄)</label>
+                <label class="option-label"><input type="radio" name="q-most-common" value="Gentoo"> Gentoo (젠투 펭귄)</label>
+                <label class="option-label"><input type="radio" name="q-most-common" value="Chinstrap"> Chinstrap (턱끈 펭귄)</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="question-card">
+              <legend class="question-title">(c) 대체로 몸무게가 가장 무거운 종류는 무엇일까요?</legend>
+              <div class="options-row">
+                <label class="option-label"><input type="radio" name="q-heaviest" value="Adelie"> Adelie (아델리 펭귄)</label>
+                <label class="option-label"><input type="radio" name="q-heaviest" value="Gentoo"> Gentoo (젠투 펭귄)</label>
+                <label class="option-label"><input type="radio" name="q-heaviest" value="Chinstrap"> Chinstrap (턱끈 펭귄)</label>
+              </div>
+            </fieldset>
+          </div>
+
+          <button type="button" id="check-activity1-btn" class="btn-primary">그래프로 확인하기</button>
+        </form>
+
+        <!-- 활동 1 결과 및 요약 그래프 공개 영역 -->
+        <div id="activity1-reveal" class="activity1-results" hidden aria-live="polite">
+          <div class="results-header">
+            <h4>나의 답과 실제 데이터 비교</h4>
+            <div id="activity1-score-badge" class="score-badge"></div>
+          </div>
+
+          <div id="activity1-feedback-list"></div>
+
+          <!-- 요약 미니 그래프 -->
+          <div style="margin-top: 1.5rem;">
+            <h5 style="margin: 0 0 0.75rem; font-size: 1rem; color: var(--ink);">요약 그래프로 한눈에 비교하기</h5>
+            <div class="svg-chart-wrap">
+              <svg id="activity1-mini-chart" class="chart-svg" viewBox="0 0 700 240" role="img" aria-label="종류별 개수 및 몸무게 요약 차트"></svg>
+            </div>
+          </div>
+
+          <div class="insight-callout">
+            <h5>표만으로 답하기 어려웠던 이유 (시각화의 필요성)</h5>
+            <p>344개나 되는 수많은 행을 표로만 보면 숫자가 흩어져 있어 전체 개수나 분포를 파악하기 어렵고, 몸무게의 대소 비교나 이상치 존재 여부를 한눈에 알아채기 힘듭니다. 그래프로 시각화하면 데이터의 <strong>전체 윤곽(분포, 최댓값, 중앙값, 밀집 구간)</strong>을 즉시 한눈에 비교할 수 있습니다.</p>
+          </div>
+        </div>
+      </section>
+    <nav class="lesson-pager" aria-label="활동 이동"><a href="../../units/ml-data-practice-2/"><em>← 활동 목록</em><strong>기계학습과 데이터 실습</strong></a><a class="next" href="../penguins-graphs/"><em>다음 활동 02</em><strong>그래프에서 어떤 특징을 찾을 수 있을까? →</strong></a></nav>
+    </main>
+
+    <footer>중·고등학교 정보·인공지능 수업 자료</footer>
+  </div>
+</body>
+</html>

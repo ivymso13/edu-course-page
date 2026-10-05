@@ -23,6 +23,61 @@
       "status": "published"
     },
     {
+      "id": "digital-life-data",
+      "subject": "인공지능 기초",
+      "unit": "기계학습과 데이터 실습(1)",
+      "order": 1,
+      "title": "표의 구조 살펴보기",
+      "path": "lessons/digital-life-data/",
+      "duration": 12,
+      "difficulty": "입문",
+      "status": "published"
+    },
+    {
+      "id": "digital-life-columns",
+      "subject": "인공지능 기초",
+      "unit": "기계학습과 데이터 실습(1)",
+      "order": 2,
+      "title": "속성으로 열 선택하기",
+      "path": "lessons/digital-life-columns/",
+      "duration": 7,
+      "difficulty": "입문",
+      "status": "published"
+    },
+    {
+      "id": "digital-life-filter",
+      "subject": "인공지능 기초",
+      "unit": "기계학습과 데이터 실습(1)",
+      "order": 3,
+      "title": "조건식 만들기",
+      "path": "lessons/digital-life-filter/",
+      "duration": 13,
+      "difficulty": "입문",
+      "status": "published"
+    },
+    {
+      "id": "penguins-data",
+      "subject": "인공지능 기초",
+      "unit": "기계학습과 데이터 실습(2)",
+      "order": 1,
+      "title": "표만 보고 알아낼 수 있을까?",
+      "path": "lessons/penguins-data/",
+      "duration": 15,
+      "difficulty": "보통",
+      "status": "published"
+    },
+    {
+      "id": "penguins-graphs",
+      "subject": "인공지능 기초",
+      "unit": "기계학습과 데이터 실습(2)",
+      "order": 2,
+      "title": "그래프에서 어떤 특징을 찾을 수 있을까?",
+      "path": "lessons/penguins-graphs/",
+      "duration": 15,
+      "difficulty": "보통",
+      "status": "published"
+    },
+    {
       "id": "ai-inference-ripeness",
       "subject": "인공지능 기초",
       "unit": "기계학습 알고리즘",
