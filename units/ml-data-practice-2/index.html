@@ -8,6 +8,7 @@
   <title>기계학습과 데이터 실습(2) | 인공지능 기초 활동지 모음</title>
   <link rel="stylesheet" href="../../assets/fonts.css">
   <link rel="stylesheet" href="../../assets/hub.css">
+  <link rel="stylesheet" href="../../assets/practice-materials.css?v=1">
   <link rel="stylesheet" href="../../assets/guard.css">
   <script type="module" src="../../assets/group-guard.js"></script>
 </head>
@@ -25,9 +26,31 @@
       <p class="eyebrow">활동지 07</p>
       <h1>기계학습과 데이터 실습(2)</h1>
       <p class="group-intro">남극 펭귄 344마리의 실제 측정 데이터셋을 표와 다양한 대화형 그래프(막대·상자·산점도)로 탐색합니다. 표만으로는 파악하기 힘든 데이터의 패턴을 시각화로 발견하고, 구글 코랩(Colab)의 기계학습 분류 실습으로 연결합니다.</p>
+    <section class="practice-materials" aria-labelledby="materials-title">
+      <div class="practice-materials-heading">
+        <span>수업 준비 자료</span>
+        <h2 id="materials-title">데이터셋과 실습 파일 다운로드</h2>
+        <p>수업에 사용할 자료를 내려받거나 코랩에서 바로 열어 보세요.</p>
+      </div>
+      <div class="practice-materials-grid">
+        <article class="practice-material-card">
+          <div><h3>펭귄 원본 데이터 (CSV)</h3><p>펭귄 344마리의 종류·서식 섬·부리·날개·몸무게·성별이 담긴 344행 7열 자료입니다.</p></div>
+          <a class="practice-material-button" href="../../data/ml-practice/penguins_size.csv" download>penguins_size.csv 다운로드</a>
+        </article>
+        <article class="practice-material-card">
+          <div><h3>실습 노트북 (.ipynb)</h3><p>펭귄 데이터를 전처리하고 결정트리로 종류를 분류하는 학생용 코랩 노트북입니다.</p></div>
+          <a class="practice-material-button" href="../../data/ml-practice/penguins-student.ipynb" download>penguins-student.ipynb 다운로드</a>
+        </article>
+        <article class="practice-material-card">
+          <div><h3>Google Colab에서 바로 열기</h3><p>파이썬 설치 없이 실습할 수 있습니다. 실행과 저장에는 Google 로그인이 필요합니다.</p></div>
+          <a class="practice-material-button practice-material-button--colab" href="https://colab.research.google.com/github/ivymso13/edu-course-page/blob/design-course-system/data/ml-practice/penguins-student.ipynb" target="_blank" rel="noopener">Google Colab에서 원본 열기 ↗</a>
+        </article>
+      </div>
+      <p class="practice-materials-note">코랩 실습과 제출은 우리 반 클래스룸의 안내를 확인하세요.</p>
+    </section>
       <ul class="concept-list">
         <li><strong>표와 시각화</strong>344행의 원본 데이터 표를 살펴보고 그래프와 비교하며 데이터 시각화의 필요성을 체감(활동 01)</li>
-        <li><strong>특징 발견</strong>종류별 개수 막대그래프, 몸무게 상자그림, 신체 특징 산점도를 조작하며 종별 분포와 구별 특징을 분석(활동 02)</li>
+        <li><strong>특징 발견</strong>종류별 개수 막대그래프, 부리 길이 상자그림, 신체 특징 산점도를 조작하며 종별 분포와 구별 특징을 분석(활동 02)</li>
         <li><strong>머신러닝 분류</strong>코랩(Colab)에서 데이터 전처리(결측치·이상치)부터 결정트리 분류 모델 훈련까지 연결</li>
       </ul>
     </header>
