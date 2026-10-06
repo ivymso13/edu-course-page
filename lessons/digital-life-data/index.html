@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="../../assets/guard.css">
   <script type="module" src="../../assets/group-guard.js"></script>
-  <script type="module" src="game.js?v=relation-choice-3"></script>
+  <script type="module" src="game.js?v=feature-role-4"></script>
 </head>
 <body data-guard-scope="page" data-guard-group="ml-data-practice-1" data-guard-lesson="digital-life-data">
   <a class="skip-link" href="#main-content">본문으로 바로가기</a>
@@ -97,13 +97,13 @@
         </li>
         <li class="dl-question">
           <fieldset>
-            <legend>4. SNS 값(sns)과 스트레스 값(stress) 사이에는 어떤 관계가 보이나요?</legend>
-            <p class="dl-note">표에서 여러 사람의 sns와 stress 값을 비교한 뒤, 가장 알맞은 설명을 하나 고르세요.</p>
+            <legend>4. SNS 사용량으로 스트레스 값을 예측하는 실습을 하려고 합니다. 입력 데이터와 예측할 값의 연결로 알맞은 것은 무엇인가요?</legend>
+            <p class="dl-note">예측에 사용할 정보와 알아내려는 결과를 구분하여 하나 고르세요.</p>
             <div class="dl-relation-options">
-              <label><input type="radio" name="q5" value="positive"> SNS 값이 높을수록 스트레스 값도 대체로 높다.</label>
-              <label><input type="radio" name="q5" value="negative"> SNS 값이 높을수록 스트레스 값은 대체로 낮다.</label>
-              <label><input type="radio" name="q5" value="none"> 두 값 사이에 뚜렷한 관계가 보이지 않는다.</label>
-              <label><input type="radio" name="q5" value="constant"> SNS 값에 관계없이 스트레스 값이 모두 같다.</label>
+              <label><input type="radio" name="q5" value="name-id"> ① 입력: name → 예측할 값: ID</label>
+              <label><input type="radio" name="q5" value="sns-stress"> ② 입력: sns → 예측할 값: stress</label>
+              <label><input type="radio" name="q5" value="stress-sns"> ③ 입력: stress → 예측할 값: sns</label>
+              <label><input type="radio" name="q5" value="gender-name"> ④ 입력: gender → 예측할 값: name</label>
             </div>
             <button type="button" class="dl-button" data-check="q5">확인</button>
             <p class="dl-feedback" id="q5-feedback" aria-live="polite"></p>

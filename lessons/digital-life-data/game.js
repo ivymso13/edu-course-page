@@ -5,7 +5,7 @@ import {
   matchingIds,
   gradeSelection,
   gradeStructureAnswer,
-} from "./game-core.js?v=relation-choice-3";
+} from "./game-core.js?v=feature-role-4";
 
 const $ = (selector) => document.querySelector(selector);
 const CSV_URL = "../../data/ml-practice/digital_life.csv";
@@ -136,7 +136,7 @@ const EXPLANATIONS = {
   q1: () => `정답은 ${table.rows.length}명입니다. 한 행이 사람 한 명의 자료입니다.`,
   q2: () => `정답은 ${table.headers.length}개입니다. ID도 속성에 포함됩니다.`,
   q3: () => "정답은 name입니다. 열 이름을 그대로 적으면 됩니다.",
-  q5: () => "이 자료에서는 SNS 값이 높을수록 스트레스 값도 대체로 높은 경향을 보입니다. 이것만으로 SNS가 스트레스를 일으킨다고 결론 내릴 수는 없습니다.",
+  q5: () => "정답은 ②입니다. 입력은 예측에 사용할 정보, 예측할 값은 알아내려는 결과입니다. 이 문제에서는 sns를 입력으로, stress를 예측 대상으로 정했습니다. 실제로 예측이 잘되는지는 별도로 확인해야 합니다.",
 };
 
 function checkQuestion(id) {

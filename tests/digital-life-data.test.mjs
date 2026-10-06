@@ -135,7 +135,7 @@ test("웹 조건 문제는 학생 노트북의 과일 예제 세 조건을 재�
 });
 
 test("표 구조 주관식은 짧은 답·대소문자·공백을 허용하고 반대 뜻과 빈 답은 구분한다", async () => {
-  const { gradeStructureAnswer, snsStressCorrelation } = await import("../lessons/digital-life-data/game-core.js");
+  const { gradeStructureAnswer } = await import("../lessons/digital-life-data/game-core.js");
   const table = parseDigitalLifeTable(await loadCsv());
   for (const [id, value] of [["q1", "20"], ["q2", "6"], ["q3", " NAME "]]) {
     assert.equal(gradeStructureAnswer(id, value, table).correct, true, `${id}: ${value}`);
@@ -144,11 +144,10 @@ test("표 구조 주관식은 짧은 답·대소문자·공백을 허용하고 �
     assert.equal(gradeStructureAnswer(id, value, table).correct, false, `${id}: ${value}`);
   }
   assert.equal(gradeStructureAnswer("q5", "  ", table).empty, true);
-  assert.ok(snsStressCorrelation(table.rows) > .96);
   const html = await readFile(new URL("index.html", lessonRoot), "utf8");
   assert.match(html, /type="radio" name="q5"/);
   assert.doesNotMatch(html, /id="q4-input"|<textarea/);
   assert.match(html, /data-check="q5"/);
-  assert.equal(gradeStructureAnswer("q5", "positive", table).correct, true);
-  assert.equal(gradeStructureAnswer("q5", "negative", table).correct, false);
+  assert.equal(gradeStructureAnswer("q5", "sns-stress", table).correct, true);
+  assert.equal(gradeStructureAnswer("q5", "stress-sns", table).correct, false);
 });

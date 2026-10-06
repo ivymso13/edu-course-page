@@ -65,6 +65,6 @@ export function gradeStructureAnswer(id, answer, table) {
   if (id === "q1") return { correct: accepts([String(table.rows.length), `${table.rows.length}명`, `${table.rows.length}행`]) };
   if (id === "q2") return { correct: accepts([String(table.headers.length), `${table.headers.length}개`, `${table.headers.length}열`]) };
   if (id === "q3") return { correct: value === "name" };
-  if (id === "q5") return { correct: value === "positive" };
+  if (id === "q5") return { correct: value === "sns-stress" };
   return { correct: false };
 }
