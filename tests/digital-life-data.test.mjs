@@ -68,8 +68,8 @@ test("활동 06 페이지는 목록 페이지로 돌아가는 링크와 다음 �
   assert.match(html, /class="next" href="\.\.\/digital-life-columns\/"/);
 });
 
-test("활동 06 페이지는 CSV와 노트북을 상대 경로로 내려받게 하고, 코랩 링크는 정확히 이 저장소 경로를 쓴다", async () => {
-  const html = await readFile(new URL("index.html", lessonRoot), "utf8");
+test("활동 06 목록은 CSV와 노트북 다운로드 및 코랩 링크를 제공한다", async () => {
+  const html = await readFile(new URL("units/ml-data-practice-1/index.html", repoRoot), "utf8");
   assert.match(html, /href="\.\.\/\.\.\/data\/ml-practice\/digital_life\.csv" download/);
   assert.match(html, /href="\.\.\/\.\.\/data\/ml-practice\/digital-life-student\.ipynb" download/);
   assert.match(
@@ -78,8 +78,8 @@ test("활동 06 페이지는 CSV와 노트북을 상대 경로로 내려받게 �
   );
 });
 
-test("활동06은 하단 코랩 실습 영역 대신 자료 영역에 클래스룸 안내를 제공한다", async () => {
-  const html = await readFile(new URL("index.html", lessonRoot), "utf8");
+test("활동06 목록 자료 영역에 클래스룸 안내를 제공한다", async () => {
+  const html = await readFile(new URL("units/ml-data-practice-1/index.html", repoRoot), "utf8");
   assert.doesNotMatch(html, /id="colab"/);
   assert.match(html, /코랩 실습과 제출은 우리 반 클래스룸의 안내를 확인하세요/);
 });
@@ -111,7 +111,7 @@ test("data/ml-practice의 학생용 노트북 사본은 빈칸(소스)을 유지
   assert.ok(blankCell, "학생용 빈칸이 사라지면 안 됨");
 });
 
-test("활동06의 표 읽기와 조건 검색은 독립 페이지이며 각각 자료 다운로드를 제공한다", async () => {
+test("활동06 웹 활동은 독립 페이지이며 중복된 수업 준비 자료를 제공하지 않는다", async () => {
   const structure = await readFile(new URL("index.html", lessonRoot), "utf8");
   const filter = await readFile(new URL("../lessons/digital-life-filter/index.html", import.meta.url), "utf8");
   assert.match(structure, /id="activity-1"/);
@@ -120,8 +120,7 @@ test("활동06의 표 읽기와 조건 검색은 독립 페이지이며 각각 �
   assert.doesNotMatch(filter, /id="activity-1"/);
   assert.match(filter, /data-guard-lesson="digital-life-filter"/);
   for (const html of [structure, filter]) {
-    assert.match(html, /digital_life\.csv" download/);
-    assert.match(html, /digital-life-student\.ipynb" download/);
+    assert.doesNotMatch(html, /수업 준비 자료| download/);
   }
 });
 

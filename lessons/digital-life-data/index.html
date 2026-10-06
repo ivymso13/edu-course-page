@@ -40,8 +40,19 @@
       </div>
     </section>
 
-    <section class="dl-section" aria-labelledby="prep-title">
-      <div class="dl-section-head"><span class="sample-id">수업 준비 자료</span><h2 id="prep-title">자료의 열 설명</h2></div>
+    <section id="activity-1" class="dl-section" aria-labelledby="activity1-title">
+      <div class="dl-section-head"><span class="sample-id">웹 활동 1</span><h2 id="activity1-title">표의 구조 살펴보기</h2></div>
+      <p class="dl-lead">아래 표가 자료 전체입니다. 가로줄은 <strong>행</strong>, 세로줄은 <strong>열</strong>입니다. 표를 보며 질문에 답해 보세요.</p>
+      <p class="dl-load-error" id="load-error" role="alert" hidden>자료를 불러오지 못했습니다. 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요.</p>
+      <div class="dl-table-wrap">
+        <table class="dl-table" id="full-table">
+          <caption class="sr-only">디지털 생활 데이터 전체 표(20행 6열)</caption>
+          <thead id="full-head"></thead>
+          <tbody id="full-body"></tbody>
+        </table>
+      </div>
+
+      <details class="dl-note"><summary>속성의 뜻 확인하기</summary>
       <div class="dl-table-wrap">
         <table class="dl-table dl-table--compact">
           <caption class="sr-only">자료의 열 이름과 뜻</caption>
@@ -57,25 +68,7 @@
         </table>
       </div>
       <p class="dl-note">단위와 측정 방식이 적혀 있지 않으므로 phone, sns, stress를 "시간"이나 "점수"처럼 단정하지 말고 <strong>값</strong>이라고 부르세요.</p>
-      <div class="dl-actions">
-        <a class="dl-button" href="../../data/ml-practice/digital_life.csv" download>CSV 파일 내려받기 (digital_life.csv)</a>
-        <a class="dl-button" href="https://colab.research.google.com/github/ivymso13/edu-course-page/blob/design-course-system/data/ml-practice/digital-life-student.ipynb" target="_blank" rel="noopener">코랩에서 실습 시작 ↗ (로그인 필요)</a>
-        <a class="dl-button dl-button--ghost" href="../../data/ml-practice/digital-life-student.ipynb" download>실습 노트북 내려받기 (.ipynb)</a>
-      </div>
-    <p class="dl-note">코랩 실습과 제출은 우리 반 클래스룸의 안내를 확인하세요.</p>
-    </section>
-
-    <section id="activity-1" class="dl-section" aria-labelledby="activity1-title">
-      <div class="dl-section-head"><span class="sample-id">웹 활동 1</span><h2 id="activity1-title">표의 구조 살펴보기</h2></div>
-      <p class="dl-lead">아래 표가 자료 전체입니다. 가로줄은 <strong>행</strong>, 세로줄은 <strong>열</strong>입니다. 표를 보며 질문에 답해 보세요.</p>
-      <p class="dl-load-error" id="load-error" role="alert" hidden>자료를 불러오지 못했습니다. 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요.</p>
-      <div class="dl-table-wrap">
-        <table class="dl-table" id="full-table">
-          <caption class="sr-only">디지털 생활 데이터 전체 표(20행 6열)</caption>
-          <thead id="full-head"></thead>
-          <tbody id="full-body"></tbody>
-        </table>
-      </div>
+      </details>
 
       <ol class="dl-questions">
         <li class="dl-question">

@@ -208,15 +208,16 @@ test("활동 페이지(lessons/penguins-data/index.html) 가드 및 계약 검�
   // 상단 back-link
   assert.match(html, /<a\s+class="back-link"\s+href="\.\.\/\.\.\/units\/ml-data-practice-2\/">/);
 
+  const hub = await readFile(unitPath, "utf8");
   // 다운로드 링크
-  assert.match(html, /href="\.\.\/\.\.\/data\/ml-practice\/penguins_size\.csv"\s+download/);
-  assert.match(html, /href="\.\.\/\.\.\/data\/ml-practice\/penguins-student\.ipynb"\s+download/);
+  assert.match(hub, /href="\.\.\/\.\.\/data\/ml-practice\/penguins_size\.csv"\s+download/);
+  assert.match(hub, /href="\.\.\/\.\.\/data\/ml-practice\/penguins-student\.ipynb"\s+download/);
 
   // 코랩 링크 (정확한 URL 및 보안 속성)
   const colabUrl = "https://colab.research.google.com/github/ivymso13/edu-course-page/blob/design-course-system/data/ml-practice/penguins-student.ipynb";
-  assert.match(html, new RegExp(`href="${colabUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
-  assert.match(html, /target="_blank"/);
-  assert.match(html, /rel="noopener"/);
+  assert.match(hub, new RegExp(`href="${colabUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
+  assert.match(hub, /target="_blank"/);
+  assert.match(hub, /rel="noopener"/);
 
   // 외부 허용되지 않은 http/https 스크립트가 없는지 검증
   const scriptTags = html.match(/<script[^>]*src=["'][^"']+["'][^>]*>/g) || [];
@@ -226,7 +227,8 @@ test("활동 페이지(lessons/penguins-data/index.html) 가드 및 계약 검�
 
   // 하단 실습 영역은 제거하고 클래스룸 안내만 자료 영역에서 제공한다.
   assert.doesNotMatch(html, /class="colab-section"/);
-  assert.match(html, /코랩 실습과 제출은 우리 반 클래스룸의 안내를 확인하세요/);
+  assert.match(hub, /코랩 실습과 제출은 우리 반 클래스룸의 안내를 확인하세요/);
+  assert.doesNotMatch(html, /수업 준비 자료|class="materials-section"/);
 });
 
 test("game.js가 펭귄 CSV 경로를 올바르게 fetch하는지 검증", async () => {
