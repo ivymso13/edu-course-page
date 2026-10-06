@@ -74,7 +74,7 @@ test("활동 06 목록은 CSV와 노트북 다운로드 및 코랩 링크를 제
   assert.match(html, /href="\.\.\/\.\.\/data\/ml-practice\/digital-life-student\.ipynb" download/);
   assert.match(
     html,
-    /href="https:\/\/colab\.research\.google\.com\/github\/ivymso13\/edu-course-page\/blob\/design-course-system\/data\/ml-practice\/digital-life-student\.ipynb"/,
+    /href="https:\/\/colab\.research\.google\.com\/github\/ivymso13\/edu-course-page\/blob\/design-course-system\/data\/ml-practice\/digital-life-student\.ipynb#copy=true"/,
   );
 });
 

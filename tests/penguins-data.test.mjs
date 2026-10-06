@@ -214,7 +214,7 @@ test("활동 페이지(lessons/penguins-data/index.html) 가드 및 계약 검�
   assert.match(hub, /href="\.\.\/\.\.\/data\/ml-practice\/penguins-student\.ipynb"\s+download/);
 
   // 코랩 링크 (정확한 URL 및 보안 속성)
-  const colabUrl = "https://colab.research.google.com/github/ivymso13/edu-course-page/blob/design-course-system/data/ml-practice/penguins-student.ipynb";
+  const colabUrl = "https://colab.research.google.com/github/ivymso13/edu-course-page/blob/design-course-system/data/ml-practice/penguins-student.ipynb#copy=true";
   assert.match(hub, new RegExp(`href="${colabUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
   assert.match(hub, /target="_blank"/);
   assert.match(hub, /rel="noopener"/);
