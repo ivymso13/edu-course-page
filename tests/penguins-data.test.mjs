@@ -194,10 +194,10 @@ test("활동 페이지(lessons/penguins-data/index.html) 가드 및 계약 검�
   assert.match(html, /document\.documentElement\.setAttribute\("data-guard",\s*"pending"\)/);
   assert.match(html, /href="\.\.\/\.\.\/assets\/fonts\.css"/);
   assert.match(html, /href="\.\.\/shared\/lab-base\.css"/);
-  assert.match(html, /href="\.\.\/penguins-data\/lab\.css\?v=4"/);
+  assert.match(html, /href="\.\.\/penguins-data\/lab\.css\?v=5"/);
   assert.match(html, /href="\.\.\/\.\.\/assets\/guard\.css"/);
   assert.match(html, /src="\.\.\/\.\.\/assets\/group-guard\.js"/);
-  assert.match(html, /src="\.\.\/penguins-data\/game\.js\?v=lab-6"/);
+  assert.match(html, /src="\.\.\/penguins-data\/game\.js\?v=lab-7"/);
 
   // 가드 패널 요소
   assert.match(html, /id="guard-loading"/);

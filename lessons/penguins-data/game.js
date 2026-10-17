@@ -1,3 +1,4 @@
+import { displayPython, initNotebookCells } from "./notebook-ui.js";
 import {
   previewCommand,
   cleaningCommand,
@@ -52,7 +53,7 @@ const featureName = (k) => `${labels[k]} (${FEATURE_INFO[k].unit})`;
 let rows = [];
 function showCommand(id, source) {
   const target = document.getElementById(id);
-  if (target) target.textContent = source;
+  if (target) displayPython(target, source);
 }
 function table(container, columns, data, caption) {
   const wrap = document.createElement("div");
@@ -591,9 +592,7 @@ function initModel() {
     model = null;
     $("#model-results").hidden = true;
     const s = settings();
-    const valid =
-      s.features.length &&
-      s.seed !== null;
+    const valid = s.features.length && s.seed !== null;
     showCommand(
       "model-command",
       valid ? modelCommand(s) : "# 입력 속성과 분할 기준값(seed)을 확인하세요.",
@@ -719,6 +718,7 @@ try {
     "penguins-model": initModel,
   }[document.body.dataset.lab];
   init();
+  initNotebookCells();
   $("#load-status").hidden = true;
   $("#lab-content").hidden = false;
 } catch (error) {
