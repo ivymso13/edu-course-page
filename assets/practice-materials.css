@@ -33,7 +33,7 @@
 }
 .practice-materials-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 1rem;
   margin: 1.25rem 0 1rem;
 }
@@ -67,8 +67,6 @@
   overflow-wrap: anywhere;
 }
 .practice-material-button:hover { background: #f1f4f9; border-color: var(--ink); }
-.practice-material-button--colab { color: #fff; background: #ea580c; border-color: #c2410c; }
-.practice-material-button--colab:hover { background: #c2410c; border-color: #c2410c; }
 @media (max-width: 800px) {
   .practice-materials-grid { grid-template-columns: 1fr; }
 }

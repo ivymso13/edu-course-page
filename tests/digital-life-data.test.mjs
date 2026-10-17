@@ -68,14 +68,10 @@ test("활동 06 페이지는 목록 페이지로 돌아가는 링크와 다음 �
   assert.match(html, /class="next" href="\.\.\/digital-life-columns\/"/);
 });
 
-test("활동 06 목록은 CSV와 노트북 다운로드 및 코랩 링크를 제공한다", async () => {
+test("활동 06 목록은 데이터 다운로드만 제공한다", async () => {
   const html = await readFile(new URL("units/ml-data-practice-1/index.html", repoRoot), "utf8");
   assert.match(html, /href="\.\.\/\.\.\/data\/ml-practice\/digital_life\.csv" download/);
-  assert.match(html, /href="\.\.\/\.\.\/data\/ml-practice\/digital-life-student\.ipynb" download/);
-  assert.match(
-    html,
-    /href="https:\/\/colab\.research\.google\.com\/github\/ivymso13\/edu-course-page\/blob\/design-course-system\/data\/ml-practice\/digital-life-student\.ipynb#copy=true"/,
-  );
+  assert.doesNotMatch(html, /\.ipynb|colab\.research\.google|사본 만들기/);
 });
 
 test("활동06 목록 자료 영역에 클래스룸 안내를 제공한다", async () => {
