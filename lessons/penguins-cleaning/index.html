@@ -13,10 +13,10 @@
     <title>데이터 정리하기 | 기계학습과 데이터 실습</title>
     <link rel="stylesheet" href="../../assets/fonts.css" />
     <link rel="stylesheet" href="../shared/lab-base.css" />
-    <link rel="stylesheet" href="../penguins-data/lab.css?v=1" />
+    <link rel="stylesheet" href="../penguins-data/lab.css?v=2" />
     <link rel="stylesheet" href="../../assets/guard.css" />
     <script type="module" src="../../assets/group-guard.js"></script>
-    <script type="module" src="../penguins-data/game.js?v=lab-2"></script>
+    <script type="module" src="../penguins-data/game.js?v=lab-3"></script>
   </head>
   <body
     data-lab="penguins-cleaning"
@@ -68,7 +68,15 @@
         <div id="lab-content" hidden>
           <section class="lab-panel">
             <h2>결측값 확인</h2>
-            <div id="missing-table"></div>
+            <p id="missing-overview" class="missing-overview"></p>
+            <ul
+              id="missing-cards"
+              class="missing-grid"
+              aria-label="원본 데이터의 속성별 결측값"
+            ></ul>
+            <p class="lab-note">
+              한 행에서 여러 속성의 값이 비어 있을 수 있습니다.
+            </p>
           </section>
           <section class="lab-panel">
             <h2>행 정리하기</h2>

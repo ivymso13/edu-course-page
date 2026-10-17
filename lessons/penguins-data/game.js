@@ -262,11 +262,35 @@ function initCleaning() {
   let stage = 0;
   const completed = completeRows(rows),
     cleaned = cleanRows(rows);
-  table(
-    $("#missing-table"),
-    ["속성", "결측값 개수"],
-    missingCounts(rows).map((x) => [labels[x.key], x.count]),
-    "원본 데이터의 속성별 결측값",
+  const missingRowCount = rows.length - completed.length;
+  $("#missing-overview").textContent =
+    `원본 ${rows.length}행 중 ${missingRowCount}행에 결측값이 있습니다.`;
+  $("#missing-cards").replaceChildren(
+    ...missingCounts(rows).map(({ key, count }) => {
+      const card = document.createElement("li");
+      card.className = `missing-card${count ? " has-missing" : ""}`;
+      const heading = document.createElement("div");
+      heading.className = "missing-card-heading";
+      const name = document.createElement("h3");
+      name.textContent = labels[key];
+      const state = document.createElement("span");
+      state.className = "missing-state";
+      state.textContent = count ? "결측 있음" : "결측 없음";
+      heading.append(name, state);
+      const field = document.createElement("p");
+      field.className = "missing-field";
+      field.textContent = key;
+      const amount = document.createElement("p");
+      amount.className = "missing-amount";
+      const number = document.createElement("strong");
+      number.textContent = count;
+      amount.append(number, document.createTextNode("개"));
+      const fraction = document.createElement("p");
+      fraction.className = "missing-fraction";
+      fraction.textContent = `결측 비율 ${((count / rows.length) * 100).toFixed(1)}%`;
+      card.append(heading, field, amount, fraction);
+      return card;
+    }),
   );
   function render() {
     const current = stage === 0 ? rows : stage === 1 ? completed : cleaned,
