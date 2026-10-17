@@ -448,3 +448,48 @@ body.projector-mode .lab-note {
     font-size: 0.9rem;
   }
 }
+
+.command-block {
+  margin: 0.85rem 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid #b5c4e9;
+  background: #f5f7fb;
+  border-radius: 0 5px 5px 0;
+}
+.command-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: #69758d;
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+}
+.command-block pre {
+  margin: 0;
+  font:
+    0.83rem/1.7 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  color: #253757;
+}
+.setup-command {
+  margin-bottom: 1.5rem;
+}
+.setup-command summary {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+@media (max-width: 640px) {
+  .command-block {
+    padding: 0.7rem 0.8rem;
+  }
+  .command-block pre {
+    font-size: 0.78rem;
+  }
+}
+body.projector-mode .command-block pre { font-size: 1rem; }

@@ -13,10 +13,10 @@
     <title>데이터 살펴보기 | 기계학습과 데이터 실습</title>
     <link rel="stylesheet" href="../../assets/fonts.css" />
     <link rel="stylesheet" href="../shared/lab-base.css" />
-    <link rel="stylesheet" href="../penguins-data/lab.css?v=2" />
+    <link rel="stylesheet" href="../penguins-data/lab.css?v=3" />
     <link rel="stylesheet" href="../../assets/guard.css" />
     <script type="module" src="../../assets/group-guard.js"></script>
-    <script type="module" src="../penguins-data/game.js?v=lab-3"></script>
+    <script type="module" src="../penguins-data/game.js?v=lab-4"></script>
   </head>
   <body
     data-lab="penguins-data"
@@ -69,6 +69,20 @@
           펭귄 데이터를 불러오는 중입니다…
         </p>
         <div id="lab-content" hidden>
+          <p class="lab-note">
+            함께 표시된 코드는 코랩에서 사용할 파이썬 명령어입니다.
+          </p>
+          <details class="setup-command">
+            <summary>준비 코드 · 파일 불러오기</summary>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(&quot;penguins_size.csv&quot;)</code></pre>
+            </div>
+          </details>
           <section class="lab-panel">
             <div class="panel-head">
               <h2>원본 데이터</h2>
@@ -90,18 +104,37 @@
               ><span id="table-status" aria-live="polite"></span
               ><button id="next-page" type="button">다음</button>
             </div>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code id="preview-command"></code></pre>
+            </div>
             <div id="raw-table"></div>
           </section>
           <section class="lab-panel">
             <h2>속성과 자료형</h2>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>df.info()
+df.nunique()</code></pre>
+            </div>
             <div id="schema-table"></div>
           </section>
           <section class="lab-panel">
             <h2>숫자 속성 요약</h2>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>df.describe()</code></pre>
+            </div>
             <div id="summary-table"></div>
           </section>
           <section class="lab-panel">
             <h2>종류별 개체수</h2>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>sns.countplot(data=df, x=&quot;species&quot;,
+              order=[&quot;Adelie&quot;, &quot;Chinstrap&quot;, &quot;Gentoo&quot;])
+plt.show()</code></pre>
+            </div>
             <div
               class="chart-wrap"
               tabindex="0"
@@ -118,6 +151,12 @@
           </section>
           <section class="lab-panel">
             <h2>종류별 몸무게</h2>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>sns.boxplot(data=df, x=&quot;species&quot;, y=&quot;body_mass_g&quot;,
+            order=[&quot;Adelie&quot;, &quot;Chinstrap&quot;, &quot;Gentoo&quot;])
+plt.show()</code></pre>
+            </div>
             <div
               class="chart-wrap"
               tabindex="0"

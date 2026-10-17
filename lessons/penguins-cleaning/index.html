@@ -13,10 +13,10 @@
     <title>데이터 정리하기 | 기계학습과 데이터 실습</title>
     <link rel="stylesheet" href="../../assets/fonts.css" />
     <link rel="stylesheet" href="../shared/lab-base.css" />
-    <link rel="stylesheet" href="../penguins-data/lab.css?v=2" />
+    <link rel="stylesheet" href="../penguins-data/lab.css?v=3" />
     <link rel="stylesheet" href="../../assets/guard.css" />
     <script type="module" src="../../assets/group-guard.js"></script>
-    <script type="module" src="../penguins-data/game.js?v=lab-3"></script>
+    <script type="module" src="../penguins-data/game.js?v=lab-4"></script>
   </head>
   <body
     data-lab="penguins-cleaning"
@@ -66,8 +66,29 @@
           펭귄 데이터를 불러오는 중입니다…
         </p>
         <div id="lab-content" hidden>
+          <p class="lab-note">
+            함께 표시된 코드는 코랩에서 사용할 파이썬 명령어입니다.
+          </p>
+          <details class="setup-command">
+            <summary>준비 코드 · 파일 불러오기</summary>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from sklearn.preprocessing import MinMaxScaler
+
+original_df = pd.read_csv(&quot;penguins_size.csv&quot;)
+df = original_df.copy()</code></pre>
+            </div>
+          </details>
           <section class="lab-panel">
             <h2>결측값 확인</h2>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>original_df.isnull().sum()</code></pre>
+            </div>
             <p id="missing-overview" class="missing-overview"></p>
             <ul
               id="missing-cards"
@@ -83,6 +104,10 @@
             <p class="lab-note">
               순서대로 눌러 표가 어떻게 바뀌는지 확인하세요.
             </p>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code id="cleaning-command"></code></pre>
+            </div>
             <div class="controls">
               <button id="drop-missing" type="button">
                 1. 결측값이 있는 행 제거</button
@@ -93,6 +118,11 @@
               </button>
             </div>
             <div id="cleaning-status" class="metrics" aria-live="polite"></div>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>df[&quot;species&quot;].unique()
+df[&quot;sex&quot;].unique()</code></pre>
+            </div>
             <div id="unique-values" class="lab-note"></div>
             <details>
               <summary>이번 단계에서 제외된 행 보기</summary>
@@ -119,6 +149,10 @@
                 ><input id="normalize" type="checkbox" disabled />정규화한 값
                 보기</label
               >
+            </div>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code id="normalize-command"></code></pre>
             </div>
             <p class="formula">(값 − 최솟값) ÷ (최댓값 − 최솟값)</p>
             <div id="normalization-ranges"></div>

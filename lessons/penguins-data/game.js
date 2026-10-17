@@ -1,3 +1,12 @@
+import {
+  previewCommand,
+  cleaningCommand,
+  normalizeCommand,
+  boxCommand,
+  scatterCommand,
+  modelCommand,
+  predictionCommand,
+} from "./lab-commands.js";
 import { parsePenguinsCSV, FEATURE_INFO, SPECIES_INFO } from "./game-core.js";
 import {
   FEATURES,
@@ -40,6 +49,10 @@ const esc = (s) =>
   );
 const featureName = (k) => `${labels[k]} (${FEATURE_INFO[k].unit})`;
 let rows = [];
+function showCommand(id, source) {
+  const target = document.getElementById(id);
+  if (target) target.textContent = source;
+}
 function table(container, columns, data, caption) {
   const wrap = document.createElement("div");
   wrap.className = "table-wrap";
@@ -187,6 +200,12 @@ function initData() {
       filtered.slice(page * size, (page + 1) * size),
       "펭귄 원본 데이터",
     );
+    showCommand(
+      "preview-command",
+      previewCommand(
+        filtered.slice(page * size, (page + 1) * size).map((row) => row.id),
+      ),
+    );
     $("#raw-table tbody")?.setAttribute("id", "penguins-table-body");
     $("#table-status").textContent =
       `${filtered.length}행 · ${page + 1}/${pages}쪽`;
@@ -293,6 +312,13 @@ function initCleaning() {
     }),
   );
   function render() {
+    showCommand("cleaning-command", cleaningCommand(stage));
+    showCommand(
+      "normalize-command",
+      stage === 2
+        ? normalizeCommand($("#normalize").checked)
+        : "# 먼저 두 단계의 행 정리를 완료하세요.",
+    );
     const current = stage === 0 ? rows : stage === 1 ? completed : cleaned,
       previous = stage === 1 ? rows : stage === 2 ? completed : [];
     const ids = new Set(current.map((r) => r.id)),
@@ -377,6 +403,7 @@ function initGraphs() {
     }),
   );
   function box() {
+    showCommand("box-command", boxCommand($("#box-feature").value));
     const k = $("#box-feature").value,
       s = summary(complete, k),
       low = s.q1 - 1.5 * (s.q3 - s.q1),
@@ -430,6 +457,16 @@ function initGraphs() {
       yKey = $("#scatter-y").value,
       normalized = $("#scatter-scale").value === "normalized",
       colored = $("#species-color").checked;
+    showCommand(
+      "scatter-command",
+      scatterCommand({
+        x: xKey,
+        y: yKey,
+        normalized,
+        colored,
+        regression: $("#regression").checked,
+      }),
+    );
     plotRows = normalized ? scaled : cleaned;
     const xs = summary(plotRows, xKey),
       ys = summary(plotRows, yKey),
@@ -558,6 +595,10 @@ function initModel() {
       Number.isInteger(s.seed) &&
       s.seed >= 0 &&
       s.seed <= 99999;
+    showCommand(
+      "model-command",
+      valid ? modelCommand(s) : "# 입력 속성과 분할 기준값(seed)을 확인하세요.",
+    );
     $("#train-model").disabled = !valid;
     $("#model-status").textContent = valid
       ? "설정을 바꾼 뒤에는 다시 학습하세요."
@@ -598,6 +639,10 @@ function initModel() {
       (r) => r.id === Number($("#prediction-row").value),
     );
     if (!row) return;
+    showCommand(
+      "prediction-command",
+      predictionCommand(row.id, Boolean(model.scaler)),
+    );
     const prediction = predict(model.tree, row);
     const box = document.createElement("div");
     box.className = "point-card";
