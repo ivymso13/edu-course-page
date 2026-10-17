@@ -7,6 +7,7 @@ import {
   cleanRows,
   missingCounts,
   summary,
+  bodyMassBoxes,
   fitMinMax,
   transform,
   relation,
@@ -136,6 +137,37 @@ function barChart() {
   svg += text(30, 24, "개수 (마리)");
   $("#species-chart").innerHTML = svg;
 }
+function bodyMassChart() {
+  const boxes = bodyMassBoxes(rows);
+  const values = rows.map((row) => row.body_mass_g).filter(Number.isFinite);
+  const min = Math.floor(Math.min(...values) / 500) * 500;
+  const max = Math.ceil(Math.max(...values) / 500) * 500;
+  const y = (value) => 295 - ((value - min) / (max - min)) * 245;
+  let svg = "";
+  for (let i = 0; i <= 4; i++) {
+    const value = min + ((max - min) * i) / 4;
+    svg +=
+      line(75, y(value), 725, y(value)) +
+      text(65, y(value) + 4, value, 'text-anchor="end"');
+  }
+  boxes.forEach((box, i) => {
+    const x = 175 + i * 210;
+    const color = SPECIES_INFO[box.species].color;
+    svg += line(x, y(box.lower), x, y(box.upper), color, 2);
+    svg += line(x - 20, y(box.lower), x + 20, y(box.lower), color, 2);
+    svg += line(x - 20, y(box.upper), x + 20, y(box.upper), color, 2);
+    svg += `<rect x="${x - 35}" y="${y(box.q3)}" width="70" height="${y(box.q1) - y(box.q3)}" fill="${SPECIES_INFO[box.species].colorLight}" stroke="${color}"/>`;
+    svg += line(x - 35, y(box.median), x + 35, y(box.median), color, 3);
+    svg += text(x + 43, y(box.median) + 4, box.median);
+    svg += text(x, 322, box.species, 'text-anchor="middle"');
+    svg += text(x, 345, `${box.count}마리`, 'text-anchor="middle"');
+    box.outliers.forEach((row) => {
+      svg += `<circle cx="${x}" cy="${y(row.body_mass_g)}" r="4" fill="${color}"><title>원본 ${row.id}번 행 · ${row.body_mass_g} g</title></circle>`;
+    });
+  });
+  svg += text(28, 25, "몸무게 (g)");
+  $("#body-mass-chart").innerHTML = svg;
+}
 function initData() {
   let page = 0;
   function render() {
@@ -224,6 +256,7 @@ function initData() {
     "숫자 속성 통계 · 결측값 제외",
   );
   barChart();
+  bodyMassChart();
 }
 function initCleaning() {
   let stage = 0;

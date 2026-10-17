@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="원본 표와 속성별 통계를 확인하고, 종류별 개수를 비교하세요."
+      content="원본 표와 속성별 통계를 확인하고, 종류별 개체수와 몸무게를 각각 그래프로 비교하세요."
     />
     <title>데이터 살펴보기 | 기계학습과 데이터 실습</title>
     <link rel="stylesheet" href="../../assets/fonts.css" />
@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="../penguins-data/lab.css?v=1" />
     <link rel="stylesheet" href="../../assets/guard.css" />
     <script type="module" src="../../assets/group-guard.js"></script>
-    <script type="module" src="../penguins-data/game.js?v=lab-1"></script>
+    <script type="module" src="../penguins-data/game.js?v=lab-2"></script>
   </head>
   <body
     data-lab="penguins-data"
@@ -60,7 +60,10 @@
         <section class="lab-intro">
           <p class="eyebrow">활동 01 · 12분</p>
           <h1>데이터 살펴보기</h1>
-          <p>원본 표와 속성별 통계를 확인하고, 종류별 개수를 비교하세요.</p>
+          <p>
+            원본 표와 속성별 통계를 확인하고, 종류별 개체수와 몸무게를 각각
+            그래프로 비교하세요.
+          </p>
         </section>
         <p id="load-status" class="load-status" role="status">
           펭귄 데이터를 불러오는 중입니다…
@@ -98,7 +101,7 @@
             <div id="summary-table"></div>
           </section>
           <section class="lab-panel">
-            <h2>종류별 개수</h2>
+            <h2>종류별 개체수</h2>
             <div
               class="chart-wrap"
               tabindex="0"
@@ -112,6 +115,25 @@
               ></svg>
             </div>
             <p class="lab-note">원본 344행 전체를 사용합니다.</p>
+          </section>
+          <section class="lab-panel">
+            <h2>종류별 몸무게</h2>
+            <div
+              class="chart-wrap"
+              tabindex="0"
+              aria-label="종류별 몸무게 상자그림 (좌우 스크롤 가능)"
+            >
+              <svg
+                id="body-mass-chart"
+                viewBox="0 0 760 360"
+                role="img"
+                aria-label="펭귄 종류별 몸무게 분포와 중앙값"
+              ></svg>
+            </div>
+            <p class="lab-note">
+              몸무게 값이 있는 342행을 사용합니다. 결측 2행은 제외했습니다.
+              가운데 선과 옆의 숫자는 중앙값(g)입니다.
+            </p>
           </section>
         </div>
         <nav class="lesson-pager" aria-label="활동 이동">

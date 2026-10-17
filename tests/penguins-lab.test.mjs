@@ -149,3 +149,28 @@ test("four independent guarded pages connect in sequence with no quiz or noteboo
     if (i < 3) assert.ok(html.includes(`href="../${ids[i + 1]}/"`));
   }
 });
+
+test("first activity separates counts from species body-mass distributions", async () => {
+  const { bodyMassBoxes } = await import(
+    "../lessons/penguins-data/lab-core.js"
+  );
+  const boxes = bodyMassBoxes(rows);
+  assert.deepEqual(
+    boxes.map((box) => [box.species, box.count, box.median]),
+    [
+      ["Adelie", 151, 3700],
+      ["Chinstrap", 68, 3700],
+      ["Gentoo", 123, 5000],
+    ],
+  );
+  assert.equal(
+    boxes.reduce((sum, box) => sum + box.count, 0),
+    342,
+  );
+  const html = await readFile(
+    new URL("../lessons/penguins-data/index.html", import.meta.url),
+    "utf8",
+  );
+  assert.match(html, /id="species-chart"/);
+  assert.match(html, /id="body-mass-chart"/);
+});

@@ -245,3 +245,34 @@ export function runModel(
     validation: evaluate(tree, test),
   };
 }
+
+// Body-mass distributions use only rows with a measurement, before preprocessing.
+export function bodyMassBoxes(rows) {
+  return SPECIES.map((species) => {
+    const group = rows.filter(
+      (row) => row.species === species && Number.isFinite(row.body_mass_g),
+    );
+    const stats = summary(group, "body_mass_g");
+    const iqr = stats.q3 - stats.q1;
+    const inside = group
+      .map((row) => row.body_mass_g)
+      .filter(
+        (value) =>
+          value >= stats.q1 - 1.5 * iqr && value <= stats.q3 + 1.5 * iqr,
+      );
+    return {
+      species,
+      count: group.length,
+      q1: stats.q1,
+      median: stats.median,
+      q3: stats.q3,
+      lower: Math.min(...inside),
+      upper: Math.max(...inside),
+      outliers: group.filter(
+        (row) =>
+          row.body_mass_g < stats.q1 - 1.5 * iqr ||
+          row.body_mass_g > stats.q3 + 1.5 * iqr,
+      ),
+    };
+  });
+}

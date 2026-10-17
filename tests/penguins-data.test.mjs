@@ -197,7 +197,7 @@ test("활동 페이지(lessons/penguins-data/index.html) 가드 및 계약 검�
   assert.match(html, /href="\.\.\/penguins-data\/lab\.css\?v=1"/);
   assert.match(html, /href="\.\.\/\.\.\/assets\/guard\.css"/);
   assert.match(html, /src="\.\.\/\.\.\/assets\/group-guard\.js"/);
-  assert.match(html, /src="\.\.\/penguins-data\/game\.js\?v=lab-1"/);
+  assert.match(html, /src="\.\.\/penguins-data\/game\.js\?v=lab-2"/);
 
   // 가드 패널 요소
   assert.match(html, /id="guard-loading"/);
