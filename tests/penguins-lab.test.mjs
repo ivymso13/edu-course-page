@@ -174,3 +174,103 @@ test("first activity separates counts from species body-mass distributions", asy
   assert.match(html, /id="species-chart"/);
   assert.match(html, /id="body-mass-chart"/);
 });
+
+test("stratified split sizes match scikit-learn train_test_split for every offered ratio", async () => {
+  const { splitSizes, parseSeed } = await import(
+    "../lessons/penguins-data/lab-core.js"
+  );
+  const clean = cleanRows(rows);
+  // Values printed by train_test_split(..., stratify=y) on the same 333 rows.
+  const expected = {
+    0.2: { train: 266, test: [29, 14, 24] },
+    0.3: { train: 233, test: [44, 20, 36] },
+    0.4: { train: 199, test: [59, 27, 48] },
+  };
+  for (const [ratio, want] of Object.entries(expected)) {
+    assert.deepEqual(splitSizes([146, 68, 119], Number(ratio)), want.test);
+    for (const seed of [0, 42, 99999]) {
+      const split = splitRows(clean, Number(ratio), seed);
+      assert.equal(split.train.length, want.train);
+      assert.deepEqual(
+        SPECIES.map((sp) => split.test.filter((r) => r.species === sp).length),
+        want.test,
+      );
+    }
+  }
+  assert.equal(parseSeed(""), null);
+  assert.equal(parseSeed("  "), null);
+  assert.equal(parseSeed("-1"), null);
+  assert.equal(parseSeed("1.5"), null);
+  assert.equal(parseSeed("100000"), null);
+  assert.equal(parseSeed("0"), 0);
+  assert.equal(parseSeed("42"), 42);
+  assert.equal(parseSeed("99999"), 99999);
+  const game = await readFile(
+    new URL("../lessons/penguins-data/game.js", import.meta.url),
+    "utf8",
+  );
+  assert.match(game, /seed: parseSeed\(\$\("#model-seed"\)\.value\)/);
+});
+
+test("Python commands follow the selected settings and match the browser computation", async () => {
+  const C = await import("../lessons/penguins-data/lab-commands.js");
+  assert.equal(C.previewCommand([1, 2, 3]), "df.head(3)");
+  assert.equal(C.previewCommand([11, 12]), "df.iloc[[10, 11]]");
+  assert.equal(
+    C.previewCommand(Array.from({ length: 344 }, (_, i) => i + 1)),
+    "df",
+  );
+  assert.match(C.cleaningCommand(0), /^df = original_df\.copy\(\)\ndf\.shape$/);
+  assert.match(C.cleaningCommand(1), /dropna\(\)/);
+  assert.doesNotMatch(C.cleaningCommand(1), /"\."/);
+  assert.match(C.cleaningCommand(2), /df\[df\["sex"\] != "\."\]/);
+  // Normalized values go to a copy; the cleaned df keeps original units.
+  const normalized = C.normalizeCommand(true);
+  assert.match(normalized, /scaled_df = df\.copy\(\)/);
+  assert.match(normalized, /scaled_df\[cols\] = scaler\.fit_transform\(df\[cols\]\)/);
+  assert.doesNotMatch(normalized, /^df\[cols\] =/m);
+  assert.doesNotMatch(C.normalizeCommand(false), /MinMaxScaler/);
+  assert.match(C.boxCommand("body_mass_g"), /data=complete_df, x="body_mass_g", whis=1\.5/);
+  const scatter = C.scatterCommand({
+    x: "flipper_length_mm",
+    y: "body_mass_g",
+    normalized: true,
+    colored: false,
+    regression: true,
+  });
+  assert.match(scatter, /plot_df\[cols\] = MinMaxScaler\(\)\.fit_transform\(df\[cols\]\)/);
+  assert.match(scatter, /x="flipper_length_mm", y="body_mass_g"/);
+  assert.match(scatter, /regplot\(.*\n.*ci=None/);
+  assert.doesNotMatch(scatter, /hue=/);
+  const plain = C.scatterCommand({
+    x: "culmen_length_mm",
+    y: "culmen_depth_mm",
+    normalized: false,
+    colored: true,
+    regression: false,
+  });
+  assert.match(plain, /hue="species"/);
+  assert.doesNotMatch(plain, /MinMaxScaler|regplot/);
+  const model = C.modelCommand({
+    features: ["culmen_length_mm", "flipper_length_mm"],
+    testRatio: 0.4,
+    seed: 7,
+    maxDepth: 2,
+    normalize: true,
+  });
+  assert.match(model, /X = df\[\["culmen_length_mm", "flipper_length_mm"\]\]/);
+  assert.match(model, /test_size=0\.4, random_state=7, stratify=y/);
+  assert.match(model, /max_depth=2,[\s\S]*random_state=7/);
+  // The scaler is fitted on training rows only and reused for test rows.
+  assert.match(model, /scaler\.fit_transform\(X_train\)/);
+  assert.match(model, /scaler\.transform\(X_test\)/);
+  assert.doesNotMatch(model, /fit_transform\(X\)|fit_transform\(X_test\)/);
+  assert.doesNotMatch(
+    C.modelCommand({ features: ["body_mass_g"], testRatio: 0.3, seed: 42, maxDepth: 3, normalize: false }),
+    /MinMaxScaler/,
+  );
+  // df keeps the CSV index after cleaning, so original row n is df.loc[n - 1].
+  assert.match(C.predictionCommand(149, false), /^sample = df\.loc\[\[148\], X\.columns\]\ndt\.predict\(sample\)$/);
+  assert.match(C.predictionCommand(149, true), /scaler\.transform\(sample\)/);
+  assert.equal(rows[148].id, 149);
+});

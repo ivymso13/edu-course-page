@@ -21,9 +21,10 @@ import {
   transform,
   relation,
   splitRows,
+  parseSeed,
   runModel,
   predict,
-} from "./lab-core.js";
+} from "./lab-core.js?v=lab-5";
 const $ = (s) => document.querySelector(s);
 const labels = {
   species: "종류",
@@ -583,7 +584,7 @@ function initModel() {
     ),
     testRatio: Number($("#test-ratio").value),
     maxDepth: Number($("#tree-depth").value),
-    seed: Number($("#model-seed").value),
+    seed: parseSeed($("#model-seed").value),
     normalize: $("#model-normalize").checked,
   });
   function invalidate() {
@@ -592,9 +593,7 @@ function initModel() {
     const s = settings();
     const valid =
       s.features.length &&
-      Number.isInteger(s.seed) &&
-      s.seed >= 0 &&
-      s.seed <= 99999;
+      s.seed !== null;
     showCommand(
       "model-command",
       valid ? modelCommand(s) : "# 입력 속성과 분할 기준값(seed)을 확인하세요.",

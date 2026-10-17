@@ -113,25 +113,57 @@ function shuffled(rows, random) {
   }
   return a;
 }
+// Same per-class sizes as scikit-learn's stratified train_test_split:
+// test rows = ceil(n × ratio), then largest-remainder allocation per class.
+function allocate(classCounts, draws) {
+  const total = classCounts.reduce((a, b) => a + b, 0),
+    exact = classCounts.map((c) => (c * draws) / total),
+    result = exact.map(Math.floor);
+  let need = draws - result.reduce((a, b) => a + b, 0);
+  const order = exact
+    .map((v, i) => [v - result[i], i])
+    .sort((a, b) => b[0] - a[0] || a[1] - b[1]);
+  for (const [, i] of order) {
+    if (!need) break;
+    result[i]++;
+    need--;
+  }
+  return result;
+}
+export function splitSizes(classCounts, testRatio) {
+  const n = classCounts.reduce((a, b) => a + b, 0),
+    testTotal = Math.ceil(n * testRatio - 1e-9),
+    train = allocate(classCounts, n - testTotal);
+  return allocate(
+    classCounts.map((c, i) => c - train[i]),
+    testTotal,
+  );
+}
 export function splitRows(rows, testRatio = 0.3, seed = 42) {
   if (testRatio <= 0 || testRatio >= 1) throw Error("검증 비율을 확인하세요.");
   const random = rng(seed),
     train = [],
     test = [];
-  for (const sp of SPECIES) {
-    const group = shuffled(
-      rows.filter((r) => r.species === sp),
-      random,
-    );
-    if (group.length < 2) throw Error("각 종류에 두 행 이상 필요합니다.");
-    const n = Math.max(
-      1,
-      Math.min(group.length - 1, Math.round(group.length * testRatio)),
-    );
+  const groups = SPECIES.map((sp) => rows.filter((r) => r.species === sp));
+  if (groups.some((group) => group.length < 2))
+    throw Error("각 종류에 두 행 이상 필요합니다.");
+  const sizes = splitSizes(
+    groups.map((group) => group.length),
+    testRatio,
+  );
+  groups.forEach((rowsOfSpecies, i) => {
+    const group = shuffled(rowsOfSpecies, random),
+      n = Math.max(1, Math.min(group.length - 1, sizes[i]));
     test.push(...group.slice(0, n));
     train.push(...group.slice(n));
-  }
+  });
   return { train: shuffled(train, random), test: shuffled(test, random) };
+}
+// The seed box must hold a whole number 0–99999; an empty box is not seed 0.
+export function parseSeed(value) {
+  const text = String(value ?? "").trim();
+  if (!/^\d{1,5}$/.test(text)) return null;
+  return Number(text);
 }
 function counts(rows) {
   return SPECIES.map((s) => rows.filter((r) => r.species === s).length);

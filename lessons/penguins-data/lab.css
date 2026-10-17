@@ -1,3 +1,39 @@
+/* ==========================================================================
+   활동지 07 기계학습과 데이터 실습(2) 인터랙티브 실습 공통 스타일
+   lessons/penguins-data, penguins-cleaning, penguins-graphs, penguins-model 공용
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. 상단바 유틸리티 버튼 (.utility-button)
+   -------------------------------------------------------------------------- */
+.utility-button {
+  min-height: 44px;
+  padding: 0.45rem 0.85rem;
+  color: #d9e0ea;
+  background: transparent;
+  border: 1px solid #4a5363;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.utility-button:hover {
+  background: #252c38;
+  border-color: #64748b;
+  color: #ffffff;
+}
+
+.utility-button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   1. 네비게이션 & 실습 단계 바 (.lab-nav)
+   -------------------------------------------------------------------------- */
 .lab-nav {
   display: flex;
   flex-wrap: wrap;
@@ -5,384 +41,490 @@
   padding: 1.2rem 0;
   border-bottom: 1px solid var(--line);
 }
+
 .lab-nav a {
-  padding: 0.65rem 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.55rem 0.95rem;
   color: var(--muted);
+  background: #ffffff;
   border: 1px solid var(--line);
-  border-radius: 5px;
+  border-radius: 6px;
   text-decoration: none;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
+  font-weight: 650;
+  transition: all 0.15s ease-in-out;
 }
+
+.lab-nav a:hover:not([aria-current]) {
+  color: var(--ink);
+  background: #f8fafc;
+  border-color: var(--line-strong);
+}
+
+.lab-nav a[aria-current="page"],
 .lab-nav a[aria-current] {
   color: var(--accent);
   background: #eef2ff;
   border-color: var(--accent);
   font-weight: 750;
+  box-shadow: 0 1px 2px rgba(49, 88, 215, 0.1);
 }
+
 .lab-nav span {
-  font-family: monospace;
-  margin-right: 0.3rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  margin-right: 0.35rem;
+  color: var(--accent);
 }
-.lab-intro {
-  padding: 2.4rem 0 1.6rem;
-}
-.lab-intro h1 {
-  font-size: clamp(2rem, 5vw, 3.3rem);
-  line-height: 1.15;
-}
-.lab-intro > p:last-child {
+
+.lab-nav a:not([aria-current]) span {
   color: var(--muted);
-  line-height: 1.7;
 }
+
+/* --------------------------------------------------------------------------
+   2. 활동 헤더 (.lab-intro)
+   -------------------------------------------------------------------------- */
+.lab-intro {
+  padding: 2.2rem 0 1.5rem;
+}
+
+.lab-intro .eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--accent);
+  font: 750 0.72rem var(--font-sans);
+  letter-spacing: 0.12em;
+}
+
+.lab-intro h1 {
+  margin: 0;
+  font-size: clamp(1.85rem, 4.5vw, 3rem);
+  font-weight: 760;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+.lab-intro > p:last-child {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+  line-height: 1.65;
+}
+
+/* --------------------------------------------------------------------------
+   3. 패널 (.lab-panel) 및 섹션 헤더
+   -------------------------------------------------------------------------- */
 .lab-panel {
-  padding: 1.5rem 0 2rem;
+  padding: 1.6rem 0 2rem;
   border-top: 1px solid var(--line);
 }
+
 .lab-panel h2 {
   font-size: 1.35rem;
-  margin: 0 0 1rem;
+  font-weight: 750;
+  margin: 0 0 0.75rem;
   letter-spacing: -0.03em;
+  color: var(--ink);
 }
+
 .panel-head {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
 }
+
+.panel-head h2 {
+  margin: 0;
+}
+
 .panel-head > span,
 .lab-note {
   color: var(--muted);
   font-size: 0.88rem;
   line-height: 1.65;
 }
+
+.lab-note {
+  margin: 0.6rem 0 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. 파이썬 코드 블록 (.command-block, .setup-command)
+   -------------------------------------------------------------------------- */
+.command-block {
+  margin: 0.75rem 0 1rem;
+  padding: 0.8rem 1.1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid var(--accent);
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
+}
+
+.command-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.command-block pre {
+  margin: 0;
+  min-height: 1.4em;
+  font: 0.85rem/1.7 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  color: #1e293b;
+}
+
+.setup-command {
+  margin: 0.5rem 0 1.5rem;
+}
+
+.setup-command summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.95rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.setup-command summary:hover {
+  background: #eef2ff;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   5. 컨트롤 패널 & 폼 요소 (.controls)
+   -------------------------------------------------------------------------- */
 .controls {
   display: flex;
   align-items: end;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin: 1rem 0;
+  margin: 0.85rem 0 1rem;
 }
+
 .controls label {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  font-size: 0.85rem;
-  font-weight: 650;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--ink);
 }
+
 .controls .check,
 .check {
+  display: inline-flex;
   flex-direction: row;
   align-items: center;
+  gap: 0.5rem;
   min-height: 44px;
+  cursor: pointer;
 }
+
 .controls input[type="checkbox"],
 .feature-options input {
   width: 18px;
   height: 18px;
   accent-color: var(--accent);
+  cursor: pointer;
 }
+
 button,
 select,
 input[type="search"],
 input[type="number"] {
   font: inherit;
   min-height: 44px;
-  padding: 0.55rem 0.8rem;
+  padding: 0.55rem 0.85rem;
   border: 1px solid var(--line-strong);
-  border-radius: 5px;
-  background: #fff;
+  border-radius: 6px;
+  background: #ffffff;
   color: var(--ink);
+  font-size: 0.92rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
+
 button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: var(--accent);
-  color: #fff;
-  font-weight: 700;
+  color: #ffffff;
+  font-weight: 750;
+  border: 1px solid var(--accent);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+button.secondary {
+  background: #ffffff;
+  color: var(--accent);
+  border: 1px solid var(--line-strong);
+}
+
+button.secondary:hover:not(:disabled) {
+  background: #f8fafc;
   border-color: var(--accent);
 }
-button.secondary {
-  background: #fff;
-  color: var(--accent);
-}
+
 button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
+
 select {
   max-width: 100%;
+  cursor: pointer;
 }
+
 input[type="number"] {
-  width: 100px;
+  width: 110px;
 }
+
 input:focus-visible,
 select:focus-visible,
-summary:focus-visible {
+summary:focus-visible,
+button:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
-.table-wrap {
-  overflow: auto;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  margin: 0.8rem 0;
-  max-height: 540px;
+
+#table-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 0.5rem;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  white-space: nowrap;
 }
+
+/* --------------------------------------------------------------------------
+   6. 표 (.lab-table, .table-wrap)
+   -------------------------------------------------------------------------- */
+.table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+  margin: 0.85rem 0 1rem;
+  max-height: 520px;
+  box-shadow: inset -6px 0 8px -4px rgba(15, 23, 42, 0.06);
+}
+
 .lab-table {
   border-collapse: collapse;
   width: 100%;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   white-space: nowrap;
   text-align: left;
+  font-variant-numeric: tabular-nums;
 }
+
 .lab-table th,
 .lab-table td {
   padding: 0.65rem 0.85rem;
   border-bottom: 1px solid var(--line);
+  vertical-align: middle;
 }
+
 .lab-table th {
-  background: #f4f6fa;
-  font-weight: 700;
+  background: #f1f5f9;
+  color: var(--ink);
+  font-weight: 750;
   position: sticky;
   top: 0;
+  z-index: 2;
+  border-bottom: 2px solid var(--line-strong);
 }
-.lab-table tbody tr:nth-child(even) {
+
+.lab-table tbody tr:nth-child(even) td {
   background: #fafbfd;
 }
+
+.lab-table tbody tr:hover td {
+  background: #f1f5f9;
+}
+
 .lab-table .missing {
-  background: #fff1e5;
-  color: #9a4707;
+  background: #fff7ed;
+  color: #c2410c;
+  font-weight: 750;
 }
+
+/* --------------------------------------------------------------------------
+   7. 차트 래퍼 (.chart-wrap) 및 SVG 그래픽
+   -------------------------------------------------------------------------- */
 .chart-wrap {
+  width: 100%;
+  max-width: 100%;
   overflow: auto;
-  margin: 1rem 0;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 0.75rem;
+  margin: 0.85rem 0 1rem;
+  box-shadow: inset -6px 0 8px -4px rgba(15, 23, 42, 0.05);
 }
+
+.chart-wrap:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
 .chart-wrap svg {
   display: block;
   width: 100%;
-  min-width: 590px;
+  min-width: 580px;
   height: auto;
   font-family: var(--font-sans);
   font-size: 13px;
+  user-select: none;
 }
+
 .chart-wrap svg text {
   fill: var(--muted);
 }
+
 .chart-wrap svg [data-point] {
   cursor: pointer;
+  transition: opacity 0.15s, r 0.15s;
 }
+
+.chart-wrap svg [data-point]:hover {
+  opacity: 1 !important;
+  stroke: #16181f;
+  stroke-width: 1.5;
+}
+
 .chart-wrap svg [data-point]:focus {
   outline: 2px solid var(--accent);
 }
+
 .legend {
   display: flex;
   flex-wrap: wrap;
   gap: 1.2rem;
-  font-size: 0.85rem;
+  font-size: 0.86rem;
+  margin: 0.4rem 0 0.8rem;
+  padding: 0.4rem 0.6rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 5px;
 }
+
 .legend span {
-  font-weight: 650;
+  font-weight: 700;
 }
+
+/* --------------------------------------------------------------------------
+   8. 통계 지표 카드 (.metrics, .metric)
+   -------------------------------------------------------------------------- */
 .metrics {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin: 1rem 0;
-}
-.metric {
-  padding: 0.8rem 1rem;
-  background: #f4f6fa;
-  min-width: 130px;
-  border-radius: 5px;
-}
-.metric strong {
-  display: block;
-  font-size: 1.5rem;
-  margin-top: 0.35rem;
-}
-.metric span {
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-.point-card {
-  padding: 1rem;
-  background: #f5f7fb;
-  border-radius: 5px;
-  line-height: 1.7;
-  font-size: 0.9rem;
-  min-height: 48px;
-}
-details {
-  margin: 1rem 0;
-}
-summary {
-  cursor: pointer;
-  padding: 0.7rem 0;
-  font-weight: 650;
-}
-.formula {
-  font-family: monospace;
-  font-size: 0.95rem;
-}
-.feature-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  border: 1px solid var(--line);
-  padding: 1rem;
-  border-radius: 5px;
-  margin: 1rem 0;
-}
-.feature-options legend {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-.feature-options label {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-height: 44px;
-  font-size: 0.9rem;
-}
-.tree-node {
-  margin: 0.65rem 0;
-  padding: 0.65rem 0.8rem;
-  border-left: 2px solid var(--line);
-  font-size: 0.87rem;
-}
-.tree-node > summary {
-  padding: 0.35rem 0;
-}
-.tree-node small {
-  display: block;
-  color: var(--muted);
-  line-height: 1.6;
-}
-.tree-node .branch {
-  font-size: 0.78rem;
-  color: var(--accent);
-  margin: 0.6rem 0 0.2rem;
-}
-.correlation-key {
-  display: flex;
-  justify-content: space-between;
-  max-width: 600px;
-  margin: 0.5rem 0;
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-.matrix td {
-  text-align: center;
-  font-weight: 750;
-  min-width: 85px;
-}
-.matrix th {
-  white-space: normal;
-  min-width: 100px;
-}
-.load-status {
-  padding: 1rem;
-  background: #f4f6fa;
-  line-height: 1.6;
-}
-.load-status.error {
-  background: #fff1e5;
-  color: #9a4707;
-}
-.lesson-pager {
-  margin: 2rem 0;
-}
-.species-adelie {
-  color: #2563eb;
-}
-.species-gentoo {
-  color: #059669;
-}
-.species-chinstrap {
-  color: #d97706;
-}
-body.projector-mode main {
-  width: min(1360px, calc(100% - 2rem));
-}
-body.projector-mode .lab-table {
-  font-size: 1.1rem;
-}
-body.projector-mode .lab-note {
-  font-size: 1rem;
-}
-@media (max-width: 640px) {
-  .lab-nav {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  .lab-nav a {
-    font-size: 0.8rem;
-    padding: 0.65rem 0.5rem;
-  }
-  .lab-panel {
-    padding: 1.25rem 0;
-  }
-  .controls label:not(.check) {
-    flex: 1 1 140px;
-    min-width: 0;
-  }
-  .controls select,
-  .controls input[type="search"] {
-    width: 100%;
-    font-size: 16px;
-  }
-  .controls button {
-    flex: 1;
-  }
-  .panel-head {
-    flex-wrap: wrap;
-  }
-  .feature-options {
-    gap: 0.4rem 0.9rem;
-  }
-  .metrics {
-    gap: 0.5rem;
-  }
-  .metric {
-    min-width: 0;
-    flex: 1 1 42%;
-    padding: 0.75rem;
-  }
-  .tree-node {
-    padding-left: 0.55rem;
-  }
-  .point-card {
-    font-size: 0.85rem;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  * {
-    scroll-behavior: auto !important;
-  }
+  gap: 0.85rem;
+  margin: 0.85rem 0 1rem;
 }
 
-.missing-overview {
-  margin: 0 0 1rem;
-  color: var(--muted);
-  line-height: 1.6;
-  font-size: 0.9rem;
+.metric {
+  flex: 1 1 140px;
+  padding: 0.85rem 1.1rem;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
 }
+
+.metric span {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.metric strong {
+  display: block;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.35rem;
+  letter-spacing: -0.03em;
+}
+
+/* --------------------------------------------------------------------------
+   9. 결측값 분석 카드 그리드 (.missing-grid, .missing-card)
+   -------------------------------------------------------------------------- */
+.missing-overview {
+  margin: 0 0 0.85rem;
+  color: var(--ink);
+  font-weight: 650;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
 .missing-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 0.8rem;
   padding: 0;
-  margin: 1rem 0;
+  margin: 0.85rem 0 1rem;
   list-style: none;
 }
+
 .missing-card {
-  padding: 1rem;
+  padding: 0.95rem 1rem;
   border: 1px solid var(--line);
-  border-radius: 7px;
-  background: #fafbfd;
+  border-left: 3px solid #10b981;
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
 }
+
 .missing-card.has-missing {
-  border-color: #edc9a1;
-  background: #fffbf6;
+  border-color: #fde68a;
+  border-left: 3px solid #d97706;
+  background: #fffdfa;
 }
+
 .missing-card-heading {
   display: flex;
   align-items: center;
@@ -390,29 +532,35 @@ body.projector-mode .lab-note {
   gap: 0.4rem;
   flex-wrap: wrap;
 }
+
 .missing-card h3 {
   margin: 0;
   font-size: 0.95rem;
+  font-weight: 750;
+  color: var(--ink);
 }
+
 .missing-state {
-  color: #626b7b;
-  font-size: 0.7rem;
-  padding: 0.2rem 0.4rem;
-  background: #eef1f6;
-  border-radius: 3px;
+  color: #047857;
+  font-size: 0.72rem;
+  font-weight: 750;
+  padding: 0.2rem 0.5rem;
+  background: #d1fae5;
+  border-radius: 4px;
 }
+
 .has-missing .missing-state {
-  color: #924c12;
-  background: #ffedd5;
+  color: #92400e;
+  background: #fef3c7;
 }
+
 .missing-field {
-  margin: 0.35rem 0 1.1rem;
+  margin: 0.35rem 0 0.85rem;
   color: var(--muted);
-  font:
-    0.7rem/1.5 ui-monospace,
-    monospace;
+  font: 0.72rem/1.5 ui-monospace, monospace;
   overflow-wrap: anywhere;
 }
+
 .missing-amount {
   display: flex;
   align-items: baseline;
@@ -421,75 +569,514 @@ body.projector-mode .lab-note {
   color: var(--muted);
   font-size: 0.85rem;
 }
+
 .missing-amount strong {
   color: #64748b;
-  font-size: 2rem;
-  font-weight: 750;
-  line-height: 1.2;
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
 }
+
 .has-missing .missing-amount strong {
-  color: #924c12;
+  color: #b45309;
 }
+
 .missing-fraction {
   margin: 0.35rem 0 0;
   color: var(--muted);
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   10. 점 인스펙터 & 상세 결과 카드 (.point-card)
+   -------------------------------------------------------------------------- */
+.point-card {
+  padding: 0.9rem 1.15rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  line-height: 1.65;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+  min-height: 48px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+/* --------------------------------------------------------------------------
+   11. 상세 정보 (<details>, <summary>)
+   -------------------------------------------------------------------------- */
+details {
+  margin: 0.85rem 0;
+}
+
+summary {
+  cursor: pointer;
+  padding: 0.6rem 0;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.formula {
+  font-family: ui-monospace, monospace;
+  font-size: 0.92rem;
+  font-weight: 650;
+  padding: 0.4rem 0.8rem;
+  background: #f1f5f9;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 0.4rem 0 0.8rem;
+}
+
+/* --------------------------------------------------------------------------
+   12. 머신러닝 속성 선택 체크박스 (.feature-options)
+   -------------------------------------------------------------------------- */
+.feature-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.65rem;
+  border: 1px solid var(--line);
+  padding: 0.9rem 1.1rem;
+  border-radius: 6px;
+  background: #fafbfd;
+  margin: 0.85rem 0 1rem;
+}
+
+.feature-options legend {
+  padding: 0 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 750;
+  color: var(--muted);
+}
+
+.feature-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.4rem 0.75rem;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.feature-options label:hover {
+  background: #f8fafc;
+  border-color: var(--line-strong);
+}
+
+.feature-options label:has(input:checked) {
+  background: #eef2ff;
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+
+/* --------------------------------------------------------------------------
+   13. 결정트리 시각화 (.tree-node, .branch)
+   -------------------------------------------------------------------------- */
+.tree-node {
+  margin: 0.5rem 0;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #93c5fd;
+  border-radius: 0 6px 6px 0;
+  background: #ffffff;
+  font-size: 0.88rem;
+}
+
+div.tree-node {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-left: 4px solid #16a34a;
+  border-radius: 6px;
+  padding: 0.65rem 0.95rem;
+  margin: 0.5rem 0;
+}
+
+div.tree-node strong {
+  color: #15803d;
+  font-size: 0.95rem;
+  font-weight: 800;
+  display: block;
+}
+
+.tree-node > summary {
+  padding: 0.35rem 0;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.tree-node small {
+  display: block;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 0.2rem;
+}
+
+.tree-node .branch {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  background: #e0e7ff;
+  color: #3730a3;
+  border-radius: 4px;
   font-size: 0.75rem;
+  font-weight: 750;
+  margin: 0.55rem 0 0.3rem;
 }
-@media (max-width: 800px) {
-  .missing-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+
+/* --------------------------------------------------------------------------
+   14. 상관관계 & 혼동행렬 (.matrix, .correlation-key)
+   -------------------------------------------------------------------------- */
+.correlation-key {
+  display: flex;
+  justify-content: space-between;
+  max-width: 600px;
+  margin: 0.6rem 0;
+  padding: 0.45rem 0.85rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 650;
 }
-@media (max-width: 380px) {
-  .missing-card {
-    padding: 0.8rem;
+
+.matrix td {
+  text-align: center;
+  font-weight: 750;
+  min-width: 80px;
+  padding: 0.75rem 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.matrix th {
+  white-space: normal;
+  min-width: 95px;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   15. 로딩 & 상태 메시지 (.load-status)
+   -------------------------------------------------------------------------- */
+.load-status {
+  padding: 1.1rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  line-height: 1.6;
+  font-size: 0.92rem;
+  margin: 1.5rem 0;
+}
+
+.load-status.error {
+  background: #fff1e5;
+  color: #9a4707;
+  border-color: #fed7aa;
+}
+
+/* --------------------------------------------------------------------------
+   16. 종별 텍스트 색상
+   -------------------------------------------------------------------------- */
+.species-adelie {
+  color: #2563eb;
+}
+
+.species-gentoo {
+  color: #059669;
+}
+
+.species-chinstrap {
+  color: #d97706;
+}
+
+/* --------------------------------------------------------------------------
+   17. 활동 이동 네비게이션 (.lesson-pager)
+   -------------------------------------------------------------------------- */
+.lesson-pager {
+  margin: 2rem 0;
+}
+
+.lesson-pager a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.15s ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   18. 프로젝터 모드 (교실 고대비 지원)
+   -------------------------------------------------------------------------- */
+body.projector-mode {
+  --ink: #000000;
+  --muted: #1e293b;
+  --line: #475569;
+  --line-strong: #000000;
+  --accent: #153eaa;
+  font-size: 112%;
+}
+
+body.projector-mode main {
+  width: min(1360px, calc(100% - 2rem));
+}
+
+body.projector-mode .command-block {
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-left: 6px solid var(--accent);
+}
+
+body.projector-mode .command-block pre {
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+body.projector-mode .lab-table {
+  font-size: 1.1rem;
+}
+
+body.projector-mode .lab-table th {
+  background: #e2e8f0;
+  color: #000000;
+  font-weight: 800;
+  border-bottom: 2px solid #000000;
+}
+
+body.projector-mode .lab-table td {
+  border-bottom: 1px solid #475569;
+  color: #000000;
+  font-weight: 600;
+}
+
+body.projector-mode .lab-note {
+  font-size: 1rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+body.projector-mode .missing-card {
+  border: 2px solid #000000;
+  background: #ffffff;
+}
+
+body.projector-mode .missing-card.has-missing {
+  border: 2px solid #c2410c;
+  background: #fffaf0;
+}
+
+body.projector-mode .missing-amount strong {
+  color: #000000;
+}
+
+body.projector-mode .metric {
+  border: 2px solid #000000;
+  background: #ffffff;
+}
+
+body.projector-mode .metric strong {
+  color: #000000;
+}
+
+body.projector-mode .chart-wrap {
+  border: 2px solid #000000;
+}
+
+body.projector-mode .chart-wrap svg text {
+  fill: #000000;
+  font-weight: 750;
+}
+
+body.projector-mode .point-card {
+  border: 2px solid #000000;
+  border-left: 6px solid var(--accent);
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+}
+
+body.projector-mode button,
+body.projector-mode select,
+body.projector-mode input {
+  border: 2px solid #000000;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   19. 반응형 미디어 쿼리 (모바일 390px 최적화)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .lab-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.85rem 0;
   }
-  .missing-card h3 {
-    font-size: 0.9rem;
+
+  .lab-nav a {
+    min-height: 44px;
+    font-size: 0.82rem;
+    padding: 0.5rem 0.4rem;
+    text-align: center;
+  }
+
+  .lab-intro {
+    padding: 1.5rem 0 1rem;
+  }
+
+  .lab-intro h1 {
+    font-size: 1.85rem;
+  }
+
+  .lab-panel {
+    padding: 1.25rem 0 1.5rem;
+  }
+
+  .panel-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .controls {
+    gap: 0.65rem;
+  }
+
+  .controls label:not(.check) {
+    width: 100%;
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .controls select,
+  .controls input[type="search"],
+  .controls input[type="number"] {
+    width: 100%;
+    min-height: 44px;
+    font-size: 16px; /* iOS Safari 강제 확대 방지 */
+  }
+
+  .controls button {
+    width: 100%;
+    flex: 1 1 100%;
+    min-height: 44px;
+    font-size: 0.92rem;
+  }
+
+  #previous-page,
+  #next-page {
+    flex: 1;
+    width: auto;
+  }
+
+  #table-status {
+    width: 100%;
+    text-align: center;
+    order: -1;
+    min-height: 32px;
+  }
+
+  #drop-missing,
+  #drop-sex,
+  #reset-cleaning {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  #train-model {
+    width: 100%;
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  .feature-options {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .feature-options label {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .metrics {
+    gap: 0.5rem;
+  }
+
+  .metric {
+    min-width: 0;
+    flex: 1 1 45%;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .metric strong {
+    font-size: 1.35rem;
+  }
+
+  .tree-node {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.84rem;
+  }
+
+  .point-card {
+    font-size: 0.86rem;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .command-block {
+    padding: 0.7rem 0.85rem;
+  }
+
+  .command-block pre {
+    font-size: 0.8rem;
   }
 }
 
-.command-block {
-  margin: 0.85rem 0 1rem;
-  padding: 0.75rem 1rem;
-  border-left: 3px solid #b5c4e9;
-  background: #f5f7fb;
-  border-radius: 0 5px 5px 0;
-}
-.command-label {
-  display: block;
-  margin-bottom: 0.4rem;
-  color: #69758d;
-  font-size: 0.65rem;
-  font-weight: 750;
-  letter-spacing: 0.06em;
-}
-.command-block pre {
-  margin: 0;
-  font:
-    0.83rem/1.7 ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Consolas,
-    monospace;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: normal;
-  color: #253757;
-}
-.setup-command {
-  margin-bottom: 1.5rem;
-}
-.setup-command summary {
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-@media (max-width: 640px) {
-  .command-block {
-    padding: 0.7rem 0.8rem;
+@media (max-width: 480px) {
+  .missing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
   }
-  .command-block pre {
-    font-size: 0.78rem;
+
+  .missing-card {
+    padding: 0.75rem 0.65rem;
+  }
+
+  .missing-card h3 {
+    font-size: 0.88rem;
+  }
+
+  .missing-amount strong {
+    font-size: 1.6rem;
+  }
+
+  .missing-field {
+    font-size: 0.68rem;
+    margin: 0.25rem 0 0.5rem;
+  }
+
+  .chart-wrap {
+    padding: 0.5rem;
+  }
+
+  .chart-wrap svg {
+    min-width: 540px;
   }
 }
-body.projector-mode .command-block pre { font-size: 1rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
