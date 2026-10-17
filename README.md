@@ -94,7 +94,12 @@
 
 ## 활동지 07 · 기계학습과 데이터 실습(2)
 
-활동지 목록 페이지는 `units/ml-data-practice-2/`이고, 독립 활동 두 개(`lessons/penguins-data/`: 표와 그래프 비교, `lessons/penguins-graphs/`: 그래프 조작과 분석)가 있습니다. 펭귄 자료 `data/ml-practice/penguins_size.csv`(344행 7열)의 표와 그래프를 직접 관찰하며 특징을 찾고, 전처리와 분류 실습은 코랩 노트북 `data/ml-practice/penguins-student.ipynb`로 이어집니다. 웹에서는 모델을 훈련시키지 않습니다.
+활동지 목록은 `units/ml-data-practice-2/`이고, 퀴즈 없이 직접 조작하는 네 페이지로 구성합니다. CSV 다운로드만 목록에 표시하고 코랩 원본은 유지합니다.
+
+1. `lessons/penguins-data/` — 데이터 살펴보기: 표 검색·페이지 이동, 자료형·통계, 종류별 개수.
+2. `lessons/penguins-cleaning/` — 데이터 정리하기: 344→334→333행, 제외 행 확인, 네 숫자 속성 MinMax 정규화 전후 비교.
+3. `lessons/penguins-graphs/` — 속성 비교하기: 334행 상자그림, 333행 산점도·최소제곱 회귀선·Pearson 상관관계 히트맵. 원본 단위와 정규화 표시를 전환합니다.
+4. `lessons/penguins-model/` — 펭귄 분류하기: 입력 속성·분할 비율·seed·최대 깊이를 선택해 지니 기준 CART 결정트리를 브라우저에서 학습합니다. 종류별 비율을 유지한 훈련/검증 분할, 훈련에만 fit한 정규화, 실제 정확도·트리·혼동행렬·행별 예측을 제공합니다. scikit-learn과 분할 및 동률 처리 구현이 달라 동일한 수치 재현을 보장하지 않습니다.
 
 ## 활동지 08 · 기계학습 알고리즘
 

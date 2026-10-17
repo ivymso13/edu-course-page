@@ -6,7 +6,7 @@ const repoRoot = new URL("../", import.meta.url);
 const LEARNING_LESSON_IDS = ["ai-problem-method", "ai-prediction-lab"];
 const ALGORITHM_LESSON_IDS = ["ai-inference-ripeness", "ai-signal-noise", "ai-biased-data"];
 const PRACTICE_1_LESSON_IDS = ["digital-life-data", "digital-life-columns", "digital-life-filter"];
-const PRACTICE_2_LESSON_IDS = ["penguins-data", "penguins-graphs"];
+const PRACTICE_2_LESSON_IDS = ["penguins-data", "penguins-cleaning", "penguins-graphs", "penguins-model"];
 
 async function loadGroups() {
   const raw = await readFile(new URL("data/activity-groups.json", repoRoot), "utf8");
@@ -151,5 +151,5 @@ test("새 실습 그룹은 각각 활동별 독립 페이지 두 개를 등록�
   assert.equal(practice1.path, "units/ml-data-practice-1/");
   assert.equal(practice2.path, "units/ml-data-practice-2/");
   assert.deepEqual(practice1.children.map((child) => [child.id, child.path]), [["digital-life-data", "lessons/digital-life-data/"], ["digital-life-columns", "lessons/digital-life-columns/"], ["digital-life-filter", "lessons/digital-life-filter/"]]);
-  assert.deepEqual(practice2.children.map((child) => [child.id, child.path]), [["penguins-data", "lessons/penguins-data/"], ["penguins-graphs", "lessons/penguins-graphs/"]]);
+  assert.deepEqual(practice2.children.map((child) => [child.id, child.path]), [["penguins-data", "lessons/penguins-data/"], ["penguins-cleaning", "lessons/penguins-cleaning/"], ["penguins-graphs", "lessons/penguins-graphs/"], ["penguins-model", "lessons/penguins-model/"]]);
 });

@@ -1,691 +1,628 @@
-// 펭귄 데이터 인터랙티브 UI 및 렌더링 스크립트
+import { parsePenguinsCSV, FEATURE_INFO, SPECIES_INFO } from "./game-core.js";
 import {
-  parsePenguinsCSV,
-  calculateDataCleaningStats,
-  calculateSpeciesCounts,
-  calculateBodyMassStats,
-  calculateScatterData,
-  filterTableRows,
-  evaluateActivity1Answers,
-  SPECIES_INFO,
-  FEATURE_INFO,
-  quantile,
-  COLAB_INFO
-} from "./game-core.js";
-
-// 상태 변수
-let allRows = [];
-let speciesStats = null;
-let bodyMassStats = null;
-let cleaningStats = null;
-
-let tableState = {
-  currentPage: 1,
-  pageSize: 10,
-  query: "",
-  species: "all",
-  sortKey: "id",
-  sortAsc: true
+  FEATURES,
+  SPECIES,
+  COLUMNS,
+  completeRows,
+  cleanRows,
+  missingCounts,
+  summary,
+  fitMinMax,
+  transform,
+  relation,
+  splitRows,
+  runModel,
+  predict,
+} from "./lab-core.js";
+const $ = (s) => document.querySelector(s);
+const labels = {
+  species: "종류",
+  island: "서식 섬",
+  sex: "성별",
+  ...Object.fromEntries(FEATURES.map((k) => [k, FEATURE_INFO[k].labelKo])),
 };
-
-let scatterState = {
-  xKey: "culmen_length_mm",
-  yKey: "culmen_depth_mm",
-  colorEnabled: true,
-  selectedPointId: null
-};
-
-// 런타임 초기화
-document.addEventListener("DOMContentLoaded", () => {
-  initProjectorMode();
-  loadData();
-});
-
-// 프로젝터 모드 토글
-function initProjectorMode() {
-  const btn = document.getElementById("projector-toggle");
-  if (!btn) return;
-  btn.addEventListener("click", () => {
-    const isPressed = btn.getAttribute("aria-pressed") === "true";
-    btn.setAttribute("aria-pressed", String(!isPressed));
-    document.body.classList.toggle("projector-mode", !isPressed);
+const fmt = (n, d = 2) =>
+  typeof n === "number"
+    ? Number.isInteger(n)
+      ? String(n)
+      : n.toFixed(d)
+    : n === null || n === undefined
+      ? "결측"
+      : String(n);
+const esc = (s) =>
+  String(s).replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
+const featureName = (k) => `${labels[k]} (${FEATURE_INFO[k].unit})`;
+let rows = [];
+function table(container, columns, data, caption) {
+  const wrap = document.createElement("div");
+  wrap.className = "table-wrap";
+  wrap.tabIndex = 0;
+  wrap.setAttribute("aria-label", caption + " (좌우 스크롤 가능)");
+  const t = document.createElement("table");
+  t.className = "lab-table";
+  const cap = document.createElement("caption");
+  cap.className = "sr-only";
+  cap.textContent = caption;
+  t.append(cap);
+  const head = t.createTHead().insertRow();
+  columns.forEach((c) => {
+    const th = document.createElement("th");
+    th.scope = "col";
+    th.textContent = typeof c === "string" ? c : c.label;
+    head.append(th);
   });
+  const body = t.createTBody();
+  data.forEach((r) => {
+    const tr = body.insertRow();
+    columns.forEach((c, i) => {
+      const v = Array.isArray(r) ? r[i] : r[c.key];
+      const td = tr.insertCell();
+      td.textContent = fmt(v);
+      if (v === null || v === undefined) td.className = "missing";
+    });
+  });
+  wrap.append(t);
+  container.replaceChildren(wrap);
+  return t;
 }
-
-// CSV 데이터 로드 및 초기 렌더링
-async function loadData() {
-  const errorBanner = document.getElementById("data-fetch-error");
-  const tableBody = document.getElementById("penguins-table-body");
-
-  try {
-    const response = await fetch("../../data/ml-practice/penguins_size.csv");
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: 데이터를 읽을 수 없습니다.`);
-    }
-    const csvText = await response.text();
-    allRows = parsePenguinsCSV(csvText);
-
-    if (allRows.length === 0) {
-      throw new Error("CSV 데이터가 비어 있거나 올바르지 않습니다.");
-    }
-
-    // 통계 계산
-    speciesStats = calculateSpeciesCounts(allRows);
-    bodyMassStats = calculateBodyMassStats(allRows);
-    cleaningStats = calculateDataCleaningStats(allRows);
-
-    // 각 영역 렌더링
-    if (tableBody) { initTable(); initActivity1Quiz(); }
-    if (document.getElementById("bar-chart-svg")) { initActivity2Graphs(); initObservationInput(); }
-  } catch (err) {
-    console.error("데이터 로드 실패:", err);
-    if (errorBanner) errorBanner.hidden = false;
-    if (tableBody) {
-      tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 2rem; color: #b91c1c;">
-        <strong>데이터 로드 실패:</strong> CSV 파일을 불러오지 못했습니다 (${err.message}).
-      </td></tr>`;
-    }
-  }
+function dataTable(container, data, caption) {
+  table(
+    container,
+    [
+      { key: "id", label: "원본 행 번호" },
+      ...COLUMNS.map((k) => ({
+        key: k,
+        label: FEATURES.includes(k) ? featureName(k) : labels[k],
+      })),
+    ],
+    data,
+    caption,
+  );
 }
-
-// --- 표(Table) 영역 초기화 및 렌더링 -----------------------------------------
-function initTable() {
-  const searchInput = document.getElementById("table-search");
-  const speciesFilter = document.getElementById("table-species-filter");
-  const pageSizeSelect = document.getElementById("table-page-size");
-
-  const btnFirst = document.getElementById("btn-first");
-  const btnPrev = document.getElementById("btn-prev");
-  const btnNext = document.getElementById("btn-next");
-  const btnLast = document.getElementById("btn-last");
-
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      tableState.query = e.target.value;
-      tableState.currentPage = 1;
-      renderTable();
-    });
-  }
-
-  if (speciesFilter) {
-    speciesFilter.addEventListener("change", (e) => {
-      tableState.species = e.target.value;
-      tableState.currentPage = 1;
-      renderTable();
-    });
-  }
-
-  if (pageSizeSelect) {
-    pageSizeSelect.addEventListener("change", (e) => {
-      tableState.pageSize = Number(e.target.value);
-      tableState.currentPage = 1;
-      renderTable();
-    });
-  }
-
-  if (btnFirst) {
-    btnFirst.addEventListener("click", () => {
-      tableState.currentPage = 1;
-      renderTable();
-    });
-  }
-
-  if (btnPrev) {
-    btnPrev.addEventListener("click", () => {
-      if (tableState.currentPage > 1) {
-        tableState.currentPage -= 1;
-        renderTable();
-      }
-    });
-  }
-
-  if (btnNext) {
-    btnNext.addEventListener("click", () => {
-      tableState.currentPage += 1;
-      renderTable();
-    });
-  }
-
-  if (btnLast) {
-    btnLast.addEventListener("click", () => {
-      const res = filterTableRows(allRows, tableState);
-      tableState.currentPage = res.totalPages;
-      renderTable();
-    });
-  }
-
-  renderTable();
+function metrics(container, items) {
+  container.replaceChildren(
+    ...items.map(([label, value]) => {
+      const box = document.createElement("div");
+      box.className = "metric";
+      const span = document.createElement("span");
+      span.textContent = label;
+      const strong = document.createElement("strong");
+      strong.textContent = value;
+      box.append(span, strong);
+      return box;
+    }),
+  );
 }
-
-function renderTable() {
-  const tableBody = document.getElementById("penguins-table-body");
-  const statusInfo = document.getElementById("table-status-info");
-  const pageIndicator = document.getElementById("page-indicator");
-  const rowsCounter = document.getElementById("table-rows-counter");
-
-  const btnFirst = document.getElementById("btn-first");
-  const btnPrev = document.getElementById("btn-prev");
-  const btnNext = document.getElementById("btn-next");
-  const btnLast = document.getElementById("btn-last");
-
-  if (!tableBody) return;
-
-  const result = filterTableRows(allRows, tableState);
-  tableState.currentPage = result.currentPage;
-
-  if (statusInfo) {
-    if (result.totalFiltered === 0) {
-      statusInfo.textContent = "일치하는 데이터가 없습니다.";
-    } else {
-      statusInfo.textContent = `전체 ${allRows.length}개 중 ${result.startIndex + 1}–${result.endIndex}번째 표시 중 (총 ${result.totalPages}페이지)`;
-    }
-  }
-
-  if (pageIndicator) {
-    pageIndicator.textContent = `${result.currentPage} / ${result.totalPages}`;
-  }
-
-  if (rowsCounter) {
-    rowsCounter.textContent = `검색 결과: ${result.totalFiltered}행 (전체 ${allRows.length}행)`;
-  }
-
-  if (btnFirst) btnFirst.disabled = result.currentPage <= 1;
-  if (btnPrev) btnPrev.disabled = result.currentPage <= 1;
-  if (btnNext) btnNext.disabled = result.currentPage >= result.totalPages;
-  if (btnLast) btnLast.disabled = result.currentPage >= result.totalPages;
-
-  if (result.rows.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 2rem; color: var(--muted);">
-      조건에 맞는 펭귄 데이터를 찾을 수 없습니다.
-    </td></tr>`;
-    return;
-  }
-
-  tableBody.innerHTML = result.rows
-    .map((r) => {
-      const spInfo = SPECIES_INFO[r.species];
-      const spBadge = spInfo
-        ? `<span class="species-badge ${spInfo.badgeClass}">${spInfo.symbol} ${spInfo.nameKo}</span>`
-        : r.species ?? '<span class="badge-na">NA</span>';
-
-      const formatNum = (v, unit = "") =>
-        v === null || Number.isNaN(v)
-          ? '<span class="badge-na">NA</span>'
-          : `${v}${unit ? " " + unit : ""}`;
-
-      return `<tr>
-        <td class="num">${r.id}</td>
-        <td>${spBadge}</td>
-        <td>${r.island ?? '<span class="badge-na">NA</span>'}</td>
-        <td class="num">${formatNum(r.culmen_length_mm)}</td>
-        <td class="num">${formatNum(r.culmen_depth_mm)}</td>
-        <td class="num">${formatNum(r.flipper_length_mm)}</td>
-        <td class="num">${formatNum(r.body_mass_g)}</td>
-        <td>${r.sex ?? '<span class="badge-na">NA</span>'}</td>
-      </tr>`;
-    })
-    .join("");
+function options(select, values = FEATURES, selected) {
+  select.replaceChildren(
+    ...values.map((k) => {
+      const o = document.createElement("option");
+      o.value = k;
+      o.textContent = labels[k] || k;
+      return o;
+    }),
+  );
+  if (selected) select.value = selected;
 }
-
-// --- 웹 활동 1: 퀴즈 검증 및 결과 공개 ---------------------------------------
-function initActivity1Quiz() {
-  const checkBtn = document.getElementById("check-activity1-btn");
-  if (!checkBtn) return;
-
-  checkBtn.addEventListener("click", () => {
-    const qCount = document.querySelector('input[name="q-species-count"]:checked')?.value;
-    const qMost = document.querySelector('input[name="q-most-common"]:checked')?.value;
-    const qHeaviest = document.querySelector('input[name="q-heaviest"]:checked')?.value;
-
-    if (!qCount || !qMost || !qHeaviest) {
-      alert("세 가지 질문에 모두 답을 선택한 후 [그래프로 확인하기]를 눌러주세요.");
-      return;
-    }
-
-    const evaluation = evaluateActivity1Answers(
-      { speciesCount: qCount, mostCommon: qMost, heaviestSpecies: qHeaviest },
-      speciesStats,
-      bodyMassStats
+function text(x, y, s, extra = "") {
+  return `<text x="${x}" y="${y}" ${extra}>${esc(s)}</text>`;
+}
+function line(x1, y1, x2, y2, color = "#d7dce5", width = 1) {
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}"/>`;
+}
+function barChart() {
+  const max = 180;
+  let svg = "";
+  for (let i = 0; i <= 3; i++) {
+    const v = i * 60,
+      y = 300 - (v / max) * 245;
+    svg += line(65, y, 720, y) + text(55, y + 4, v, 'text-anchor="end"');
+  }
+  SPECIES.forEach((sp, i) => {
+    const count = rows.filter((r) => r.species === sp).length,
+      x = 150 + i * 210,
+      h = (count / max) * 245;
+    svg +=
+      `<rect x="${x - 45}" y="${300 - h}" width="90" height="${h}" fill="${SPECIES_INFO[sp].color}"/>` +
+      text(x, 288 - h, count, 'text-anchor="middle"') +
+      text(x, 327, sp, 'text-anchor="middle"');
+  });
+  svg += text(30, 24, "개수 (마리)");
+  $("#species-chart").innerHTML = svg;
+}
+function initData() {
+  let page = 0;
+  function render() {
+    const term = $("#table-search").value.trim().toLowerCase(),
+      size = Number($("#table-size").value),
+      filtered = rows.filter((r) =>
+        COLUMNS.some((k) =>
+          String(r[k] ?? "결측")
+            .toLowerCase()
+            .includes(term),
+        ),
+      );
+    const pages = Math.max(1, Math.ceil(filtered.length / size));
+    page = Math.min(page, pages - 1);
+    dataTable(
+      $("#raw-table"),
+      filtered.slice(page * size, (page + 1) * size),
+      "펭귄 원본 데이터",
     );
-
-    renderActivity1Results(evaluation);
+    $("#raw-table tbody")?.setAttribute("id", "penguins-table-body");
+    $("#table-status").textContent =
+      `${filtered.length}행 · ${page + 1}/${pages}쪽`;
+    $("#previous-page").disabled = page === 0;
+    $("#next-page").disabled = page >= pages - 1;
+  }
+  $("#table-search").addEventListener("input", () => {
+    page = 0;
+    render();
   });
-}
-
-function renderActivity1Results(evaluation) {
-  const revealArea = document.getElementById("activity1-reveal");
-  const scoreBadge = document.getElementById("activity1-score-badge");
-  const feedbackList = document.getElementById("activity1-feedback-list");
-
-  if (!revealArea) return;
-  revealArea.hidden = false;
-
-  let correctCount = 0;
-  if (evaluation.q1.correct) correctCount++;
-  if (evaluation.q2.correct) correctCount++;
-  if (evaluation.q3.correct) correctCount++;
-
-  if (scoreBadge) {
-    scoreBadge.className = `score-badge ${correctCount === 3 ? "score-pass" : "score-partial"}`;
-    scoreBadge.textContent = `${correctCount} / 3 정답`;
-  }
-
-  if (feedbackList) {
-    feedbackList.innerHTML = `
-      <div class="review-item ${evaluation.q1.correct ? "is-correct" : "is-wrong"}">
-        <strong>(a) 펭귄 종류 수: ${evaluation.q1.correct ? "정답! 👏" : "아쉽네요!"}</strong>
-        <p>나의 선택: ${evaluation.q1.studentAnswer}가지 / 실제 데이터: <strong>${evaluation.q1.correctAnswer}</strong></p>
-        <p>${evaluation.q1.explanation}</p>
-      </div>
-
-      <div class="review-item ${evaluation.q2.correct ? "is-correct" : "is-wrong"}">
-        <strong>(b) 가장 많은 종류: ${evaluation.q2.correct ? "정답! 👏" : "아쉽네요!"}</strong>
-        <p>나의 선택: ${evaluation.q2.studentAnswer} / 실제 데이터: <strong>${evaluation.q2.correctAnswer}</strong></p>
-        <p>${evaluation.q2.explanation}</p>
-      </div>
-
-      <div class="review-item ${evaluation.q3.correct ? "is-correct" : "is-wrong"}">
-        <strong>(c) 대체로 가장 무거운 종류: ${evaluation.q3.correct ? "정답! 👏" : "아쉽네요!"}</strong>
-        <p>나의 선택: ${evaluation.q3.studentAnswer} / 실제 데이터: <strong>${evaluation.q3.correctAnswer}</strong></p>
-        <p>${evaluation.q3.explanation}</p>
-      </div>
-    `;
-  }
-
-  renderActivity1MiniChart();
-  revealArea.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-// 활동 1 요약 미니 차트 (SVG)
-function renderActivity1MiniChart() {
-  const svg = document.getElementById("activity1-mini-chart");
-  if (!svg || !speciesStats || !bodyMassStats) return;
-
-  const species = ["Adelie", "Gentoo", "Chinstrap"];
-  const maxCount = 160;
-
-  let html = `
-    <!-- 배경 눈금선 -->
-    <line x1="80" y1="20" x2="80" y2="190" stroke="#cbd5e1" stroke-width="1.5" />
-    <line x1="80" y1="190" x2="660" y2="190" stroke="#cbd5e1" stroke-width="1.5" />
-    <text x="370" y="215" text-anchor="middle" font-size="12" fill="#64748b">종류별 개체 수(마리) 및 체질량 중앙값(g)</text>
-  `;
-
-  species.forEach((s, i) => {
-    const y = 35 + i * 50;
-    const count = speciesStats.counts[s];
-    const med = bodyMassStats.bySpecies[s]?.median ?? 0;
-    const sp = SPECIES_INFO[s];
-    const barWidth = (count / maxCount) * 380;
-
-    html += `
-      <g>
-        <text x="70" y="${y + 16}" text-anchor="end" font-size="13" font-weight="700" fill="#1e293b">${sp.nameKo}</text>
-        <rect x="80" y="${y}" width="${barWidth}" height="24" rx="4" fill="${sp.color}" />
-        <text x="${85 + barWidth}" y="${y + 16}" font-size="12" font-weight="750" fill="${sp.color}">
-          ${count}마리 (${speciesStats.percentages[s]}%)
-        </text>
-        <text x="560" y="${y + 16}" font-size="12" fill="#334155" font-weight="600">
-          중앙값: <tspan font-weight="750" fill="${sp.color}">${med}g</tspan>
-        </text>
-      </g>
-    `;
+  $("#table-size").addEventListener("change", () => {
+    page = 0;
+    render();
   });
-
-  svg.innerHTML = html;
+  $("#previous-page").onclick = () => {
+    page--;
+    render();
+  };
+  $("#next-page").onclick = () => {
+    page++;
+    render();
+  };
+  render();
+  table(
+    $("#schema-table"),
+    ["속성", "열 이름", "자료형", "값이 있는 행", "고유한 값"],
+    COLUMNS.map((k) => [
+      labels[k],
+      k,
+      FEATURES.includes(k) ? "숫자" : "문자열",
+      rows.filter((r) => r[k] !== null).length,
+      FEATURES.includes(k)
+        ? "—"
+        : [...new Set(rows.map((r) => r[k]).filter((v) => v !== null))].join(
+            ", ",
+          ),
+    ]),
+    "속성과 자료형",
+  );
+  table(
+    $("#summary-table"),
+    [
+      "속성",
+      "개수",
+      "평균",
+      "표준편차",
+      "최솟값",
+      "25%",
+      "중앙값",
+      "75%",
+      "최댓값",
+    ],
+    FEATURES.map((k) => {
+      const s = summary(rows, k);
+      return [
+        featureName(k),
+        s.count,
+        s.mean,
+        s.std,
+        s.min,
+        s.q1,
+        s.median,
+        s.q3,
+        s.max,
+      ];
+    }),
+    "숫자 속성 통계 · 결측값 제외",
+  );
+  barChart();
 }
-
-// --- 웹 활동 2: 그래프 렌더링 ------------------------------------------------
-function initActivity2Graphs() {
-  renderSpeciesBarChart();
-  renderBodyMassBoxPlot();
-  initScatterPlot();
-  updateGuidedQA();
-}
-
-// (가) 종류별 개수 막대그래프
-function renderSpeciesBarChart() {
-  const svg = document.getElementById("bar-chart-svg");
-  const rowCountDiv = document.getElementById("bar-chart-row-count");
-  if (!svg || !speciesStats) return;
-
-  const species = ["Adelie", "Gentoo", "Chinstrap"];
-  const maxCount = 160;
-
-  let html = `
-    <!-- 세로 눈금선 -->
-    <line x1="120" y1="20" x2="120" y2="175" stroke="#cbd5e1" stroke-width="1.5" />
-    <line x1="120" y1="175" x2="660" y2="175" stroke="#cbd5e1" stroke-width="1.5" />
-  `;
-
-  // x축 눈금 0, 40, 80, 120, 160
-  [0, 40, 80, 120, 160].forEach((tick) => {
-    const x = 120 + (tick / maxCount) * 500;
-    html += `
-      <line x1="${x}" y1="20" x2="${x}" y2="175" stroke="#f1f5f9" stroke-width="1" />
-      <line x1="${x}" y1="175" x2="${x}" y2="180" stroke="#94a3b8" stroke-width="1" />
-      <text x="${x}" y="195" text-anchor="middle" font-size="11" fill="#64748b">${tick}</text>
-    `;
-  });
-
-  species.forEach((s, i) => {
-    const y = 35 + i * 46;
-    const count = speciesStats.counts[s];
-    const pct = speciesStats.percentages[s];
-    const sp = SPECIES_INFO[s];
-    const barWidth = (count / maxCount) * 500;
-
-    html += `
-      <g tabindex="0" role="img" aria-label="${sp.nameKo}: ${count}마리 (${pct}%)">
-        <text x="110" y="${y + 18}" text-anchor="end" font-size="13" font-weight="700" fill="#1e293b">${sp.symbol} ${sp.nameKo}</text>
-        <rect x="120" y="${y}" width="${barWidth}" height="26" rx="4" fill="${sp.color}">
-          <title>${sp.nameKo}: ${count}마리 (${pct}%)</title>
-        </rect>
-        <text x="${130 + barWidth}" y="${y + 18}" font-size="13" font-weight="750" fill="${sp.color}">${count}마리 (${pct}%)</text>
-      </g>
-    `;
-  });
-
-  svg.innerHTML = html;
-
-  if (rowCountDiv) {
-    rowCountDiv.innerHTML = `
-      <span>📊 <strong>이 그래프에 사용된 행:</strong> ${speciesStats.usedRows}개</span>
-      <span style="color:#94a3b8;">|</span>
-      <span><strong>결측으로 제외된 행:</strong> ${speciesStats.missingRows}개 (종류 열은 344행 모두 결측 없음)</span>
-    `;
-  }
-}
-
-// (나) 종류별 몸무게 상자그림
-function renderBodyMassBoxPlot() {
-  const svg = document.getElementById("box-chart-svg");
-  const rows = allRows.filter(row => ["species", "island", "culmen_length_mm", "culmen_depth_mm", "flipper_length_mm", "body_mass_g", "sex"].every(key => row[key] !== null && row[key] !== undefined));
-  const values = rows.map(row => row.culmen_length_mm).sort((a,b) => a-b);
-  const q1 = quantile(values, .25), median = quantile(values, .5), q3 = quantile(values, .75);
-  const iqr = q3-q1;
-  const within = values.filter(v => v >= q1-1.5*iqr && v <= q3+1.5*iqr);
-  const lo = Math.min(...within), hi = Math.max(...within);
-  const x = value => 70+(value-30)/32*560;
-  svg.innerHTML = `<line x1="70" y1="200" x2="630" y2="200" stroke="#94a3b8"/>
-    <line x1="${x(lo)}" y1="100" x2="${x(hi)}" y2="100" stroke="#3158d7" stroke-width="2"/>
-    <rect x="${x(q1)}" y="70" width="${x(q3)-x(q1)}" height="60" fill="#dbeafe" stroke="#3158d7"/>
-    <line x1="${x(median)}" y1="70" x2="${x(median)}" y2="130" stroke="#3158d7" stroke-width="4"/>
-    <text x="${x(median)}" y="50" text-anchor="middle">중앙값 ${median.toFixed(1)} mm</text>
-    <text x="350" y="260" text-anchor="middle">부리 길이 (culmen_length_mm)</text>`;
-  for (const value of [30,35,40,45,50,55,60]) svg.innerHTML += `<text x="${x(value)}" y="225" text-anchor="middle">${value} mm</text>`;
-  for (const value of [lo,hi]) svg.innerHTML += `<line x1="${x(value)}" y1="85" x2="${x(value)}" y2="115" stroke="#3158d7" stroke-width="2"/>`;
-  for (const value of values.filter(v => v<lo || v>hi)) svg.innerHTML += `<circle cx="${x(value)}" cy="100" r="4" fill="#b33e4b"/>`;
-  document.getElementById("box-chart-row-count").textContent = `노트북과 같이 결측 행 제거 후 부리 길이를 확인합니다. 사용 ${rows.length}행 · 제외 ${allRows.length-rows.length}행 · 수염 밖 점은 이상치 후보입니다.`;
-}
-
-// (다) 신체 특징 산점도 초기화 및 이벤트 연결
-function initScatterPlot() {
-  const xSelect = document.getElementById("scatter-x-select");
-  const ySelect = document.getElementById("scatter-y-select");
-  const colorToggleBtn = document.getElementById("toggle-color-btn");
-  const pointSelect = document.getElementById("keyboard-point-select");
-
-  if (xSelect) {
-    xSelect.addEventListener("change", (e) => {
-      scatterState.xKey = e.target.value;
-      renderScatterPlot();
-    });
-  }
-
-  if (ySelect) {
-    ySelect.addEventListener("change", (e) => {
-      scatterState.yKey = e.target.value;
-      renderScatterPlot();
-    });
-  }
-
-  if (colorToggleBtn) {
-    colorToggleBtn.addEventListener("click", () => {
-      scatterState.colorEnabled = !scatterState.colorEnabled;
-      colorToggleBtn.setAttribute("aria-pressed", String(scatterState.colorEnabled));
-      colorToggleBtn.textContent = scatterState.colorEnabled
-        ? "종류 색상 끄기"
-        : "종류 색상 켜기";
-      renderScatterPlot();
-    });
-  }
-
-  if (pointSelect) {
-    pointSelect.addEventListener("change", (e) => {
-      const pid = Number(e.target.value);
-      if (pid) {
-        selectScatterPoint(pid);
-      }
-    });
-  }
-
-  renderScatterPlot();
-}
-
-// 산점도 렌더링
-function renderScatterPlot() {
-  const svg = document.getElementById("scatter-chart-svg");
-  const rowCountDiv = document.getElementById("scatter-chart-row-count");
-  const pointSelect = document.getElementById("keyboard-point-select");
-  if (!svg || allRows.length === 0) return;
-
-  const { xKey, yKey, colorEnabled } = scatterState;
-  const scatter = calculateScatterData(allRows, xKey, yKey);
-
-  const plotLeft = 65;
-  const plotTop = 25;
-  const plotWidth = 590;
-  const plotHeight = 350;
-
-  // 축 범위 약간 여유 두기
-  const xSpan = scatter.xMax - scatter.xMin || 1;
-  const ySpan = scatter.yMax - scatter.yMin || 1;
-  const xDomainMin = scatter.xMin - xSpan * 0.06;
-  const xDomainMax = scatter.xMax + xSpan * 0.06;
-  const yDomainMin = scatter.yMin - ySpan * 0.06;
-  const yDomainMax = scatter.yMax + ySpan * 0.06;
-
-  const toSvgX = (val) =>
-    plotLeft + ((val - xDomainMin) / (xDomainMax - xDomainMin)) * plotWidth;
-  const toSvgY = (val) =>
-    plotTop + plotHeight - ((val - yDomainMin) / (yDomainMax - yDomainMin)) * plotHeight;
-
-  let html = `
-    <!-- 플롯 배경 및 축 -->
-    <rect x="${plotLeft}" y="${plotTop}" width="${plotWidth}" height="${plotHeight}" fill="#fafcff" stroke="#cbd5e1" stroke-width="1.5" />
-  `;
-
-  // X축 눈금선 (5개)
-  for (let i = 0; i <= 5; i++) {
-    const val = xDomainMin + (i / 5) * (xDomainMax - xDomainMin);
-    const x = toSvgX(val);
-    const displayVal = xKey === "body_mass_g" ? Math.round(val) : val.toFixed(1);
-    html += `
-      <line x1="${x}" y1="${plotTop}" x2="${x}" y2="${plotTop + plotHeight}" stroke="#f1f5f9" stroke-width="1" />
-      <line x1="${x}" y1="${plotTop + plotHeight}" x2="${x}" y2="${plotTop + plotHeight + 5}" stroke="#94a3b8" stroke-width="1" />
-      <text x="${x}" y="${plotTop + plotHeight + 20}" text-anchor="middle" font-size="11" fill="#64748b">${displayVal}</text>
-    `;
-  }
-
-  // Y축 눈금선 (5개)
-  for (let i = 0; i <= 5; i++) {
-    const val = yDomainMin + (i / 5) * (yDomainMax - yDomainMin);
-    const y = toSvgY(val);
-    const displayVal = yKey === "body_mass_g" ? Math.round(val) : val.toFixed(1);
-    html += `
-      <line x1="${plotLeft}" y1="${y}" x2="${plotLeft + plotWidth}" y2="${y}" stroke="#f1f5f9" stroke-width="1" />
-      <line x1="${plotLeft - 5}" y1="${y}" x2="${plotLeft}" y2="${y}" stroke="#94a3b8" stroke-width="1" />
-      <text x="${plotLeft - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#64748b">${displayVal}</text>
-    `;
-  }
-
-  // 축 제목
-  html += `
-    <text x="${plotLeft + plotWidth / 2}" y="${plotTop + plotHeight + 42}" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">
-      ${scatter.xLabel} (${scatter.xUnit})
-    </text>
-    <text x="18" y="${plotTop + plotHeight / 2}" text-anchor="middle" font-size="13" font-weight="700" fill="#334155" transform="rotate(-90 18 ${plotTop + plotHeight / 2})">
-      ${scatter.yLabel} (${scatter.yUnit})
-    </text>
-  `;
-
-  // 점(Scatter Points) 그리기
-  scatter.points.forEach((p) => {
-    const cx = toSvgX(p.x);
-    const cy = toSvgY(p.y);
-    const sp = SPECIES_INFO[p.species];
-    const isSelected = scatterState.selectedPointId === p.id;
-
-    const fill = colorEnabled ? sp.color : "#475569";
-    const stroke = isSelected ? "#ef4444" : "#ffffff";
-    const strokeWidth = isSelected ? 3 : 1;
-
-    let shapeTag = "";
-    if (sp.marker === "circle") {
-      shapeTag = `<circle cx="${cx}" cy="${cy}" r="${isSelected ? 7 : 4.5}" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" />`;
-    } else if (sp.marker === "triangle") {
-      const s = isSelected ? 8 : 5.5;
-      const points = `${cx},${cy - s * 1.2} ${cx - s},${cy + s * 0.8} ${cx + s},${cy + s * 0.8}`;
-      shapeTag = `<polygon points="${points}" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" />`;
+function initCleaning() {
+  let stage = 0;
+  const completed = completeRows(rows),
+    cleaned = cleanRows(rows);
+  table(
+    $("#missing-table"),
+    ["속성", "결측값 개수"],
+    missingCounts(rows).map((x) => [labels[x.key], x.count]),
+    "원본 데이터의 속성별 결측값",
+  );
+  function render() {
+    const current = stage === 0 ? rows : stage === 1 ? completed : cleaned,
+      previous = stage === 1 ? rows : stage === 2 ? completed : [];
+    const ids = new Set(current.map((r) => r.id)),
+      removed = previous.filter((r) => !ids.has(r.id));
+    metrics($("#cleaning-status"), [
+      ["원본", `${rows.length}행`],
+      ["현재", `${current.length}행`],
+      ["누적 제외", `${rows.length - current.length}행`],
+    ]);
+    $("#drop-missing").disabled = stage !== 0;
+    $("#drop-sex").disabled = stage !== 1;
+    $("#normalize").disabled = stage < 2;
+    if (stage < 2) $("#normalize").checked = false;
+    $("#unique-values").textContent =
+      `현재 species 고유값: ${[...new Set(current.map((r) => r.species))].join(", ")} · sex 고유값: ${[...new Set(current.map((r) => (r.sex === null ? "결측" : r.sex)))].join(", ")}`;
+    dataTable(
+      $("#cleaning-table"),
+      $("#cleaning-view").value === "all" ? current : current.slice(0, 10),
+      "현재 단계의 데이터",
+    );
+    dataTable($("#removed-table"), removed, "이번 단계에서 제외된 행");
+    if (stage === 2) {
+      const scaler = fitMinMax(cleaned);
+      table(
+        $("#normalization-ranges"),
+        ["속성", "기준 최솟값", "기준 최댓값"],
+        FEATURES.map((k) => [featureName(k), scaler[k].min, scaler[k].max]),
+        "정규화 기준 · 정리한 333행",
+      );
+      const data = $("#normalize").checked
+        ? transform(cleaned, scaler)
+        : cleaned;
+      table(
+        $("#normalized-table"),
+        [
+          { key: "id", label: "원본 행 번호" },
+          ...FEATURES.map((k) => ({
+            key: k,
+            label: $("#normalize").checked
+              ? `${labels[k]} (0~1)`
+              : featureName(k),
+          })),
+        ],
+        data.slice(0, 10),
+        "정규화 전후 첫 10행",
+      );
     } else {
-      // square
-      const size = isSelected ? 12 : 8;
-      shapeTag = `<rect x="${cx - size / 2}" y="${cy - size / 2}" width="${size}" height="${size}" rx="1" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" />`;
+      $("#normalization-ranges").textContent =
+        "먼저 두 단계의 행 정리를 완료하세요.";
+      $("#normalized-table").replaceChildren();
     }
-
-    html += `
-      <g class="scatter-point-node" data-point-id="${p.id}" tabindex="0" role="button" aria-label="펭귄 #${p.id}: ${sp.nameKo}, ${scatter.xLabel}=${p.x}${scatter.xUnit}, ${scatter.yLabel}=${p.y}${scatter.yUnit}" style="cursor:pointer; outline:none;">
-        <title>펭귄 #${p.id} (${sp.nameKo}): ${scatter.xLabel} ${p.x}${scatter.xUnit}, ${scatter.yLabel} ${p.y}${scatter.yUnit}</title>
-        ${shapeTag}
-      </g>
-    `;
+  }
+  $("#drop-missing").onclick = () => {
+    stage = 1;
+    render();
+  };
+  $("#drop-sex").onclick = () => {
+    stage = 2;
+    render();
+  };
+  $("#reset-cleaning").onclick = () => {
+    stage = 0;
+    render();
+  };
+  $("#normalize").onchange = render;
+  $("#cleaning-view").onchange = render;
+  render();
+}
+function initGraphs() {
+  const cleaned = cleanRows(rows),
+    complete = completeRows(rows),
+    scaled = transform(cleaned, fitMinMax(cleaned));
+  options($("#box-feature"));
+  options($("#scatter-x"), FEATURES, "culmen_length_mm");
+  options($("#scatter-y"), FEATURES, "culmen_depth_mm");
+  $("#species-legend").replaceChildren(
+    ...SPECIES.map((sp) => {
+      const span = document.createElement("span");
+      span.style.color = SPECIES_INFO[sp].color;
+      span.textContent = `${SPECIES_INFO[sp].symbol} ${sp}`;
+      return span;
+    }),
+  );
+  function box() {
+    const k = $("#box-feature").value,
+      s = summary(complete, k),
+      low = s.q1 - 1.5 * (s.q3 - s.q1),
+      high = s.q3 + 1.5 * (s.q3 - s.q1),
+      inside = complete.map((r) => r[k]).filter((v) => v >= low && v <= high),
+      lo = Math.min(...inside),
+      hi = Math.max(...inside),
+      range = s.max - s.min || 1,
+      x = (v) => 70 + ((v - s.min) / range) * 620;
+    let out = "";
+    for (let i = 0; i <= 4; i++) {
+      const v = s.min + (range * i) / 4;
+      out +=
+        line(x(v), 270, x(v), 277) +
+        text(x(v), 300, fmt(v), 'text-anchor="middle"');
+    }
+    out +=
+      line(70, 270, 690, 270) +
+      line(x(lo), 160, x(hi), 160, "#626b7b", 2) +
+      line(x(lo), 135, x(lo), 185, "#626b7b", 2) +
+      line(x(hi), 135, x(hi), 185, "#626b7b", 2) +
+      `<rect x="${x(s.q1)}" y="115" width="${x(s.q3) - x(s.q1)}" height="90" fill="#dbeafe" stroke="#2563eb"/>` +
+      line(x(s.median), 115, x(s.median), 205, "#2563eb", 3);
+    complete
+      .filter((r) => r[k] < lo || r[k] > hi)
+      .forEach((r) => {
+        out += `<circle cx="${x(r[k])}" cy="160" r="5" fill="#d97706"><title>원본 ${r.id}번 행 · ${r[k]}</title></circle>`;
+      });
+    out +=
+      text(380, 335, featureName(k), 'text-anchor="middle"') +
+      text(380, 65, "결측 행 제거 후 334행", 'text-anchor="middle"');
+    $("#box-chart").innerHTML = out;
+    table(
+      $("#box-summary"),
+      ["수염 최솟값", "25%", "중앙값", "75%", "수염 최댓값"],
+      [[lo, s.q1, s.median, s.q3, hi]],
+      "상자그림의 요약 값",
+    );
+  }
+  let plotRows = cleaned;
+  function pointInfo() {
+    const id = Number($("#keyboard-point-select").value),
+      r = plotRows.find((r) => r.id === id);
+    if (!r) return;
+    const normalized = $("#scatter-scale").value === "normalized";
+    $("#point-inspector").textContent =
+      `원본 ${r.id}번 행 · ${r.species} · ${labels[$("#scatter-x").value]}: ${fmt(r[$("#scatter-x").value], 3)}${normalized ? "" : ` ${FEATURE_INFO[$("#scatter-x").value].unit}`} · ${labels[$("#scatter-y").value]}: ${fmt(r[$("#scatter-y").value], 3)}${normalized ? "" : ` ${FEATURE_INFO[$("#scatter-y").value].unit}`}`;
+  }
+  function scatter() {
+    const xKey = $("#scatter-x").value,
+      yKey = $("#scatter-y").value,
+      normalized = $("#scatter-scale").value === "normalized",
+      colored = $("#species-color").checked;
+    plotRows = normalized ? scaled : cleaned;
+    const xs = summary(plotRows, xKey),
+      ys = summary(plotRows, yKey),
+      dx = xs.max - xs.min || 1,
+      dy = ys.max - ys.min || 1,
+      x = (v) => 75 + ((v - xs.min) / dx) * 620,
+      y = (v) => 285 - ((v - ys.min) / dy) * 235;
+    let svg = "";
+    for (let i = 0; i <= 4; i++) {
+      const xv = xs.min + (dx * i) / 4,
+        yv = ys.min + (dy * i) / 4;
+      svg +=
+        line(x(xv), 50, x(xv), 285) +
+        line(75, y(yv), 695, y(yv)) +
+        text(x(xv), 308, fmt(xv), 'text-anchor="middle"') +
+        text(65, y(yv) + 4, fmt(yv), 'text-anchor="end"');
+    }
+    svg +=
+      line(75, 285, 695, 285, "#626b7b") +
+      line(75, 50, 75, 285, "#626b7b") +
+      text(
+        385,
+        345,
+        normalized ? `${labels[xKey]} (0~1)` : featureName(xKey),
+        'text-anchor="middle"',
+      ) +
+      text(75, 25, normalized ? `${labels[yKey]} (0~1)` : featureName(yKey));
+    for (const r of plotRows) {
+      const cx = x(r[xKey]),
+        cy = y(r[yKey]),
+        color = colored ? SPECIES_INFO[r.species].color : "#64748b",
+        attr = `data-point="${r.id}" fill="${color}" opacity=".72"`,
+        title = `<title>원본 ${r.id}번 행 · ${r.species} · ${fmt(r[xKey])}, ${fmt(r[yKey])}</title>`;
+      if (colored && r.species === "Gentoo")
+        svg += `<path d="M ${cx} ${cy - 4} l 4 8 h -8 Z" ${attr}>${title}</path>`;
+      else if (colored && r.species === "Chinstrap")
+        svg += `<rect x="${cx - 3}" y="${cy - 3}" width="6" height="6" ${attr}>${title}</rect>`;
+      else
+        svg += `<circle cx="${cx}" cy="${cy}" r="3.5" ${attr}>${title}</circle>`;
+    }
+    const rel = relation(plotRows, xKey, yKey);
+    if ($("#regression").checked)
+      svg += `<defs><clipPath id="regression-clip"><rect x="75" y="50" width="620" height="235"/></clipPath></defs><g clip-path="url(#regression-clip)">${line(x(xs.min), y(rel.slope * xs.min + rel.intercept), x(xs.max), y(rel.slope * xs.max + rel.intercept), "#16181f", 2)}</g>`;
+    $("#scatter-chart-svg").innerHTML = svg;
+    $("#scatter-status").textContent =
+      `333행 · 상관계수 r = ${rel.r.toFixed(3)}${$("#regression").checked ? " · 회귀선은 전체 데이터의 최소제곱 직선입니다." : ""}`;
+    $("#species-legend").hidden = !colored;
+    const selected = $("#keyboard-point-select").value;
+    $("#keyboard-point-select").replaceChildren(
+      ...plotRows.map((r) => {
+        const o = document.createElement("option");
+        o.value = r.id;
+        o.textContent = `원본 ${r.id}번 행 · ${r.species}`;
+        return o;
+      }),
+    );
+    if (plotRows.some((r) => String(r.id) === selected))
+      $("#keyboard-point-select").value = selected;
+    pointInfo();
+  }
+  $("#scatter-chart-svg").onclick = (e) => {
+    const point = e.target.closest("[data-point]");
+    if (point) {
+      $("#keyboard-point-select").value = point.dataset.point;
+      pointInfo();
+    }
+  };
+  $("#keyboard-point-select").onchange = pointInfo;
+  $("#box-feature").onchange = box;
+  for (const id of [
+    "scatter-x",
+    "scatter-y",
+    "scatter-scale",
+    "species-color",
+    "regression",
+  ])
+    $("#" + id).onchange = scatter;
+  const t = table(
+    $("#correlation-matrix"),
+    ["속성", ...FEATURES.map((k) => labels[k])],
+    FEATURES.map((k) => [
+      labels[k],
+      ...FEATURES.map((other) => relation(cleaned, k, other).r.toFixed(2)),
+    ]),
+    "숫자 속성의 Pearson 상관계수 · 333행",
+  );
+  t.classList.add("matrix");
+  [...t.tBodies[0].rows].forEach((tr) =>
+    [...tr.cells].slice(1).forEach((td) => {
+      const v = Number(td.textContent),
+        alpha = Math.abs(v) * 0.28;
+      td.style.background =
+        v >= 0 ? `rgba(37,99,235,${alpha})` : `rgba(217,119,6,${alpha})`;
+    }),
+  );
+  box();
+  scatter();
+}
+function initModel() {
+  let model = null;
+  const clean = cleanRows(rows);
+  FEATURES.forEach((k) => {
+    const label = document.createElement("label"),
+      input = document.createElement("input");
+    input.type = "checkbox";
+    input.value = k;
+    input.checked = true;
+    label.append(input, document.createTextNode(labels[k]));
+    $("#model-features").append(label);
   });
-
-  svg.innerHTML = html;
-
-  // 클릭 이벤트 연결
-  svg.querySelectorAll(".scatter-point-node").forEach((node) => {
-    const pid = Number(node.getAttribute("data-point-id"));
-    const handleSelect = () => selectScatterPoint(pid);
-    node.addEventListener("click", handleSelect);
-    node.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        handleSelect();
+  const settings = () => ({
+    features: [...$("#model-features").querySelectorAll("input:checked")].map(
+      (i) => i.value,
+    ),
+    testRatio: Number($("#test-ratio").value),
+    maxDepth: Number($("#tree-depth").value),
+    seed: Number($("#model-seed").value),
+    normalize: $("#model-normalize").checked,
+  });
+  function invalidate() {
+    model = null;
+    $("#model-results").hidden = true;
+    const s = settings();
+    const valid =
+      s.features.length &&
+      Number.isInteger(s.seed) &&
+      s.seed >= 0 &&
+      s.seed <= 99999;
+    $("#train-model").disabled = !valid;
+    $("#model-status").textContent = valid
+      ? "설정을 바꾼 뒤에는 다시 학습하세요."
+      : "입력 속성을 선택하고 seed를 0~99999 사이 정수로 입력하세요.";
+    if (valid) {
+      const split = splitRows(clean, s.testRatio, s.seed);
+      $("#split-preview").textContent =
+        `훈련 ${split.train.length}행 · 검증 ${split.test.length}행 · 종류별 비율 유지 · seed ${s.seed}`;
+    }
+  }
+  function treeNode(node) {
+    const el = document.createElement(node.feature ? "details" : "div");
+    el.className = "tree-node";
+    if (node.feature) el.open = node.depth < 2;
+    const title = document.createElement(node.feature ? "summary" : "strong");
+    title.textContent = node.feature
+      ? `${labels[node.feature]} ≤ ${fmt(node.threshold, 3)}${model.scaler ? " (정규화)" : ` ${FEATURE_INFO[node.feature].unit}`}`
+      : `예측: ${node.prediction}`;
+    const note = document.createElement("small");
+    note.textContent = `훈련 ${node.samples}행 · ${SPECIES.map((sp, i) => `${sp} ${node.distribution[i]}`).join(" / ")}`;
+    el.append(title, note);
+    if (node.feature) {
+      for (const [label, child] of [
+        ["조건을 만족", node.left],
+        ["조건을 만족하지 않음", node.right],
+      ]) {
+        const branch = document.createElement("p");
+        branch.className = "branch";
+        branch.textContent = label;
+        el.append(branch, treeNode(child));
       }
-    });
-  });
-
-  // 키보드 점 선택 셀렉트 박스 갱신
-  if (pointSelect) {
-    const currentVal = pointSelect.value;
-    pointSelect.innerHTML =
-      '<option value="">-- 키보드로 펭귄 선택하기 (ID) --</option>' +
-      scatter.points
-        .map(
-          (p) =>
-            `<option value="${p.id}" ${String(p.id) === currentVal ? "selected" : ""}>#${p.id} (${SPECIES_INFO[p.species]?.nameKo}, ${p.island})</option>`
-        )
-        .join("");
-  }
-
-  // 행 수 표시 안내
-  if (rowCountDiv) {
-    rowCountDiv.innerHTML = `
-      <span>📊 <strong>이 그래프에 사용된 행:</strong> ${scatter.usedRows}개</span>
-      <span style="color:#94a3b8;">|</span>
-      <span><strong>결측으로 제외된 행:</strong> ${scatter.missingRows}개 (${scatter.xLabel}·${scatter.yLabel} 측정값 결측 제외)</span>
-    `;
-  }
-}
-
-// 점 선택 및 인스펙터 정보 표시
-function selectScatterPoint(pointId) {
-  scatterState.selectedPointId = pointId;
-  const targetRow = allRows.find((r) => r.id === pointId);
-  const inspectorBody = document.getElementById("point-inspector-body");
-  const pointSelect = document.getElementById("keyboard-point-select");
-
-  if (pointSelect && pointSelect.value !== String(pointId)) {
-    pointSelect.value = String(pointId);
-  }
-
-  // 산점도 하이라이트 재렌더링
-  renderScatterPlot();
-
-  if (!targetRow || !inspectorBody) return;
-
-  const sp = SPECIES_INFO[targetRow.species];
-  inspectorBody.innerHTML = `
-    <div class="point-attr-box">
-      <span class="point-attr-name">펭귄 번호</span>
-      <strong class="point-attr-val">#${targetRow.id}</strong>
-    </div>
-    <div class="point-attr-box">
-      <span class="point-attr-name">종류 (species)</span>
-      <strong class="point-attr-val" style="color: ${sp?.color ?? "inherit"};">${sp?.nameKo ?? targetRow.species}</strong>
-    </div>
-    <div class="point-attr-box">
-      <span class="point-attr-name">서식 섬 (island)</span>
-      <strong class="point-attr-val">${targetRow.island}</strong>
-    </div>
-    <div class="point-attr-box">
-      <span class="point-attr-name">부리 길이</span>
-      <strong class="point-attr-val">${targetRow.culmen_length_mm ?? "NA"} mm</strong>
-    </div>
-    <div class="point-attr-box">
-      <span class="point-attr-name">부리 깊이</span>
-      <strong class="point-attr-val">${targetRow.culmen_depth_mm ?? "NA"} mm</strong>
-    </div>
-    <div class="point-attr-box">
-      <span class="point-attr-name">날개 길이</span>
-      <strong class="point-attr-val">${targetRow.flipper_length_mm ?? "NA"} mm</strong>
-    </div>
-    <div class="point-attr-box">
-      <span class="point-attr-name">체질량 (몸무게)</span>
-      <strong class="point-attr-val">${targetRow.body_mass_g ?? "NA"} g</strong>
-    </div>
-    <div class="point-attr-box">
-      <span class="point-attr-name">성별 (sex)</span>
-      <strong class="point-attr-val">${targetRow.sex ?? "NA"}</strong>
-    </div>
-  `;
-}
-
-// 활동 2 유도 질문 동적 텍스트 갱신
-function updateGuidedQA() {
-  const qa1 = document.getElementById("guided-qa-1");
-  const qa2 = document.getElementById("guided-qa-2");
-
-  if (qa1 && speciesStats) {
-    qa1.innerHTML = `
-      아델리 펭귄(<strong>${speciesStats.counts.Adelie}마리</strong>, ${speciesStats.percentages.Adelie}%)이 가장 많고,
-      턱끈 펭귄(<strong>${speciesStats.counts.Chinstrap}마리</strong>, ${speciesStats.percentages.Chinstrap}%)이 가장 적습니다.
-    `;
-  }
-
-  if (qa2) qa2.textContent = "부리 길이 상자그림의 가운데 선은 중앙값, 상자는 중간 50% 구간입니다. 수염 밖에 점이 있는지 확인하고, 있다면 원본 값을 다시 살펴보세요. 그래프 밖 점이라고 자동으로 삭제하지는 않습니다.";
-
-}
-
-// 학생 관찰 입력란 처리
-function initObservationInput() {
-  const saveBtn = document.getElementById("save-observation-btn");
-  const textarea = document.getElementById("student-observation");
-  const feedback = document.getElementById("observation-feedback");
-
-  if (!saveBtn || !textarea || !feedback) return;
-
-  saveBtn.addEventListener("click", () => {
-    const text = textarea.value.trim();
-    if (!text) {
-      alert("관찰한 특징과 근거가 된 그래프 부분을 간단히 적어주세요.");
-      textarea.focus();
-      return;
     }
-
-    feedback.hidden = false;
-    feedback.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  });
+    return el;
+  }
+  function inspect() {
+    if (!model) return;
+    const row = model.test.find(
+      (r) => r.id === Number($("#prediction-row").value),
+    );
+    if (!row) return;
+    const prediction = predict(model.tree, row);
+    const box = document.createElement("div");
+    box.className = "point-card";
+    box.textContent = `원본 ${row.id}번 행 · 실제: ${row.species} · 예측: ${prediction} · ${prediction === row.species ? "일치" : "불일치"}`;
+    $("#prediction-detail").replaceChildren(box);
+    table(
+      $("#prediction-detail").appendChild(document.createElement("div")),
+      ["입력 속성", "모델에 입력한 값"],
+      model.features.map((k) => [
+        model.scaler ? `${labels[k]} (정규화)` : featureName(k),
+        row[k],
+      ]),
+      "선택한 검증 행의 입력 값",
+    );
+  }
+  for (const el of document.querySelectorAll(
+    "#model-features input,#test-ratio,#tree-depth,#model-seed,#model-normalize",
+  ))
+    el.addEventListener("input", invalidate);
+  $("#train-model").onclick = () => {
+    try {
+      model = runModel(rows, settings());
+      metrics($("#model-metrics"), [
+        ["훈련 데이터", `${model.train.length}행`],
+        ["검증 데이터", `${model.test.length}행`],
+        ["훈련 정확도", `${(model.training.accuracy * 100).toFixed(1)}%`],
+        ["검증 정확도", `${(model.validation.accuracy * 100).toFixed(1)}%`],
+      ]);
+      $("#decision-tree").replaceChildren(treeNode(model.tree));
+      const t = table(
+        $("#confusion-matrix"),
+        ["실제 ↓ / 예측 →", ...SPECIES],
+        SPECIES.map((sp, i) => [sp, ...model.validation.matrix[i]]),
+        "검증 데이터 혼동행렬",
+      );
+      t.classList.add("matrix");
+      [...t.tBodies[0].rows].forEach((tr, i) =>
+        [...tr.cells].slice(1).forEach((td, j) => {
+          if (i === j) td.style.background = "#dbeafe";
+        }),
+      );
+      $("#prediction-row").replaceChildren(
+        ...model.test.map((r) => {
+          const o = document.createElement("option");
+          o.value = r.id;
+          o.textContent = `원본 ${r.id}번 행 · 실제 ${r.species}`;
+          return o;
+        }),
+      );
+      inspect();
+      $("#model-results").hidden = false;
+      $("#model-status").textContent =
+        `학습 완료 · 검증에서 ${model.validation.total}행 중 ${model.validation.correct}행의 종류를 맞혔습니다.`;
+    } catch (error) {
+      $("#model-status").textContent = error.message;
+      $("#model-results").hidden = true;
+    }
+  };
+  $("#prediction-row").onchange = inspect;
+  invalidate();
+}
+$("#projector-toggle").onclick = () => {
+  const active = document.body.classList.toggle("projector-mode");
+  $("#projector-toggle").setAttribute("aria-pressed", String(active));
+};
+try {
+  const response = await fetch("../../data/ml-practice/penguins_size.csv");
+  if (!response.ok) throw Error("CSV 응답 오류");
+  rows = parsePenguinsCSV(await response.text());
+  if (rows.length !== 344) throw Error("CSV 행 수 확인 필요");
+  const init = {
+    "penguins-data": initData,
+    "penguins-cleaning": initCleaning,
+    "penguins-graphs": initGraphs,
+    "penguins-model": initModel,
+  }[document.body.dataset.lab];
+  init();
+  $("#load-status").hidden = true;
+  $("#lab-content").hidden = false;
+} catch (error) {
+  $("#load-status").classList.add("error");
+  $("#load-status").setAttribute("role", "alert");
+  $("#load-status").textContent =
+    `데이터를 불러오지 못했습니다. 새로고침해 주세요. (${error.message})`;
 }

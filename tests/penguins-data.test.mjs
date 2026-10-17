@@ -194,10 +194,10 @@ test("활동 페이지(lessons/penguins-data/index.html) 가드 및 계약 검�
   assert.match(html, /document\.documentElement\.setAttribute\("data-guard",\s*"pending"\)/);
   assert.match(html, /href="\.\.\/\.\.\/assets\/fonts\.css"/);
   assert.match(html, /href="\.\.\/shared\/lab-base\.css"/);
-  assert.match(html, /href="styles\.css"/);
+  assert.match(html, /href="\.\.\/penguins-data\/lab\.css\?v=1"/);
   assert.match(html, /href="\.\.\/\.\.\/assets\/guard\.css"/);
   assert.match(html, /src="\.\.\/\.\.\/assets\/group-guard\.js"/);
-  assert.match(html, /src="game\.js"/);
+  assert.match(html, /src="\.\.\/penguins-data\/game\.js\?v=lab-1"/);
 
   // 가드 패널 요소
   assert.match(html, /id="guard-loading"/);
@@ -206,7 +206,7 @@ test("활동 페이지(lessons/penguins-data/index.html) 가드 및 계약 검�
   assert.match(html, /id="guard-content"/);
 
   // 상단 back-link
-  assert.match(html, /<a\s+class="back-link"\s+href="\.\.\/\.\.\/units\/ml-data-practice-2\/">/);
+  assert.match(html, /<a\s+class="back-link"\s+href="\.\.\/\.\.\/units\/ml-data-practice-2\/"\s*>/);
 
   const hub = await readFile(unitPath, "utf8");
   // 다운로드 링크
@@ -231,7 +231,7 @@ test("game.js가 펭귄 CSV 경로를 올바르게 fetch하는지 검증", async
 });
 
 test("styles.css가 프로젝터 모드 및 모바일 반응형 규칙을 포함한다", async () => {
-  const css = await readFile(new URL("../lessons/penguins-data/styles.css", import.meta.url), "utf8");
+  const css = await readFile(new URL("../lessons/penguins-data/lab.css", import.meta.url), "utf8");
   assert.match(css, /body\.projector-mode/);
   assert.match(css, /@media\s*\(max-width:\s*640px\)/);
   assert.match(css, /\.species-adelie/);
@@ -271,10 +271,11 @@ test("그래프 활동 페이지의 키보드 접근성 및 ARIA 속성 검증",
 test("활동07은 표 관찰과 그래프 분석을 별도 페이지로 제공한다", async () => {
   const tableHtml = await readFile(lessonHtmlPath, "utf8");
   const graphHtml = await readFile(new URL("../lessons/penguins-graphs/index.html", import.meta.url), "utf8");
-  assert.match(tableHtml, /id="penguins-table-body"/);
+  assert.match(tableHtml, /id="raw-table"/);
   assert.doesNotMatch(tableHtml, /id="scatter-chart-svg"/);
   assert.match(graphHtml, /id="scatter-chart-svg"/);
   assert.doesNotMatch(graphHtml, /id="penguins-table-body"/);
   assert.match(graphHtml, /data-guard-lesson="penguins-graphs"/);
-  assert.match(graphHtml, /<details class="guided-qa-list">/);
+  assert.doesNotMatch(graphHtml, /guided-qa-list|type="radio"|정답 확인/);
+  assert.match(graphHtml, /id="correlation-matrix"/);
 });

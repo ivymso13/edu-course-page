@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      document.documentElement.setAttribute("data-guard", "pending");
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="결측값과 잘못된 성별 값을 처리하고, 정규화 전후를 비교하세요."
+    />
+    <title>데이터 정리하기 | 기계학습과 데이터 실습</title>
+    <link rel="stylesheet" href="../../assets/fonts.css" />
+    <link rel="stylesheet" href="../shared/lab-base.css" />
+    <link rel="stylesheet" href="../penguins-data/lab.css?v=1" />
+    <link rel="stylesheet" href="../../assets/guard.css" />
+    <script type="module" src="../../assets/group-guard.js"></script>
+    <script type="module" src="../penguins-data/game.js?v=lab-1"></script>
+  </head>
+  <body
+    data-lab="penguins-cleaning"
+    data-guard-scope="page"
+    data-guard-group="ml-data-practice-2"
+    data-guard-lesson="penguins-cleaning"
+  >
+    <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+    <div id="guard-loading" class="guard-panel">
+      <p>활동 정보를 확인하는 중입니다…</p>
+    </div>
+    <div id="guard-blocked" class="guard-panel">
+      <h1>아직 준비 중인 활동입니다</h1>
+      <a class="guard-home-link" href="../../">← 전체 활동지 홈으로 돌아가기</a>
+    </div>
+    <div id="guard-content">
+      <header class="topbar">
+        <a class="back-link" href="../../units/ml-data-practice-2/"
+          >← 활동 목록</a
+        >
+        <div class="module-title">
+          <span>활동지 07</span><strong>기계학습과 데이터 실습(2)</strong>
+        </div>
+        <button
+          id="projector-toggle"
+          class="utility-button"
+          type="button"
+          aria-pressed="false"
+        >
+          프로젝터 모드
+        </button>
+      </header>
+      <main id="main-content">
+        <nav class="lab-nav" aria-label="실습 단계">
+          <a href="../penguins-data/"><span>01</span> 데이터 살펴보기</a
+          ><a href="../penguins-cleaning/" aria-current="page"
+            ><span>02</span> 데이터 정리하기</a
+          ><a href="../penguins-graphs/"><span>03</span> 속성 비교하기</a
+          ><a href="../penguins-model/"><span>04</span> 펭귄 분류하기</a>
+        </nav>
+        <section class="lab-intro">
+          <p class="eyebrow">활동 02 · 15분</p>
+          <h1>데이터 정리하기</h1>
+          <p>결측값과 잘못된 성별 값을 처리하고, 정규화 전후를 비교하세요.</p>
+        </section>
+        <p id="load-status" class="load-status" role="status">
+          펭귄 데이터를 불러오는 중입니다…
+        </p>
+        <div id="lab-content" hidden>
+          <section class="lab-panel">
+            <h2>결측값 확인</h2>
+            <div id="missing-table"></div>
+          </section>
+          <section class="lab-panel">
+            <h2>행 정리하기</h2>
+            <p class="lab-note">
+              순서대로 눌러 표가 어떻게 바뀌는지 확인하세요.
+            </p>
+            <div class="controls">
+              <button id="drop-missing" type="button">
+                1. 결측값이 있는 행 제거</button
+              ><button id="drop-sex" type="button" disabled>
+                2. 성별의 . 값 제거</button
+              ><button id="reset-cleaning" class="secondary" type="button">
+                원본으로 되돌리기
+              </button>
+            </div>
+            <div id="cleaning-status" class="metrics" aria-live="polite"></div>
+            <div id="unique-values" class="lab-note"></div>
+            <details>
+              <summary>이번 단계에서 제외된 행 보기</summary>
+              <div id="removed-table"></div>
+            </details>
+            <div class="controls">
+              <label
+                >표에 표시할 행<select id="cleaning-view">
+                  <option value="preview">처음 10행</option>
+                  <option value="all">전체 행</option>
+                </select></label
+              >
+            </div>
+            <div id="cleaning-table"></div>
+          </section>
+          <section class="lab-panel">
+            <h2>MinMax 정규화</h2>
+            <p class="lab-note">
+              행 정리가 끝나면 네 숫자 속성을 각각 0~1 범위로 바꿔 보세요.
+              종류와 성별은 바뀌지 않습니다.
+            </p>
+            <div class="controls">
+              <label class="check"
+                ><input id="normalize" type="checkbox" disabled />정규화한 값
+                보기</label
+              >
+            </div>
+            <p class="formula">(값 − 최솟값) ÷ (최댓값 − 최솟값)</p>
+            <div id="normalization-ranges"></div>
+            <div id="normalized-table"></div>
+          </section>
+        </div>
+        <nav class="lesson-pager" aria-label="활동 이동">
+          <a href="../penguins-data/">← 데이터 살펴보기</a
+          ><a class="next" href="../penguins-graphs/">속성 비교하기 →</a>
+        </nav>
+      </main>
+      <footer>중·고등학교 정보·인공지능 수업 자료</footer>
+    </div>
+  </body>
+</html>

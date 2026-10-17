@@ -147,7 +147,7 @@
       "id": "ml-data-practice-2",
       "order": 7,
       "title": "기계학습과 데이터 실습(2)",
-      "description": "실제 펭귄 자료(344행 7열)의 표와 그래프를 직접 관찰하며 종류·몸무게·신체 특징에서 규칙을 찾고, 분류 실습은 코랩 노트북으로 이어 갑니다.",
+      "description": "펭귄 데이터를 살펴보고 전처리·속성 비교·결정트리 학습과 평가를 직접 실습합니다.",
       "path": "units/ml-data-practice-2/",
       "status": "published",
       "active": true,
@@ -155,24 +155,46 @@
         {
           "id": "penguins-data",
           "order": 1,
-          "title": "표만 보고 알아낼 수 있을까?",
+          "title": "데이터 살펴보기",
           "path": "lessons/penguins-data/",
+          "duration": 12,
+          "difficulty": "보통",
+          "status": "published",
+          "active": true,
+          "objective": "데이터 표와 자료형·요약 통계를 읽는다."
+        },
+        {
+          "id": "penguins-cleaning",
+          "order": 2,
+          "title": "데이터 정리하기",
+          "path": "lessons/penguins-cleaning/",
           "duration": 15,
           "difficulty": "보통",
           "status": "published",
           "active": true,
-          "objective": "데이터 표를 직접 관찰하고 구조와 특징을 설명한다."
+          "objective": "전처리에 따른 행 수와 값의 변화를 확인한다."
         },
         {
           "id": "penguins-graphs",
-          "order": 2,
-          "title": "그래프에서 어떤 특징을 찾을 수 있을까?",
+          "order": 3,
+          "title": "속성 비교하기",
           "path": "lessons/penguins-graphs/",
           "duration": 15,
           "difficulty": "보통",
           "status": "published",
           "active": true,
-          "objective": "그래프를 조작하고 관찰한 특징의 근거를 설명한다."
+          "objective": "분포와 상관관계를 그래프로 비교한다."
+        },
+        {
+          "id": "penguins-model",
+          "order": 4,
+          "title": "펭귄 분류하기",
+          "path": "lessons/penguins-model/",
+          "duration": 18,
+          "difficulty": "보통",
+          "status": "published",
+          "active": true,
+          "objective": "결정트리를 학습하고 검증 정확도와 혼동행렬을 해석한다."
         }
       ]
     },

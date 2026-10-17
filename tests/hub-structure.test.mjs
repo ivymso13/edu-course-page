@@ -79,7 +79,7 @@ test("활동지 06·07 허브 카드는 번호를 표시하고 과일 활동은 
   }
 });
 
-test("활동지 06과 07 목록 페이지는 각각 두 개의 활동 페이지를 연결하고 소속 그룹 가드를 선언한다", async () => {
+test("활동지 06과 07 목록 페이지는 활동 링크와 소속 그룹 가드를 선언한다", async () => {
   const [practice1, practice2] = await Promise.all([
     readFile(new URL("units/ml-data-practice-1/index.html", repoRoot), "utf8"),
     readFile(new URL("units/ml-data-practice-2/index.html", repoRoot), "utf8"),

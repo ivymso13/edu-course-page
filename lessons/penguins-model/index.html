@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      document.documentElement.setAttribute("data-guard", "pending");
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="입력 속성과 트리 깊이를 바꾸며 훈련 결과와 검증 결과를 비교하세요."
+    />
+    <title>펭귄 분류하기 | 기계학습과 데이터 실습</title>
+    <link rel="stylesheet" href="../../assets/fonts.css" />
+    <link rel="stylesheet" href="../shared/lab-base.css" />
+    <link rel="stylesheet" href="../penguins-data/lab.css?v=1" />
+    <link rel="stylesheet" href="../../assets/guard.css" />
+    <script type="module" src="../../assets/group-guard.js"></script>
+    <script type="module" src="../penguins-data/game.js?v=lab-1"></script>
+  </head>
+  <body
+    data-lab="penguins-model"
+    data-guard-scope="page"
+    data-guard-group="ml-data-practice-2"
+    data-guard-lesson="penguins-model"
+  >
+    <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+    <div id="guard-loading" class="guard-panel">
+      <p>활동 정보를 확인하는 중입니다…</p>
+    </div>
+    <div id="guard-blocked" class="guard-panel">
+      <h1>아직 준비 중인 활동입니다</h1>
+      <a class="guard-home-link" href="../../">← 전체 활동지 홈으로 돌아가기</a>
+    </div>
+    <div id="guard-content">
+      <header class="topbar">
+        <a class="back-link" href="../../units/ml-data-practice-2/"
+          >← 활동 목록</a
+        >
+        <div class="module-title">
+          <span>활동지 07</span><strong>기계학습과 데이터 실습(2)</strong>
+        </div>
+        <button
+          id="projector-toggle"
+          class="utility-button"
+          type="button"
+          aria-pressed="false"
+        >
+          프로젝터 모드
+        </button>
+      </header>
+      <main id="main-content">
+        <nav class="lab-nav" aria-label="실습 단계">
+          <a href="../penguins-data/"><span>01</span> 데이터 살펴보기</a
+          ><a href="../penguins-cleaning/"><span>02</span> 데이터 정리하기</a
+          ><a href="../penguins-graphs/"><span>03</span> 속성 비교하기</a
+          ><a href="../penguins-model/" aria-current="page"
+            ><span>04</span> 펭귄 분류하기</a
+          >
+        </nav>
+        <section class="lab-intro">
+          <p class="eyebrow">활동 04 · 18분</p>
+          <h1>펭귄 분류하기</h1>
+          <p>
+            입력 속성과 트리 깊이를 바꾸며 훈련 결과와 검증 결과를 비교하세요.
+          </p>
+        </section>
+        <p id="load-status" class="load-status" role="status">
+          펭귄 데이터를 불러오는 중입니다…
+        </p>
+        <div id="lab-content" hidden>
+          <section class="lab-panel">
+            <h2>입력 속성과 예측 대상</h2>
+            <p class="lab-note">
+              예측할 값(y)은 펭귄 종류(species)입니다. 예측에 사용할 숫자
+              속성(X)을 선택하세요.
+            </p>
+            <fieldset id="model-features" class="feature-options">
+              <legend>입력 속성</legend>
+            </fieldset>
+            <div class="controls">
+              <label
+                >검증에 사용할 비율<select id="test-ratio">
+                  <option value="0.2">20%</option>
+                  <option value="0.3" selected>30%</option>
+                  <option value="0.4">40%</option>
+                </select></label
+              ><label
+                >최대 트리 깊이<select id="tree-depth">
+                  <option>1</option>
+                  <option>2</option>
+                  <option selected>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                </select></label
+              ><label
+                >분할 기준값(seed)<input
+                  id="model-seed"
+                  type="number"
+                  value="42"
+                  min="0"
+                  max="99999"
+                  step="1" /></label
+              ><label class="check"
+                ><input id="model-normalize" type="checkbox" />MinMax
+                정규화</label
+              >
+            </div>
+            <p id="split-preview" class="lab-note" aria-live="polite"></p>
+            <p class="lab-note">
+              정리한 333행을 종류별 비율을 유지하며 나눕니다. 정규화는 훈련
+              데이터로 기준을 계산하고 검증 데이터에 같은 기준을 적용합니다.
+            </p>
+            <button id="train-model" type="button">결정트리 학습하기</button>
+            <p id="model-status" class="lab-note" aria-live="polite">
+              속성과 설정을 선택한 뒤 학습을 누르세요.
+            </p>
+          </section>
+          <div id="model-results" hidden>
+            <section class="lab-panel">
+              <h2>학습과 검증 결과</h2>
+              <div id="model-metrics" class="metrics"></div>
+              <p class="lab-note">
+                훈련 정확도는 학습에 사용한 행, 검증 정확도는 학습에 사용하지
+                않은 행으로 계산합니다.
+              </p>
+            </section>
+            <section class="lab-panel">
+              <h2>결정트리</h2>
+              <p class="lab-note">
+                각 분기를 펼쳐 결정 기준과 훈련 데이터 수를 확인하세요.
+              </p>
+              <div id="decision-tree"></div>
+            </section>
+            <section class="lab-panel">
+              <h2>혼동행렬</h2>
+              <p class="lab-note">
+                행은 실제 종류, 열은 예측한 종류입니다. 대각선의 수가 맞게
+                예측한 개수입니다.
+              </p>
+              <div id="confusion-matrix"></div>
+            </section>
+            <section class="lab-panel">
+              <h2>검증 데이터의 예측 확인</h2>
+              <div class="controls">
+                <label
+                  >검증 데이터 선택<select id="prediction-row"></select
+                ></label>
+              </div>
+              <div id="prediction-detail" aria-live="polite"></div>
+            </section>
+          </div>
+          <p class="lab-note">
+            브라우저에서 지니 불순도를 사용하는 결정트리를 실제로 학습합니다.
+            코랩의 scikit-learn과 데이터 분할·동률 처리 방식이 달라 결과가
+            같지는 않을 수 있습니다.
+          </p>
+        </div>
+        <nav class="lesson-pager" aria-label="활동 이동">
+          <a href="../penguins-graphs/">← 속성 비교하기</a
+          ><a class="next" href="../../units/ml-data-practice-2/"
+            >활동 목록 →</a
+          >
+        </nav>
+      </main>
+      <footer>중·고등학교 정보·인공지능 수업 자료</footer>
+    </div>
+  </body>
+</html>
