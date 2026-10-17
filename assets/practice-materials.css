@@ -1,60 +1,48 @@
-/* Worksheet hub downloads, matching the penguin lesson's materials cards. */
+/* Compact dataset downloads on worksheet hubs. */
 .practice-materials {
-  margin-top: 1.8rem;
-  padding: clamp(1.2rem, 3vw, 2rem);
+  margin-top: 1.6rem;
+  padding: 1.2rem 1.4rem;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #fff;
-  box-shadow: 0 10px 30px rgba(25, 35, 54, .05);
+  background: #f9fafc;
 }
-.practice-materials-heading {
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--line);
+.practice-material-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
 }
-.practice-materials-heading > span {
-  display: inline-block;
-  padding: .25rem .6rem;
-  border-radius: 3px;
-  background: #eef2ff;
+.practice-material-info { min-width: 0; }
+.practice-material-label {
+  margin: 0 0 .35rem;
   color: var(--accent);
   font-size: .72rem;
-  font-weight: 700;
+  font-weight: 750;
 }
-.practice-materials-heading h2 {
-  margin: .5rem 0 0;
-  font-size: clamp(1.4rem, 3vw, 1.85rem);
-}
-.practice-materials-heading p,
-.practice-materials-note {
-  margin: .5rem 0 0;
+.practice-material-info h2 { margin: 0; font-size: 1.15rem; line-height: 1.4; }
+.practice-material-description {
+  margin: .35rem 0 0;
   color: var(--muted);
-  font-size: .9rem;
+  font-size: .88rem;
   line-height: 1.6;
 }
-.practice-materials-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin: 1.25rem 0 1rem;
-}
-.practice-material-card {
+.practice-material-meta {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-width: 0;
-  padding: 1.25rem;
-  background: #f9fafc;
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  flex-wrap: wrap;
+  gap: .3rem .8rem;
+  margin: .5rem 0 0;
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.5;
 }
-.practice-material-card h3 { margin: 0 0 .5rem; font-size: 1.05rem; }
-.practice-material-card p { margin: 0 0 1rem; color: var(--muted); font-size: .85rem; line-height: 1.6; }
+.practice-material-meta code { color: var(--ink); overflow-wrap: anywhere; }
 .practice-material-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
   min-height: 44px;
-  padding: .65rem .85rem;
+  padding: .65rem 1rem;
   border: 1px solid var(--line-strong);
   border-radius: 4px;
   background: #fff;
@@ -62,11 +50,16 @@
   font-size: .88rem;
   font-weight: 700;
   line-height: 1.5;
-  text-align: center;
   text-decoration: none;
-  overflow-wrap: anywhere;
 }
 .practice-material-button:hover { background: #f1f4f9; border-color: var(--ink); }
-@media (max-width: 800px) {
-  .practice-materials-grid { grid-template-columns: 1fr; }
+.practice-materials-note {
+  margin: .85rem 0 0;
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.6;
+}
+@media (max-width: 600px) {
+  .practice-materials { padding: 1rem; }
+  .practice-material-row { flex-direction: column; align-items: stretch; gap: .85rem; }
 }
