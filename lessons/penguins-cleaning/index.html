@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="../penguins-data/lab.css?v=5" />
     <link rel="stylesheet" href="../../assets/guard.css" />
     <script type="module" src="../../assets/group-guard.js"></script>
-    <script type="module" src="../penguins-data/game.js?v=lab-7"></script>
+    <script type="module" src="../penguins-data/game.js?v=lab-8"></script>
   </head>
   <body
     data-lab="penguins-cleaning"
@@ -67,7 +67,8 @@
         </p>
         <div id="lab-content" hidden>
           <p class="lab-note">
-            Python 코드는 예시이며, 출력은 웹에서 계산한 결과입니다.
+            명령어는 코랩 원본의 실습 순서를 따릅니다. 출력은 웹에서 계산한
+            결과입니다.
           </p>
           <details class="setup-command">
             <summary>준비 코드 · 파일 불러오기</summary>
@@ -76,18 +77,16 @@
               <pre><code>import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
 from sklearn.preprocessing import MinMaxScaler
 
-original_df = pd.read_csv(&quot;penguins_size.csv&quot;)
-df = original_df.copy()</code></pre>
+df = pd.read_csv(&quot;penguins_size.csv&quot;)</code></pre>
             </div>
           </details>
           <section class="lab-panel">
             <h2>결측값 확인</h2>
             <div class="command-block">
               <span class="command-label">Python</span>
-              <pre><code>original_df.isnull().sum()</code></pre>
+              <pre><code>df.isnull().sum()</code></pre>
             </div>
             <p id="missing-overview" class="missing-overview"></p>
             <ul

@@ -212,65 +212,52 @@ test("stratified split sizes match scikit-learn train_test_split for every offer
   assert.match(game, /seed: parseSeed\(\$\("#model-seed"\)\.value\)/);
 });
 
-test("Python commands follow the selected settings and match the browser computation", async () => {
+test("displayed Python uses the original lesson operations without web helper commands", async () => {
   const C = await import("../lessons/penguins-data/lab-commands.js");
-  assert.equal(C.previewCommand([1, 2, 3]), "df.head(3)");
-  assert.equal(C.previewCommand([11, 12]), "df.iloc[[10, 11]]");
-  assert.equal(
-    C.previewCommand(Array.from({ length: 344 }, (_, i) => i + 1)),
-    "df",
+  assert.equal(C.previewCommand([11, 12]), "df");
+  assert.match(C.cleaningCommand(2), /dropna\(\)/);
+  assert.match(
+    C.normalizeCommand(true),
+    /df\[col\] = scaler\.fit_transform\(df\[col\]\)/,
   );
-  assert.match(C.cleaningCommand(0), /^df = original_df\.copy\(\)\ndf\.shape$/);
-  assert.match(C.cleaningCommand(1), /dropna\(\)/);
-  assert.doesNotMatch(C.cleaningCommand(1), /"\."/);
-  assert.match(C.cleaningCommand(2), /df\[df\["sex"\] != "\."\]/);
-  // Normalized values go to a copy; the cleaned df keeps original units.
-  const normalized = C.normalizeCommand(true);
-  assert.match(normalized, /scaled_df = df\.copy\(\)/);
-  assert.match(normalized, /scaled_df\[cols\] = scaler\.fit_transform\(df\[cols\]\)/);
-  assert.doesNotMatch(normalized, /^df\[cols\] =/m);
-  assert.doesNotMatch(C.normalizeCommand(false), /MinMaxScaler/);
-  assert.match(C.boxCommand("body_mass_g"), /data=complete_df, x="body_mass_g", whis=1\.5/);
-  const scatter = C.scatterCommand({
-    x: "flipper_length_mm",
-    y: "body_mass_g",
-    normalized: true,
-    colored: false,
-    regression: true,
-  });
-  assert.match(scatter, /plot_df\[cols\] = MinMaxScaler\(\)\.fit_transform\(df\[cols\]\)/);
-  assert.match(scatter, /x="flipper_length_mm", y="body_mass_g"/);
-  assert.match(scatter, /regplot\(.*\n.*ci=None/);
-  assert.doesNotMatch(scatter, /hue=/);
-  const plain = C.scatterCommand({
-    x: "culmen_length_mm",
-    y: "culmen_depth_mm",
-    normalized: false,
-    colored: true,
-    regression: false,
-  });
-  assert.match(plain, /hue="species"/);
-  assert.doesNotMatch(plain, /MinMaxScaler|regplot/);
-  const model = C.modelCommand({
-    features: ["culmen_length_mm", "flipper_length_mm"],
-    testRatio: 0.4,
-    seed: 7,
-    maxDepth: 2,
-    normalize: true,
-  });
-  assert.match(model, /X = df\[\["culmen_length_mm", "flipper_length_mm"\]\]/);
-  assert.match(model, /test_size=0\.4, random_state=7, stratify=y/);
-  assert.match(model, /max_depth=2,[\s\S]*random_state=7/);
-  // The scaler is fitted on training rows only and reused for test rows.
-  assert.match(model, /scaler\.fit_transform\(X_train\)/);
-  assert.match(model, /scaler\.transform\(X_test\)/);
-  assert.doesNotMatch(model, /fit_transform\(X\)|fit_transform\(X_test\)/);
-  assert.doesNotMatch(
-    C.modelCommand({ features: ["body_mass_g"], testRatio: 0.3, seed: 42, maxDepth: 3, normalize: false }),
-    /MinMaxScaler/,
-  );
-  // df keeps the CSV index after cleaning, so original row n is df.loc[n - 1].
-  assert.match(C.predictionCommand(149, false), /^sample = df\.loc\[\[148\], X\.columns\]\ndt\.predict\(sample\)$/);
-  assert.match(C.predictionCommand(149, true), /scaler\.transform\(sample\)/);
-  assert.equal(rows[148].id, 149);
+  const commands = [
+    C.previewCommand(),
+    C.cleaningCommand(2),
+    C.normalizeCommand(true),
+    C.boxCommand("body_mass_g"),
+    C.scatterCommand({
+      x: "culmen_length_mm",
+      y: "body_mass_g",
+      normalized: true,
+      colored: true,
+      regression: true,
+    }),
+    C.modelCommand({
+      features: ["body_mass_g"],
+      testRatio: 0.4,
+      seed: 7,
+      maxDepth: 2,
+      normalize: true,
+    }),
+  ];
+  for (const command of commands)
+    assert.doesNotMatch(
+      command,
+      /nunique|\.iloc|\.loc|\.copy\(|pd\.DataFrame|\.transform\(|original_df|complete_df|plot_df|sample/,
+    );
+  for (const slug of [
+    "penguins-data",
+    "penguins-cleaning",
+    "penguins-graphs",
+    "penguins-model",
+  ]) {
+    const html = await readFile(
+      new URL(`../lessons/${slug}/index.html`, import.meta.url),
+      "utf8",
+    );
+    assert.doesNotMatch(
+      html,
+      /nunique|prediction-command|original_df|complete_df|plot_df/,
+    );
+  }
 });

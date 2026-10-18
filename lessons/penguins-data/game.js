@@ -6,8 +6,7 @@ import {
   boxCommand,
   scatterCommand,
   modelCommand,
-  predictionCommand,
-} from "./lab-commands.js";
+} from "./lab-commands.js?v=source-1";
 import { parsePenguinsCSV, FEATURE_INFO, SPECIES_INFO } from "./game-core.js";
 import {
   FEATURES,
@@ -233,17 +232,12 @@ function initData() {
   render();
   table(
     $("#schema-table"),
-    ["속성", "열 이름", "자료형", "값이 있는 행", "고유한 값"],
+    ["속성", "열 이름", "자료형", "값이 있는 행"],
     COLUMNS.map((k) => [
       labels[k],
       k,
       FEATURES.includes(k) ? "숫자" : "문자열",
       rows.filter((r) => r[k] !== null).length,
-      FEATURES.includes(k)
-        ? "—"
-        : [...new Set(rows.map((r) => r[k]).filter((v) => v !== null))].join(
-            ", ",
-          ),
     ]),
     "속성과 자료형",
   );
@@ -637,10 +631,6 @@ function initModel() {
       (r) => r.id === Number($("#prediction-row").value),
     );
     if (!row) return;
-    showCommand(
-      "prediction-command",
-      predictionCommand(row.id, Boolean(model.scaler)),
-    );
     const prediction = predict(model.tree, row);
     const box = document.createElement("div");
     box.className = "point-card";

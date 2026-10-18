@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="../penguins-data/lab.css?v=5" />
     <link rel="stylesheet" href="../../assets/guard.css" />
     <script type="module" src="../../assets/group-guard.js"></script>
-    <script type="module" src="../penguins-data/game.js?v=lab-7"></script>
+    <script type="module" src="../penguins-data/game.js?v=lab-8"></script>
   </head>
   <body
     data-lab="penguins-model"
@@ -70,7 +70,8 @@
         </p>
         <div id="lab-content" hidden>
           <p class="lab-note">
-            Python 코드는 예시이며, 출력은 웹에서 계산한 결과입니다.
+            명령어는 코랩 원본의 실습 순서를 따릅니다. 출력은 웹에서 계산한
+            결과입니다.
           </p>
           <details class="setup-command">
             <summary>준비 코드 · 파일 불러오기</summary>
@@ -79,14 +80,12 @@
               <pre><code>import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.metrics import confusion_matrix
 
-df = pd.read_csv(&quot;penguins_size.csv&quot;).dropna()
-df = df[df[&quot;sex&quot;] != &quot;.&quot;].copy()</code></pre>
+df = pd.read_csv(&quot;penguins_size.csv&quot;)</code></pre>
             </div>
           </details>
           <section class="lab-panel">
@@ -146,8 +145,8 @@ df = df[df[&quot;sex&quot;] != &quot;.&quot;].copy()</code></pre>
               <h2>학습과 검증 결과</h2>
               <div class="command-block">
                 <span class="command-label">Python</span>
-                <pre><code>dt.score(X_train, y_train)
-dt.score(X_test, y_test)</code></pre>
+                <pre><code>print(&quot;훈련용 데이터의 정확도:&quot;, dt.score(X_train, y_train))
+print(&quot;결정트리 성능 평가:&quot;, dt.score(X_test, y_test))</code></pre>
               </div>
               <div id="model-metrics" class="metrics"></div>
               <p class="lab-note">
@@ -162,8 +161,8 @@ dt.score(X_test, y_test)</code></pre>
               </p>
               <div class="command-block">
                 <span class="command-label">Python</span>
-                <pre><code>plt.figure(figsize=(16, 8))
-plot_tree(dt, feature_names=X.columns, filled=True)
+                <pre><code>plt.figure(figsize=(20, 10))
+plot_tree(dt, feature_names=X.columns, max_depth=2, filled=True)
 plt.show()</code></pre>
               </div>
               <div id="decision-tree"></div>
@@ -176,10 +175,9 @@ plt.show()</code></pre>
               </p>
               <div class="command-block">
                 <span class="command-label">Python</span>
-                <pre><code>labels = [&quot;Adelie&quot;, &quot;Chinstrap&quot;, &quot;Gentoo&quot;]
-conf = confusion_matrix(y_test, dt.predict(X_test), labels=labels)
-sns.heatmap(conf, annot=True, fmt=&quot;d&quot;, cmap=&quot;Blues&quot;,
-            xticklabels=labels, yticklabels=labels)
+                <pre><code>conf = confusion_matrix(y_test, dt.predict(X_test))
+sns.heatmap(conf, annot=True, cmap=&quot;Blues&quot;)
+plt.title(&quot;Penguin Classifier&quot;)
 plt.xlabel(&quot;Predicted&quot;)
 plt.ylabel(&quot;Actual&quot;)
 plt.show()</code></pre>
@@ -192,10 +190,6 @@ plt.show()</code></pre>
                 <label
                   >검증 데이터 선택<select id="prediction-row"></select
                 ></label>
-              </div>
-              <div class="command-block">
-                <span class="command-label">Python</span>
-                <pre><code id="prediction-command"></code></pre>
               </div>
               <div id="prediction-detail" aria-live="polite"></div>
             </section>

@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="../penguins-data/lab.css?v=5" />
     <link rel="stylesheet" href="../../assets/guard.css" />
     <script type="module" src="../../assets/group-guard.js"></script>
-    <script type="module" src="../penguins-data/game.js?v=lab-7"></script>
+    <script type="module" src="../penguins-data/game.js?v=lab-8"></script>
   </head>
   <body
     data-lab="penguins-graphs"
@@ -67,7 +67,8 @@
         </p>
         <div id="lab-content" hidden>
           <p class="lab-note">
-            Python 코드는 예시이며, 출력은 웹에서 계산한 결과입니다.
+            명령어는 코랩 원본의 실습 순서를 따릅니다. 출력은 웹에서 계산한
+            결과입니다.
           </p>
           <details class="setup-command">
             <summary>준비 코드 · 파일 불러오기</summary>
@@ -76,11 +77,9 @@
               <pre><code>import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
 from sklearn.preprocessing import MinMaxScaler
 
-complete_df = pd.read_csv(&quot;penguins_size.csv&quot;).dropna()
-df = complete_df[complete_df[&quot;sex&quot;] != &quot;.&quot;].copy()</code></pre>
+df = pd.read_csv(&quot;penguins_size.csv&quot;)</code></pre>
             </div>
           </details>
           <p class="lab-note">
@@ -168,11 +167,9 @@ df = complete_df[complete_df[&quot;sex&quot;] != &quot;.&quot;].copy()</code></p
             </p>
             <div class="command-block">
               <span class="command-label">Python</span>
-              <pre><code>cols = [&quot;culmen_length_mm&quot;, &quot;culmen_depth_mm&quot;,
-        &quot;flipper_length_mm&quot;, &quot;body_mass_g&quot;]
-sns.heatmap(df[cols].corr(), annot=True, vmin=-1, vmax=1,
-            cmap=&quot;RdBu&quot;, center=0)
-plt.show()</code></pre>
+              <pre><code>col = [&quot;culmen_length_mm&quot;, &quot;culmen_depth_mm&quot;,
+       &quot;flipper_length_mm&quot;, &quot;body_mass_g&quot;]
+sns.heatmap(df[col].corr(), annot=True)</code></pre>
             </div>
             <div id="correlation-matrix"></div>
             <div class="correlation-key">
