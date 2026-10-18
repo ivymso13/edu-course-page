@@ -58,7 +58,7 @@
     {
       "id": "penguins-data",
       "subject": "인공지능 기초",
-      "unit": "기계학습과 데이터 실습(2)",
+      "unit": "기계학습과 데이터_분류",
       "order": 1,
       "title": "데이터 살펴보기",
       "path": "lessons/penguins-data/",
@@ -69,7 +69,7 @@
     {
       "id": "penguins-cleaning",
       "subject": "인공지능 기초",
-      "unit": "기계학습과 데이터 실습(2)",
+      "unit": "기계학습과 데이터_분류",
       "order": 2,
       "title": "데이터 정리하기",
       "path": "lessons/penguins-cleaning/",
@@ -80,7 +80,7 @@
     {
       "id": "penguins-graphs",
       "subject": "인공지능 기초",
-      "unit": "기계학습과 데이터 실습(2)",
+      "unit": "기계학습과 데이터_분류",
       "order": 3,
       "title": "속성 비교하기",
       "path": "lessons/penguins-graphs/",
@@ -91,7 +91,7 @@
     {
       "id": "penguins-model",
       "subject": "인공지능 기초",
-      "unit": "기계학습과 데이터 실습(2)",
+      "unit": "기계학습과 데이터_분류",
       "order": 4,
       "title": "펭귄 분류하기",
       "path": "lessons/penguins-model/",

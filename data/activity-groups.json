@@ -146,7 +146,7 @@
     {
       "id": "ml-data-practice-2",
       "order": 7,
-      "title": "기계학습과 데이터 실습(2)",
+      "title": "기계학습과 데이터_분류",
       "description": "펭귄 데이터를 살펴보고 전처리·속성 비교·결정트리 학습과 평가를 직접 실습합니다.",
       "path": "units/ml-data-practice-2/",
       "status": "published",

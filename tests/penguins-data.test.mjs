@@ -180,7 +180,7 @@ test("단원 페이지(units/ml-data-practice-2/index.html) 가드 및 계약 �
 
   // 제목 및 카드 링크
   assert.match(html, /활동지 07/);
-  assert.match(html, /기계학습과 데이터 실습\(2\)/);
+  assert.match(html, /기계학습과 데이터_분류/);
   assert.match(html, /<a\s+class="lesson-card"\s+href="\.\.\/\.\.\/lessons\/penguins-data\/"\s+data-lesson-card="penguins-data">/);
 });
 
