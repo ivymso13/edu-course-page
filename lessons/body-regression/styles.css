@@ -1,0 +1,122 @@
+/* ==========================================================================
+   기계학습과 데이터_회귀 실습 스타일 어댑터 (lessons/body-regression/styles.css)
+   - 분류 실습(penguins-data) 공통 lab-base.css + lab.css + practice-materials.css 재사용
+   - 회귀 실습 전용 최소 어댑터만 정의 (텍스트 출력 pre.text-output, 플레이스홀더, 차트, 상태 등)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 텍스트 콘솔 출력 블록 (pre.text-output)
+   - 파이썬 raw 텍스트/배열 출력 표시용
+   - 내부 가로 스크롤(overflow-x: auto), 고정폭 글꼴
+   -------------------------------------------------------------------------- */
+pre.text-output {
+  margin: 0.5rem 0;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: #1e293b;
+  white-space: pre;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 노트북 셀 내부 출력 영역 안에서 패딩/배경 조화 */
+.cell-output pre.text-output {
+  margin: 0.35rem 0 0.5rem;
+  background: #ffffff;
+  border: 1px solid #e1e3e6;
+}
+
+/* 아직 계산되지 않은 대기 상태 텍스트 */
+pre.text-output.placeholder {
+  color: var(--muted);
+  background: #f8fafc;
+}
+
+/* --------------------------------------------------------------------------
+   2. 데이터 탐색 컨트롤 보조 (#browse-status)
+   -------------------------------------------------------------------------- */
+#browse-status {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--muted);
+  align-self: center;
+  padding: 0 0.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. 새 목둘레 예측 입력 폼 검증 상태
+   -------------------------------------------------------------------------- */
+#neck-input[aria-invalid="true"] {
+  border-color: var(--no);
+  background-color: #fff8f8;
+}
+
+#neck-error:not(:empty) {
+  color: var(--no);
+  font-weight: 650;
+}
+
+/* --------------------------------------------------------------------------
+   4. 산점도 및 회귀 차트 SVG 보조
+   -------------------------------------------------------------------------- */
+.chart-wrap svg .regression-line {
+  stroke: #d62728;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.chart-wrap svg .regression-points {
+  fill: #1f5fbf;
+  fill-opacity: 0.55;
+}
+
+.chart-wrap svg .regression-axis-label text {
+  fill: var(--ink);
+  font-weight: 700;
+}
+
+.chart-wrap svg .regression-tick text {
+  fill: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   5. 프로젝터 고대비 모드 지원
+   -------------------------------------------------------------------------- */
+body.projector-mode pre.text-output {
+  font-size: 0.95rem;
+  color: #000000;
+  border-color: #000000;
+  background: #ffffff;
+}
+
+body.projector-mode .chart-wrap svg .regression-line {
+  stroke-width: 4;
+}
+
+body.projector-mode .chart-wrap svg .regression-axis {
+  stroke: #000000;
+}
+
+body.projector-mode .chart-wrap svg .regression-axis-label text,
+body.projector-mode .chart-wrap svg .regression-tick text {
+  fill: #000000;
+  font-weight: 750;
+}
+
+/* --------------------------------------------------------------------------
+   6. 모바일 반응형 미세 조정 (<= 640px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  pre.text-output {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.75rem;
+  }
+}

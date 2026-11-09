@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      document.documentElement.setAttribute("data-guard", "pending");
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="공군 신체 측정 데이터(jeans.csv)로 목둘레에서 허리둘레를 예측하는 단순 선형 회귀 모델을 학습하고, 목둘레·몸무게·엉덩이둘레를 함께 쓰는 다중 선형 회귀와 결정 계수를 비교합니다."
+    />
+    <title>신체 치수로 허리둘레 예측하기 | 기계학습과 데이터_회귀</title>
+    <link rel="stylesheet" href="../../assets/fonts.css" />
+    <link rel="stylesheet" href="../shared/lab-base.css" />
+    <link rel="stylesheet" href="../penguins-data/lab.css?v=5" />
+    <link rel="stylesheet" href="../../assets/practice-materials.css?v=3" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../../assets/guard.css" />
+    <script type="module" src="../../assets/group-guard.js"></script>
+    <script type="module" src="game.js"></script>
+  </head>
+  <body
+    data-lab="body-regression"
+    data-guard-scope="page"
+    data-guard-group="body-regression"
+    data-guard-lesson="body-regression"
+  >
+    <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+    <div id="guard-loading" class="guard-panel">
+      <p>활동 정보를 확인하는 중입니다…</p>
+    </div>
+    <div id="guard-blocked" class="guard-panel">
+      <h1>아직 준비 중인 활동입니다</h1>
+      <a class="guard-home-link" href="../../">← 전체 활동지 홈으로 돌아가기</a>
+    </div>
+    <div id="guard-content">
+      <header class="topbar">
+        <a class="back-link" href="../../">← 전체 활동지</a>
+        <div class="module-title">
+          <span>회귀 실습</span><strong>기계학습과 데이터_회귀</strong>
+        </div>
+        <button
+          id="projector-toggle"
+          class="utility-button"
+          type="button"
+          aria-pressed="false"
+        >
+          프로젝터 모드
+        </button>
+      </header>
+      <main id="main-content">
+        <nav class="lab-nav" aria-label="실습 단계">
+          <a href="#step-problem" aria-current="location"
+            ><span>01</span> 문제 정의</a
+          ><a href="#step-data"><span>02</span> 데이터 수집</a
+          ><a href="#step-explore"><span>03</span> 통계·상관관계</a
+          ><a href="#step-preprocess"><span>04</span> 전처리·분할</a
+          ><a href="#step-model"><span>05</span> 모델 학습</a
+          ><a href="#step-evaluate"><span>06</span> 성능 평가</a
+          ><a href="#step-chart"><span>07</span> 시각화</a
+          ><a href="#step-multiple"><span>08</span> 다중 선형 회귀</a>
+        </nav>
+        <section class="lab-intro">
+          <p class="eyebrow">회귀 실습 · 45분</p>
+          <h1>신체 치수로 허리둘레 예측하기</h1>
+          <p>
+            목둘레로 허리둘레를 예측하는 단순 선형 회귀 모델을 학습하고,
+            목둘레·몸무게·엉덩이둘레를 함께 쓰는 다중 선형 회귀와 결정 계수를
+            비교하세요.
+          </p>
+        </section>
+        <section class="practice-materials" aria-labelledby="materials-title">
+          <div class="practice-material-row">
+            <div class="practice-material-info">
+              <p class="practice-material-label">수업 준비 자료</p>
+              <h2 id="materials-title">신체 치수 원본 데이터</h2>
+              <p class="practice-material-description">
+                국방부 공군 신체 측정 정보(남, 여)의 목둘레(neck, cm)·몸무게(weight,
+                kg)·엉덩이둘레(heap, cm)·허리둘레(waist, cm)를 살펴봅니다.
+              </p>
+              <p class="practice-material-meta">
+                <code>jeans.csv</code><span id="regression-shape">963행 × 4열 · 중복 행 포함</span>
+              </p>
+            </div>
+            <a class="practice-material-button" href="../../data/ml-practice/jeans.csv" download aria-label="jeans.csv CSV 다운로드">CSV 다운로드 ↓</a>
+          </div>
+          <p class="practice-materials-note">
+            코랩 실습과 제출은 우리 반 클래스룸의 안내를 확인하세요.
+          </p>
+        </section>
+        <p id="load-status" class="load-status" role="status">
+          신체 치수 데이터를 불러오는 중입니다…
+        </p>
+        <div id="lab-content" hidden>
+          <p class="lab-note">
+            명령어는 코랩 원본의 실습 순서를 따릅니다. 출력은 웹에서 계산한
+            결과이며, 이 페이지에서 파이썬 코드를 실행하거나 고쳐 쓸 수는
+            없습니다.
+          </p>
+          <details class="setup-command">
+            <summary>준비 코드 · 파일 불러오기</summary>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression</code></pre>
+            </div>
+          </details>
+
+          <section class="lab-panel" id="step-problem" aria-labelledby="step-problem-title">
+            <div class="panel-head">
+              <h2 id="step-problem-title">문제 정의하기</h2>
+              <span>1단계</span>
+            </div>
+            <p>
+              <strong>신체 치수를 알면 허리둘레를 예측할 수 있을까?</strong>
+            </p>
+            <p class="lab-note">
+              바지를 살 때 허리둘레를 재지 않고도 다른 신체 치수로 알맞은 크기를
+              짐작할 수 있을지 데이터로 확인해 봅니다. 예측하려는 값(허리둘레)이
+              연속된 숫자이므로 <strong>회귀</strong> 문제입니다.
+            </p>
+          </section>
+
+          <section class="lab-panel" id="step-data" aria-labelledby="step-data-title">
+            <div class="panel-head">
+              <h2 id="step-data-title">데이터 수집하기</h2>
+              <span>2단계 · 963행 · 4개 속성</span>
+            </div>
+            <p class="lab-note">
+              국방부 공군 신체 측정 정보(남, 여) · 열: <code>neck</code> 목둘레(cm)
+              · <code>weight</code> 몸무게(kg) · <code>heap</code> 엉덩이둘레(cm) ·
+              <code>waist</code> 허리둘레(cm)
+            </p>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 신체 치수 데이터 불러오기(p99)
+import pandas as pd
+
+df = pd.read_csv("jeans.csv")
+df.head()</code></pre>
+            </div>
+            <div id="head-table"></div>
+            <details id="browse-details">
+              <summary>전체 데이터 넘겨 보기 (963행)</summary>
+              <div class="controls">
+                <label
+                  >표시할 행 수<select id="browse-size">
+                    <option value="10">10</option>
+                    <option value="25" selected>25</option>
+                    <option value="50">50</option>
+                  </select></label
+                ><button id="browse-prev" class="secondary" type="button">이전</button
+                ><span id="browse-status" aria-live="polite"></span
+                ><button id="browse-next" class="secondary" type="button">다음</button>
+              </div>
+              <div id="browse-table"></div>
+              <p class="lab-note">
+                원본 파일의 행을 그대로 보여 줍니다. 값이 똑같은 행도 지우지 않고
+                모두 사용합니다.
+              </p>
+            </details>
+          </section>
+
+          <section class="lab-panel" id="step-explore" aria-labelledby="step-explore-title">
+            <div class="panel-head">
+              <h2 id="step-explore-title">속성별 통계와 상관관계</h2>
+              <span>3단계</span>
+            </div>
+            <h3>속성별 통계 분석</h3>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 속성별 통계 분석
+df.describe()</code></pre>
+            </div>
+            <div id="describe-table"></div>
+            <h3>속성별 상관관계 분석</h3>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 속성별 상관관계 분석
+df.corr(numeric_only=True)</code></pre>
+            </div>
+            <div id="corr-table"></div>
+            <p class="lab-note" id="corr-note"></p>
+          </section>
+
+          <section class="lab-panel" id="step-preprocess" aria-labelledby="step-preprocess-title">
+            <div class="panel-head">
+              <h2 id="step-preprocess-title">데이터 전처리하기</h2>
+              <span>4단계</span>
+            </div>
+            <h3>독립 변수와 종속 변수 선정하기</h3>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 데이터 전처리하기
+# 독립 변수: 목둘레(neck)
+# 종속 변수: 허리둘레(waist)
+
+import numpy as np
+
+X = df["neck"].values.reshape(-1, 1)
+y = df["waist"].values
+
+X, y</code></pre>
+            </div>
+            <pre class="text-output" id="xy-preview" aria-label="X, y 출력 앞부분"></pre>
+            <details>
+              <summary>X, y 전체 출력 보기</summary>
+              <pre class="text-output" id="xy-full"></pre>
+            </details>
+            <h3>훈련 데이터와 테스트 데이터 분할하기</h3>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 훈련 데이터는 70%, 테스트 데이터는 30%로 분할하기(p100)
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)</code></pre>
+            </div>
+            <div id="split-metrics" class="metrics" aria-live="polite"></div>
+            <div class="controls">
+              <button id="reshuffle" class="secondary" type="button">
+                데이터 다시 섞어서 나누기
+              </button>
+            </div>
+            <p class="lab-note">
+              행을 무작위로 섞은 뒤 30%를 테스트용으로 떼어 둡니다. 다시 나누면
+              아래의 학습 결과가 지워지니 모델을 다시 학습하세요.
+            </p>
+          </section>
+
+          <section class="lab-panel" id="step-model" aria-labelledby="step-model-title">
+            <div class="panel-head">
+              <h2 id="step-model-title">모델 선정하고 학습하기</h2>
+              <span>5단계</span>
+            </div>
+            <p class="lab-note">
+              단순 선형 회귀 모델을 사용합니다. 입력(목둘레) 하나로 허리둘레를
+              직선 하나로 예측합니다.
+            </p>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 선형 회귀 모델 사용해서 모델 학습하기(p100)
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(X_train, y_train)</code></pre>
+            </div>
+            <button id="fit-simple" type="button">모델 학습하기</button>
+            <pre class="text-output" id="fit-output" aria-live="polite"></pre>
+            <h3>모델의 회귀계수와 절편 구하기</h3>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 모델의 회귀계수와 절편 구하기(p100)
+print(model.coef_, model.intercept_)</code></pre>
+            </div>
+            <pre class="text-output" id="coef-output"></pre>
+            <p class="lab-note" id="coef-note"></p>
+          </section>
+
+          <section class="lab-panel" id="step-evaluate" aria-labelledby="step-evaluate-title">
+            <div class="panel-head">
+              <h2 id="step-evaluate-title">모델의 성능 평가하기</h2>
+              <span>6단계</span>
+            </div>
+            <h3>모델의 결정 계수(R²) 구하기</h3>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 모델의 결정 계수(R^2) 구하기(p101)
+print(model.score(X_test, y_test))</code></pre>
+            </div>
+            <pre class="text-output" id="score-output"></pre>
+            <p class="lab-note">
+              결정 계수는 1에 가까울수록 모델이 허리둘레의 차이를 잘 설명한다는
+              뜻입니다.
+            </p>
+            <h3>테스트 데이터로 예측하기</h3>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 테스트 데이터로 예측하기(p101)
+pred = model.predict(X_test)
+
+print("예측값:", pred[:5])
+print("실제값:", y_test[:5])</code></pre>
+            </div>
+            <pre class="text-output" id="predict-output"></pre>
+          </section>
+
+          <section class="lab-panel" id="step-chart" aria-labelledby="step-chart-title">
+            <div class="panel-head">
+              <h2 id="step-chart-title">테스트 데이터와 예측값 시각화하기</h2>
+              <span>7단계</span>
+            </div>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 테스트 데이터와 예측값 시각화하기(p101)
+import matplotlib.pyplot as plt
+
+plt.scatter(X_test, y_test, color="blue")
+plt.plot(X_test, pred, color="red")
+plt.xlabel("neck")
+plt.ylabel("waist")
+
+plt.show()</code></pre>
+            </div>
+            <div
+              class="chart-wrap"
+              tabindex="0"
+              aria-label="목둘레와 허리둘레 산점도 (좌우 스크롤 가능)"
+            >
+              <svg
+                id="regression-chart"
+                viewBox="0 0 640 420"
+                role="img"
+                aria-labelledby="regression-chart-title regression-chart-desc"
+              >
+                <title id="regression-chart-title">목둘레와 허리둘레 산점도와 회귀 직선</title>
+                <desc id="regression-chart-desc">가로축은 목둘레(neck, cm), 세로축은 허리둘레(waist, cm)입니다. 파란 점은 테스트 데이터, 빨간 선은 모델의 예측입니다.</desc>
+              </svg>
+            </div>
+            <p class="lab-note" id="chart-caption">모델을 학습하면 그래프가 나타납니다.</p>
+            <h3>새 목둘레로 예측해 보기</h3>
+            <form class="controls" id="predict-form" novalidate>
+              <label
+                >목둘레(cm)<input
+                  id="neck-input"
+                  type="number"
+                  inputmode="decimal"
+                  min="25"
+                  max="55"
+                  step="0.1"
+                  value="37.0"
+                  aria-describedby="neck-error" /></label
+              ><button id="predict-submit" type="submit">예측하기</button>
+            </form>
+            <p class="lab-note" id="neck-error" aria-live="polite"></p>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code id="new-predict-code">model.predict([[37.0]])</code></pre>
+            </div>
+            <pre class="text-output" id="new-predict-output" aria-live="polite"></pre>
+          </section>
+
+          <section class="lab-panel" id="step-multiple" aria-labelledby="step-multiple-title">
+            <div class="panel-head">
+              <h2 id="step-multiple-title">다중 선형 회귀</h2>
+              <span>8단계</span>
+            </div>
+            <p class="lab-note">
+              목둘레(neck), 몸무게(weight), 엉덩이 둘레(heap)를 이용해
+              허리둘레(waist) 예측하기
+            </p>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 독립변수, 종속변수 선정
+XX = df[["neck", "weight", "heap"]]
+yy = df["waist"]
+
+# 데이터 분할
+XX_train, XX_test, yy_train, yy_test = train_test_split(XX, yy, test_size=0.3)
+
+# 모델 학습
+model2 = LinearRegression()
+model2.fit(XX_train, yy_train)
+
+# 테스트 데이터로 결과 확인
+print("모델 결정 계수:", model2.score(XX_test, yy_test))</code></pre>
+            </div>
+            <button id="fit-multiple" type="button">다중 회귀 모델 학습하기</button>
+            <pre class="text-output" id="multiple-output" aria-live="polite"></pre>
+            <div id="compare-metrics" class="metrics" aria-live="polite"></div>
+            <p class="lab-note">
+              두 모델을 공정하게 비교하려고, 이 웹페이지는 4단계에서 나눈
+              훈련·테스트 행을 그대로 다시 사용합니다. 코랩에서 위 코드를
+              실행하면 데이터가 새로 섞여 나뉘므로 결정 계수가 조금 다르게 나올
+              수 있습니다.
+            </p>
+          </section>
+        </div>
+        <nav class="lesson-pager" aria-label="활동 이동">
+          <a href="../../">← 전체 활동지 홈</a
+          ><a class="next" href="#step-problem">처음 단계로 ↑</a>
+        </nav>
+      </main>
+      <footer>중·고등학교 정보·인공지능 수업 자료</footer>
+    </div>
+  </body>
+</html>

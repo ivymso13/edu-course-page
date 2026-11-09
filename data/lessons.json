@@ -100,6 +100,17 @@
       "status": "published"
     },
     {
+      "id": "body-regression",
+      "subject": "인공지능 기초",
+      "unit": "기계학습과 데이터_회귀",
+      "order": 1,
+      "title": "신체 치수로 허리둘레 예측하기",
+      "path": "lessons/body-regression/",
+      "duration": 45,
+      "difficulty": "보통",
+      "status": "published"
+    },
+    {
       "id": "ai-inference-ripeness",
       "subject": "인공지능 기초",
       "unit": "기계학습 알고리즘",

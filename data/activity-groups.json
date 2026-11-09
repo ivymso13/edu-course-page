@@ -199,6 +199,28 @@
       ]
     },
     {
+      "id": "body-regression",
+      "order": 7.5,
+      "title": "기계학습과 데이터_회귀",
+      "description": "공군 신체 측정 데이터로 목둘레에서 허리둘레를 예측하는 선형 회귀 모델을 학습하고, 목둘레·몸무게·엉덩이둘레를 함께 쓰는 다중 선형 회귀와 결정 계수를 비교합니다.",
+      "path": "lessons/body-regression/",
+      "status": "published",
+      "active": true,
+      "children": [
+        {
+          "id": "body-regression",
+          "order": 1,
+          "title": "신체 치수로 허리둘레 예측하기",
+          "path": "lessons/body-regression/",
+          "duration": 45,
+          "difficulty": "보통",
+          "status": "published",
+          "active": true,
+          "objective": "신체 치수 데이터로 단순·다중 선형 회귀 모델을 학습하고 결정 계수로 성능을 비교한다."
+        }
+      ]
+    },
+    {
       "id": "machine-learning-algorithms",
       "order": 8,
       "title": "기계학습 알고리즘",

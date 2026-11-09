@@ -15,7 +15,9 @@ test("루트 허브는 메인 제목과 활동지 카드를 보여주고 그룹 
   assert.match(html, /class="group-card" href="units\/ml-data-practice-2\/"/);
   assert.match(html, /class="group-card" href="units\/machine-learning-algorithms\/"/);
   assert.match(html, />기계학습과 데이터</);
-  assert.doesNotMatch(html, /href="lessons\//, "루트 허브는 개별 lesson으로 바로 연결하지 않아야 함");
+  // 활동이 하나뿐인 회귀 실습은 목록 페이지 없이 활동 페이지로 바로 연결한다. 그 밖의 카드는 목록 페이지를 거친다.
+  assert.match(html, /class="group-card" href="lessons\/body-regression\/" data-group-card="body-regression"/);
+  assert.doesNotMatch(html.replace('href="lessons/body-regression/"', ""), /href="lessons\//, "루트 허브는 회귀 실습 외의 개별 lesson으로 바로 연결하지 않아야 함");
 });
 
 test("루트 허브는 활동지 01~03과 04 이후를 서로 다른 단원으로 구분한다", async () => {
@@ -27,6 +29,7 @@ test("루트 허브는 활동지 01~03과 04 이후를 서로 다른 단원으�
   const activity05 = html.indexOf('data-group-card="ai-learning"');
   const activity06 = html.indexOf('data-group-card="ml-data-practice-1"');
   const activity07 = html.indexOf('data-group-card="ml-data-practice-2"');
+  const regression = html.indexOf('data-group-card="body-regression"');
   const activity08 = html.indexOf('data-group-card="machine-learning-algorithms"');
 
   assert.ok(understandingHeading < activity01);
@@ -35,7 +38,8 @@ test("루트 허브는 활동지 01~03과 04 이후를 서로 다른 단원으�
   assert.ok(learningHeading < activity05);
   assert.ok(activity05 < activity06);
   assert.ok(activity06 < activity07);
-  assert.ok(activity07 < activity08);
+  assert.ok(activity07 < regression, "회귀 실습 카드는 펭귄 분류 실습(07) 바로 다음에 온다");
+  assert.ok(regression < activity08);
 });
 
 test("루트 허브 제목은 작은 화면과 브라우저 글꼴 차이에도 한 줄로 유지된다", async () => {
