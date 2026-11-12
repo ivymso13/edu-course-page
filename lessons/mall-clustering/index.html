@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      document.documentElement.setAttribute("data-guard", "pending");
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="쇼핑몰 고객 데이터(Mall_Customers.csv)의 연간 소득과 소비 점수로 고객을 K개 군집으로 나누고, 실루엣 점수와 나이까지 더한 3차원 군집 결과를 살펴봅니다."
+    />
+    <title>쇼핑몰 고객을 비슷한 무리로 나누기 | 기계학습과 데이터_군집</title>
+    <link rel="stylesheet" href="../../assets/fonts.css" />
+    <link rel="stylesheet" href="../shared/lab-base.css" />
+    <link rel="stylesheet" href="../penguins-data/lab.css?v=5" />
+    <link rel="stylesheet" href="../../assets/practice-materials.css?v=3" />
+    <link rel="stylesheet" href="../body-regression/styles.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../../assets/guard.css" />
+    <script type="module" src="../../assets/group-guard.js"></script>
+    <script type="module" src="game.js"></script>
+  </head>
+  <body
+    data-lab="mall-clustering"
+    data-guard-scope="page"
+    data-guard-group="mall-clustering"
+    data-guard-lesson="mall-clustering"
+  >
+    <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+    <div id="guard-loading" class="guard-panel">
+      <p>활동 정보를 확인하는 중입니다…</p>
+    </div>
+    <div id="guard-blocked" class="guard-panel">
+      <h1>아직 준비 중인 활동입니다</h1>
+      <a class="guard-home-link" href="../../">← 전체 활동지 홈으로 돌아가기</a>
+    </div>
+    <div id="guard-content">
+      <header class="topbar">
+        <a class="back-link" href="../../">← 전체 활동지</a>
+        <div class="module-title">
+          <span>군집 실습</span><strong>기계학습과 데이터_군집</strong>
+        </div>
+        <button
+          id="projector-toggle"
+          class="utility-button"
+          type="button"
+          aria-pressed="false"
+        >
+          프로젝터 모드
+        </button>
+      </header>
+      <main id="main-content">
+        <nav class="lab-nav" aria-label="실습 단계">
+          <a href="#step-data" aria-current="location"
+            ><span>01</span> 데이터 불러오기</a
+          ><a href="#step-select"><span>02</span> 속성 선택</a
+          ><a href="#step-model"><span>03</span> 모델 학습</a
+          ><a href="#step-result"><span>04</span> 군집 결과</a
+          ><a href="#step-chart"><span>05</span> 시각화</a
+          ><a href="#step-evaluate"><span>06</span> 실루엣 점수</a
+          ><a href="#step-3d"><span>07</span> 3개 특징 군집</a>
+        </nav>
+        <section class="lab-intro">
+          <p class="eyebrow">군집 실습 · 45분</p>
+          <h1>쇼핑몰 고객을 비슷한 무리로 나누기</h1>
+          <p>
+            정답(레이블) 없이 쇼핑몰 고객의 연간 소득과 소비 점수로
+            군집을 만들고 실루엣 점수로 얼마나 잘 나뉘었는지 확인하세요.
+          </p>
+        </section>
+
+        <section class="practice-materials" aria-labelledby="materials-title">
+          <div class="practice-material-row">
+            <div class="practice-material-info">
+              <p class="practice-material-label">수업 준비 자료</p>
+              <h2 id="materials-title">쇼핑몰 고객 원본 데이터</h2>
+              <p class="practice-material-description">
+                고객 번호(CustomerID)·성별(Genre)·나이(Age, 세)·연간 소득(Annual
+                Income, 천 달러)·소비 점수(Spending Score, 1~100점)를 살펴봅니다.
+              </p>
+              <p class="practice-material-meta">
+                <code>Mall_Customers.csv</code><span id="mall-shape">200행 × 5열</span>
+              </p>
+            </div>
+            <a
+              class="practice-material-button"
+              href="../../data/ml-practice/Mall_Customers.csv"
+              download="Mall_Customers.csv"
+              aria-label="Mall_Customers.csv CSV 다운로드"
+              >CSV 다운로드 ↓</a
+            >
+          </div>
+          <p class="practice-materials-note">
+            코랩 실습과 제출은 우리 반 클래스룸의 안내를 확인하세요.
+          </p>
+        </section>
+
+        <p id="load-status" class="load-status" role="status">
+          쇼핑몰 고객 데이터를 불러오는 중입니다…
+        </p>
+        <div id="lab-content" hidden>
+          <p class="lab-note">
+            명령어는 코랩 원본의 실습 순서를 따르고 빈칸은 채워 두었습니다. 출력은
+            웹에서 원본 CSV로 직접 계산한 결과이며, 이 페이지에서 파이썬 코드를
+            실행하거나 고쳐 쓸 수는 없습니다.
+          </p>
+
+          <section class="lab-panel" id="step-data" aria-labelledby="step-data-title">
+            <div class="panel-head">
+              <h2 id="step-data-title">데이터 불러오기</h2>
+              <span>1단계 · 200행 · 5개 속성</span>
+            </div>
+            <p class="lab-note">
+              열: <code>CustomerID</code> 고객 번호 · <code>Genre</code> 성별 ·
+              <code>Age</code> 나이(세) · <code>Annual Income (k$)</code> 연간
+              소득(천 달러) · <code>Spending Score (1-100)</code> 쇼핑몰이 매긴
+              소비 점수(1~100점)
+            </p>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>import pandas as pd
+
+# Mall_Customers 데이터 불러오기(p120)
+df = pd.read_csv("Mall_Customers.csv")
+df</code></pre>
+            </div>
+            <div id="df-table"></div>
+            <p class="lab-note">
+              파일에는 고객 번호가 <code>0001</code>처럼 적혀 있지만 pandas는 숫자로
+              읽어 <code>1</code>로 보여 줍니다.
+            </p>
+            <details id="browse-details">
+              <summary>전체 데이터 넘겨 보기 (200행)</summary>
+              <div class="controls">
+                <label
+                  >표시할 행 수<select id="browse-size">
+                    <option value="10">10</option>
+                    <option value="25" selected>25</option>
+                    <option value="50">50</option>
+                  </select></label
+                ><button id="browse-prev" class="secondary" type="button">이전</button
+                ><span id="browse-status" aria-live="polite"></span
+                ><button id="browse-next" class="secondary" type="button">다음</button>
+              </div>
+              <div id="browse-table"></div>
+              <p class="lab-note" id="browse-note">
+                원본 파일의 행을 그대로 보여 줍니다. 3단계에서 모델을 학습하면
+                군집 번호(centroid) 열이 함께 나타납니다.
+              </p>
+            </details>
+          </section>
+
+          <section class="lab-panel" id="step-select" aria-labelledby="step-select-title">
+            <div class="panel-head">
+              <h2 id="step-select-title">군집에 사용할 속성 고르기</h2>
+              <span>2단계</span>
+            </div>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 군집 모델에서 사용할 속성 2개 추출하기(p121)
+data = df[["Annual Income (k$)", "Spending Score (1-100)"]]
+data.head()</code></pre>
+            </div>
+            <div id="data-head-table"></div>
+            <p class="lab-note">
+              두 속성을 원래 단위(천 달러, 점수) 그대로 사용합니다. 값의 크기를
+              맞추는 정규화는 하지 않으며, 거리는 두 값의 차이로 바로 계산합니다.
+            </p>
+          </section>
+
+          <section class="lab-panel" id="step-model" aria-labelledby="step-model-title">
+            <div class="panel-head">
+              <h2 id="step-model-title">군집 모델 만들고 학습하기</h2>
+              <span>3단계</span>
+            </div>
+            <p class="lab-note">
+              K-평균은 정답 없이 가까운 점끼리 K개의 무리로 묶습니다. 원본 노트북은
+              5개 군집을 사용합니다. 군집 수를 바꿔 보고 다시 학습해 보세요.
+            </p>
+            <div class="controls">
+              <label
+                >군집 수 <code>n_clusters</code
+                ><select id="k-select" class="k-select" aria-describedby="k-note">
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5" selected>5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                </select></label
+              >
+            </div>
+            <p class="lab-note" id="k-note">
+              군집 수를 바꾸면 아래 결과가 지워지니 모델을 다시 학습하세요.
+            </p>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code id="fit-code">from sklearn.cluster import KMeans
+
+# 군집 모델 생성 및 학습(p121)
+model = KMeans(n_clusters=5)
+model.fit(data)</code></pre>
+            </div>
+            <button id="fit-2d" type="button">모델 학습하기</button>
+            <pre class="text-output" id="fit-output" aria-live="polite"></pre>
+            <div id="fit-metrics" class="metrics" aria-live="polite"></div>
+            <p class="lab-note">
+              웹에서는 결과가 매번 같도록 고정된 seed로 시작 중심을 10번
+              뽑아(<code>n_init=10</code>) 학습하고, 중심까지의 거리 제곱합(inertia)이
+              가장 작은 결과를 고릅니다. 코랩의 scikit-learn과 난수 생성 방식이 달라
+              군집 번호의 순서나 세부 결과가 다르게 나올 수 있습니다.
+            </p>
+            <h3>학습 결과 저장하기</h3>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 학습 결과 저장하기(p121)
+pred = model.predict(data)
+pred</code></pre>
+            </div>
+            <pre class="text-output" id="pred-output"></pre>
+          </section>
+
+          <section class="lab-panel" id="step-result" aria-labelledby="step-result-title">
+            <div class="panel-head">
+              <h2 id="step-result-title">군집 결과 살펴보기</h2>
+              <span>4단계</span>
+            </div>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 군집 결과를 데이터(df)에 추가하기(p121)
+df["centroid"] = model.labels_
+
+# 군집의 중심값 확인하기
+final_centroid = model.cluster_centers_
+final_centroid</code></pre>
+            </div>
+            <pre class="text-output" id="centers-output"></pre>
+            <p class="lab-note">
+              <code>centroid</code> 열에는 중심 좌표가 아니라 각 고객이 속한
+              <strong>군집 번호</strong>(0부터 시작)가 들어갑니다. 군집 번호는 정답이
+              아니라 무리를 구분하는 이름일 뿐입니다. 중심 좌표는
+              <code>final_centroid</code>에 [연간 소득, 소비 점수] 순서로 들어
+              있습니다.
+            </p>
+            <div id="cluster-summary"></div>
+            <h3>새롭게 추가된 속성 확인하기</h3>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code># 새롭게 추가된 속성(centroid) 확인하기(p122)
+df.head()</code></pre>
+            </div>
+            <div id="df-head-table"></div>
+          </section>
+
+          <section class="lab-panel" id="step-chart" aria-labelledby="step-chart-title">
+            <div class="panel-head">
+              <h2 id="step-chart-title">군집 결과 시각화하기</h2>
+              <span>5단계</span>
+            </div>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>import seaborn as sns
+import matplotlib.pyplot as plt
+
+# 군집 결과 시각화하기
+sns.scatterplot(data=df, x="Annual Income (k$)", y="Spending Score (1-100)", hue = "centroid", palette="bright")
+
+# 군집의 중심값 시각화하기
+plt.scatter(final_centroid[:, 0], final_centroid[:, 1], s=300, marker="*", color="black", label="Centroid")
+plt.legend()
+plt.show()</code></pre>
+            </div>
+            <div
+              class="chart-wrap"
+              tabindex="0"
+              aria-label="연간 소득과 소비 점수 군집 산점도 (좌우 스크롤 가능)"
+            >
+              <svg
+                id="cluster-chart"
+                class="cluster-chart"
+                viewBox="0 0 640 440"
+                role="img"
+                aria-labelledby="cluster-chart-title cluster-chart-desc"
+              >
+                <title id="cluster-chart-title">연간 소득과 소비 점수 군집 산점도</title>
+                <desc id="cluster-chart-desc">가로축은 연간 소득(천 달러), 세로축은 소비 점수입니다. 점의 색은 군집 번호, 검은 별은 군집의 중심입니다.</desc>
+              </svg>
+            </div>
+            <div id="cluster-legend" class="legend cluster-legend" aria-label="군집 범례"></div>
+            <p class="lab-note" id="chart-caption">모델을 학습하면 그래프가 나타납니다.</p>
+          </section>
+
+          <section class="lab-panel" id="step-evaluate" aria-labelledby="step-evaluate-title">
+            <div class="panel-head">
+              <h2 id="step-evaluate-title">실루엣 점수로 모델 평가하기</h2>
+              <span>6단계</span>
+            </div>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>from sklearn.metrics import silhouette_score
+
+# 실루엣 점수를 사용하여 모델 평가하기(p122)
+score = silhouette_score(data, pred)
+
+print( score )</code></pre>
+            </div>
+            <pre class="text-output" id="silhouette-output"></pre>
+            <p class="lab-note">
+              실루엣 점수는 정답과 비교한 정확도가 아닙니다. 각 고객이 자기 군집과는
+              가깝고 다른 군집과는 멀수록 1에 가까워지며(−1~1), 모든 고객의 값을
+              평균한 점수입니다. 고객이 한 명뿐인 군집의 점은 0으로 셉니다.
+            </p>
+            <div id="silhouette-metrics" class="metrics" aria-live="polite"></div>
+          </section>
+
+          <section class="lab-panel" id="step-3d" aria-labelledby="step-3d-title">
+            <div class="panel-head">
+              <h2 id="step-3d-title">3개의 특징으로 군집화하기</h2>
+              <span>7단계</span>
+            </div>
+            <p class="lab-note">
+              연간 소득, 소비 점수에 나이(Age)까지 세 속성을 원래 단위 그대로 사용해
+              5개 군집으로 나눕니다.
+            </p>
+            <div class="command-block">
+              <span class="command-label">Python</span>
+              <pre><code>import plotly.express as px
+import plotly.graph_objects as go
+
+# 3개의 특징으로 군집화
+X = df[["Annual Income (k$)", "Spending Score (1-100)", "Age"]]
+
+model = KMeans(n_clusters=5, random_state=42, n_init=10)
+df["centroid"] = model.fit_predict(X)
+final_centroid = model.cluster_centers_
+
+# 군집별 데이터 시각화
+fig = px.scatter_3d(
+    df,
+    x="Annual Income (k$)",
+    y="Spending Score (1-100)",
+    z="Age",
+    color=df["centroid"].astype(str),
+    color_discrete_sequence=px.colors.qualitative.Bold,
+    opacity=0.7
+)
+
+# 군집 중심점 표시
+fig.add_trace(go.Scatter3d(
+    x=final_centroid[:, 0],
+    y=final_centroid[:, 1],
+    z=final_centroid[:, 2],
+    mode="markers",
+    marker=dict(size=10, symbol="diamond", color="black"),
+    name="Centroid"
+))
+
+fig.update_layout(width=900, height=700)
+fig.show()</code></pre>
+            </div>
+            <button id="fit-3d" type="button">3개 특징으로 학습하기</button>
+            <div id="fit3d-metrics" class="metrics" aria-live="polite"></div>
+            <p class="lab-note">
+              웹에서도 seed 42로 시작 중심을 10번 뽑지만 난수 생성 방식이 달라 코랩과
+              군집 번호의 순서가 다를 수 있습니다. 코랩에서는 이 셀이
+              <code>df["centroid"]</code>를 3개 특징의 군집 번호로 덮어씁니다.
+            </p>
+            <div class="cluster-3d" id="cluster-3d" data-ready="false">
+              <div class="controls cluster-3d-controls" role="group" aria-label="3차원 그래프 회전">
+                <button class="secondary" type="button" data-rotate="left" aria-label="왼쪽으로 돌리기">← 왼쪽</button
+                ><button class="secondary" type="button" data-rotate="right" aria-label="오른쪽으로 돌리기">오른쪽 →</button
+                ><button class="secondary" type="button" data-rotate="up" aria-label="위로 기울이기">↑ 위로</button
+                ><button class="secondary" type="button" data-rotate="down" aria-label="아래로 기울이기">↓ 아래로</button
+                ><button class="secondary" type="button" data-rotate="reset">처음 방향</button>
+              </div>
+              <div
+                class="chart-wrap cluster-3d-wrap"
+                id="cluster-3d-wrap"
+                tabindex="0"
+                role="application"
+                aria-roledescription="회전할 수 있는 3차원 산점도"
+                aria-label="3차원 군집 산점도. 끌거나 방향키로 돌릴 수 있습니다."
+                aria-describedby="cluster-3d-help"
+              >
+                <svg
+                  id="cluster-3d-chart"
+                  class="cluster-3d-chart"
+                  viewBox="0 0 640 520"
+                  role="img"
+                  aria-labelledby="cluster-3d-title cluster-3d-desc"
+                >
+                  <title id="cluster-3d-title">연간 소득·소비 점수·나이 3차원 군집 산점도</title>
+                  <desc id="cluster-3d-desc">세 축은 연간 소득(천 달러), 소비 점수, 나이(세)입니다. 점의 색은 군집 번호, 검은 마름모는 군집의 중심입니다.</desc>
+                </svg>
+              </div>
+              <p class="lab-note" id="cluster-3d-help">
+                그래프를 마우스나 손가락으로 끌거나, 그래프를 선택한 뒤 방향키(←
+                → ↑ ↓)로 돌려 보세요. 화면은 3차원 점을 돌려 평면에 비춘
+                모습이며, 보기 쉽도록 세 축을 같은 길이의 상자로 그렸습니다(모델은
+                원래 값으로 계산).
+              </p>
+              <p class="lab-note" id="angle-status" aria-live="polite"></p>
+            </div>
+            <div id="cluster-3d-legend" class="legend cluster-legend" aria-label="3차원 군집 범례"></div>
+            <div id="cluster-3d-summary"></div>
+          </section>
+        </div>
+        <nav class="lesson-pager" aria-label="활동 이동">
+          <a href="../../">← 전체 활동지 홈</a
+          ><a class="next" href="#step-data">처음 단계로 ↑</a>
+        </nav>
+      </main>
+      <footer>중·고등학교 정보·인공지능 수업 자료</footer>
+    </div>
+  </body>
+</html>

@@ -111,6 +111,17 @@
       "status": "published"
     },
     {
+      "id": "mall-clustering",
+      "subject": "인공지능 기초",
+      "unit": "기계학습과 데이터_군집",
+      "order": 1,
+      "title": "쇼핑몰 고객을 비슷한 무리로 나누기",
+      "path": "lessons/mall-clustering/",
+      "duration": 45,
+      "difficulty": "보통",
+      "status": "published"
+    },
+    {
       "id": "ai-inference-ripeness",
       "subject": "인공지능 기초",
       "unit": "기계학습 알고리즘",

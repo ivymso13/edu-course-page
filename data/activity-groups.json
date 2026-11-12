@@ -221,6 +221,28 @@
       ]
     },
     {
+      "id": "mall-clustering",
+      "order": 7.75,
+      "title": "기계학습과 데이터_군집",
+      "description": "K-평균 군집으로 쇼핑몰 고객의 연간 소득과 소비 점수로 비슷한 고객끼리 군집을 만들고 실루엣 점수와 나이를 더한 3차원 군집 결과를 살펴봅니다.",
+      "path": "lessons/mall-clustering/",
+      "status": "published",
+      "active": true,
+      "children": [
+        {
+          "id": "mall-clustering",
+          "order": 1,
+          "title": "쇼핑몰 고객을 비슷한 무리로 나누기",
+          "path": "lessons/mall-clustering/",
+          "duration": 45,
+          "difficulty": "보통",
+          "status": "published",
+          "active": true,
+          "objective": "쇼핑몰 고객 데이터로 K-평균 군집 모델을 학습하고 군집 번호·중심·실루엣 점수를 해석한다."
+        }
+      ]
+    },
+    {
       "id": "machine-learning-algorithms",
       "order": 8,
       "title": "기계학습 알고리즘",
